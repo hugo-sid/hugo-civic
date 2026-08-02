@@ -1,0 +1,18 @@
+{{- /*
+  usa-footer primary nav, shared by the default and slim variants.
+  Contract: packages/usa-footer/src/_includes/usa-footer-nav-primary.twig
+
+  Column width is the only difference between the two variants, and upstream
+  keys it off the modifier — kept identical here so the layouts match.
+*/ -}}
+{{- $modifier := .modifier | default "" -}}
+{{- $cols := cond (eq $modifier "usa-footer--slim") "mobile-lg:grid-col-6" "mobile-lg:grid-col-4" -}}
+<nav class="usa-footer__nav" aria-label="{{ i18n "footer_navigation" | default "Footer navigation" }}">
+  <ul class="grid-row grid-gap">
+    {{- range .links }}
+    <li class="{{ $cols }} desktop:grid-col-auto usa-footer__primary-content">
+      <a class="usa-footer__primary-link" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+    </li>
+    {{- end }}
+  </ul>
+</nav>

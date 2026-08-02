@@ -1,0 +1,91 @@
+{{- /*
+  Emits the two JS tiers.
+
+  Tier 1 (core.js) is the same file on every page, so it gets one fingerprinted
+  URL and stays cached site-wide.
+
+  Tier 2 is built from whatever components registered via uswds/require during
+  this page's render. The generated source is derived only from the SORTED
+  component list, so two pages using the same components produce byte-identical
+  source, land on the same content-addressed path, and share one cached bundle.
+  Sorting is what makes that true — without it, {accordion, modal} and
+  {modal, accordion} would be two separate downloads for identical behaviour.
+
+  Trade-off: per-page bundles beat one global bundle on transfer size but lose
+  cross-page cache reuse. Two tiers is the compromise. If a site turns out to
+  have high combination entropy, set params.uswds.singleBundle = true to fall
+  back to one bundle containing every behaviour used anywhere (25.9 KB gzip
+  worst case). See DESIGN.md §6.1.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+
+{{- /* USWDS behaviours that exist as importable modules, minus the three
+       already in core.js. Password and the validation module are intentionally
+       absent until the form components land in Phase 3. */ -}}
+{{- $known := slice
+      "usa-accordion" "usa-button" "usa-character-count" "usa-combo-box"
+      "usa-date-picker" "usa-date-range-picker" "usa-file-input" "usa-footer"
+      "usa-in-page-navigation" "usa-input-mask" "usa-language-selector"
+      "usa-modal" "usa-range" "usa-search" "usa-table" "usa-time-picker"
+      "usa-tooltip" "usa-validation"
+-}}
+
+{{- /* Tier 1 */ -}}
+{{- with resources.Get "uswds/js/core.js" -}}
+  {{- $core := . | js.Build (dict
+        "targetPath" "js/uswds-core.js"
+        "minify" hugo.IsProduction
+        "target" "es2018") -}}
+  {{- if hugo.IsProduction -}}
+    {{- $core = $core | fingerprint "sha512" -}}
+    <script src="{{ $core.RelPermalink }}" integrity="{{ $core.Data.Integrity }}" defer></script>
+  {{- else -}}
+    <script src="{{ $core.RelPermalink }}" defer></script>
+  {{- end -}}
+{{- end -}}
+
+{{- /* Tier 2 */ -}}
+{{- /* .Store, not page.Store — see uswds/require for why the global is wrong. */ -}}
+{{- $requested := .Store.Get "uswdsJS" | default slice -}}
+{{- $wanted := slice -}}
+{{- range sort (uniq $requested) -}}
+  {{- if in $known . -}}{{- $wanted = $wanted | append . -}}{{- end -}}
+{{- end -}}
+
+{{- with $wanted -}}
+  {{- $imports := slice -}}
+  {{- $names := slice -}}
+  {{- range $i, $c := . -}}
+    {{- $id := printf "b%d" $i -}}
+    {{- $imports = $imports | append (printf "import %s from \"@uswds/uswds/js/%s\";" $id $c) -}}
+    {{- $names = $names | append $id -}}
+  {{- end -}}
+
+  {{- $src := printf `%s
+const behaviors = [%s];
+const init = () => { behaviors.forEach((b) => b.on(document.body)); };
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+} else {
+  init();
+}
+` (delimit $imports "\n") (delimit $names ", ") -}}
+
+  {{- /* Keyed by the sorted component names, so identical sets share one
+         bundle. A name is used rather than a hash of the source because the
+         resulting filename is self-describing in devtools and in the build
+         output — worth more than the few bytes a hash would save. */ -}}
+  {{- $slug := slice -}}
+  {{- range . }}{{ $slug = $slug | append (strings.TrimPrefix "usa-" .) }}{{ end -}}
+  {{- $key := printf "uswds/gen/page-%s.js" (delimit $slug "-") -}}
+  {{- $page := resources.FromString $key $src | js.Build (dict
+        "minify" hugo.IsProduction
+        "target" "es2018") -}}
+  {{- if hugo.IsProduction -}}
+    {{- $page = $page | fingerprint "sha512" -}}
+    <script src="{{ $page.RelPermalink }}" integrity="{{ $page.Data.Integrity }}" defer></script>
+  {{- else -}}
+    <script src="{{ $page.RelPermalink }}" defer></script>
+  {{- end -}}
+{{- end -}}

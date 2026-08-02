@@ -1,0 +1,11 @@
+{{- /*
+  {{< process-list heading_level="h3" >}}
+    {{< process-step heading="Start" >}}Body{{< /process-step >}}
+  {{< /process-list >}}
+
+  Steps render in place — see accordion.html for why the store-based approach
+  does not work with nested shortcodes.
+*/ -}}
+<ol class="usa-process-list{{ with .Get "modifier" }} {{ . }}{{ end }}">
+{{ .Inner }}
+</ol>

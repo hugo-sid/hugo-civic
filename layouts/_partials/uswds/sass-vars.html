@@ -1,0 +1,107 @@
+{{- /*
+  Builds the scalar map handed to css.Sass's `vars` option, which Dart Sass
+  exposes as the `hugo:vars` module. assets/uswds/_settings.scss reads every key
+  below, so a missing key is a hard Sass error, not a silent default — the
+  `default` chain on each line is what guarantees one is always present.
+
+  Hugo's `vars` carries scalars only; a Go slice fails with "$string: [...] is
+  not a string". List-valued settings are therefore joined here and split back
+  apart in _settings.scss via sass:string's split().
+
+  @return dict of kebab-case Sass variable names to scalar values
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $t := $u.theme | default dict -}}
+
+{{- /* Utility families to emit.
+
+       These names are the MAP KEYS in
+       packages/uswds-utilities/src/styles/rules/*.scss, not the file names and
+       not the class prefixes. The distinction is not cosmetic and upstream is
+       not consistent about it: `padding` carries its own -top/-bottom/-x/-y
+       modifiers, while `margin` splits them across `margin`,
+       `margin-vertical` and `margin-horizontal`. Listing "margin" alone gets
+       you .margin-2 but not .margin-top-2.
+
+       USWDS compares against the literal string "default" for its standard
+       set. There is no "all" or "none" keyword — an unrecognised name is
+       silently ignored and emits nothing, which is why tools/check-utilities.sh
+       verifies that every utility class the rendered HTML uses actually exists
+       in the compiled CSS. */ -}}
+{{- $utilityDefaults := dict
+      "minimal"  (slice
+        "display" "margin" "margin-vertical" "margin-horizontal" "padding"
+        "text-align" "font" "color")
+      "standard" (slice
+        "display" "margin" "margin-vertical" "margin-horizontal" "padding"
+        "text-align" "font" "font-weight" "color" "background-color"
+        "border" "width" "height" "flex" "flex-direction" "justify-content"
+        "align-items" "measure" "add-list-reset")
+      "full"     (slice "default")
+      "custom"   (slice "default")
+-}}
+{{- $preset := $u.preset | default "standard" -}}
+{{- $utilities := $u.utilities | default (index $utilityDefaults $preset) | default (slice "default") -}}
+
+{{- /* Font types and the light weight accept `false` to switch a face off
+       entirely, which is the difference between publishing one font family and
+       publishing three — USWDS emits @font-face for every configured type
+       whether the site uses it or not.
+
+       `default` cannot be used on these: Hugo treats false as falsy, so
+       `false | default "merriweather"` would resurrect the family the site just
+       disabled. Hence the explicit isset checks.
+
+       The keys are lowercase because Hugo lowercases all param keys — dotted
+       access like $t.fontTypeSerif is case-insensitive, but isset is not, and
+       the camelCase spelling silently returns false for every site. */ -}}
+{{- $fontSerif := "merriweather" -}}
+{{- if isset $t "fonttypeserif" }}{{ $fontSerif = index $t "fonttypeserif" }}{{ end -}}
+{{- $fontMono := "roboto-mono" -}}
+{{- if isset $t "fonttypemono" }}{{ $fontMono = index $t "fonttypemono" }}{{ end -}}
+{{- $weightLight := 300 -}}
+{{- if isset $t "fontweightlight" }}{{ $weightLight = index $t "fontweightlight" }}{{ end -}}
+
+{{- /* Hugo's `vars` rejects booleans outright: both true and false make Dart
+       Sass fail with "expected \")\"", while strings and numbers pass. Bools
+       are therefore stringified here and converted back by _off() in
+       _settings.scss. Verified against Hugo 0.164. */ -}}
+{{- if eq (printf "%T" $fontSerif) "bool" }}{{ $fontSerif = printf "%v" $fontSerif }}{{ end -}}
+{{- if eq (printf "%T" $fontMono) "bool" }}{{ $fontMono = printf "%v" $fontMono }}{{ end -}}
+{{- if eq (printf "%T" $weightLight) "bool" }}{{ $weightLight = printf "%v" $weightLight }}{{ end -}}
+
+{{- return (dict
+      "output-utilities"          (delimit $utilities ",")
+
+      "image-path"                ($u.imagePath | default "/img/uswds")
+      "font-path"                 ($u.fontPath | default "/fonts")
+
+      "color-primary-family"      ($t.colorPrimaryFamily | default "blue")
+      "color-secondary-family"    ($t.colorSecondaryFamily | default "red")
+      "color-accent-warm-family"  ($t.colorAccentWarmFamily | default "orange")
+      "color-accent-cool-family"  ($t.colorAccentCoolFamily | default "cyan")
+
+      "color-primary"             ($t.colorPrimary | default "blue-60v")
+      "color-primary-dark"        ($t.colorPrimaryDark | default "blue-warm-70v")
+      "color-primary-darker"      ($t.colorPrimaryDarker | default "blue-warm-80v")
+      "color-primary-light"       ($t.colorPrimaryLight | default "blue-30")
+      "color-primary-lighter"     ($t.colorPrimaryLighter | default "blue-5")
+      "color-primary-vivid"       ($t.colorPrimaryVivid | default "blue-warm-60v")
+      "color-secondary"           ($t.colorSecondary | default "red-50")
+      "color-base"                ($t.colorBase | default "gray-cool-60")
+      "color-base-dark"           ($t.colorBaseDark | default "gray-cool-70")
+
+      "font-type-sans"            ($t.fontTypeSans | default "public-sans")
+      "font-type-serif"           $fontSerif
+      "font-type-mono"            $fontMono
+      "font-weight-light"         $weightLight
+      "font-role-heading"         ($t.fontRoleHeading | default "sans")
+      "font-role-body"            ($t.fontRoleBody | default "sans")
+      "font-role-ui"              ($t.fontRoleUi | default "sans")
+      "font-role-code"            ($t.fontRoleCode | default "mono")
+      "font-role-alt"             ($t.fontRoleAlt | default "serif")
+
+      "grid-container-max-width"  ($t.gridContainerMaxWidth | default "desktop")
+      "banner-background-color"   ($t.bannerBackgroundColor | default "base-lightest")
+) -}}

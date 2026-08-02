@@ -1,0 +1,20 @@
+{{- /*
+  usa-icon-list — contract: packages/usa-icon-list/src/usa-icon-list.twig
+
+  @param items  slice of {icon, icon_color, content}
+  @param color  list-wide colour token, e.g. "primary"
+  @param size   "sm" | "lg" | "xl"
+*/ -}}
+{{- $classes := slice "usa-icon-list" -}}
+{{- with .color }}{{ $classes = $classes | append (printf "usa-icon-list--%s" .) }}{{ end -}}
+{{- with .size }}{{ $classes = $classes | append (printf "usa-icon-list--size-%s" .) }}{{ end -}}
+<ul class="{{ delimit $classes " " }}">
+  {{- range .items }}
+  <li class="usa-icon-list__item">
+    <div class="usa-icon-list__icon{{ with .icon_color }} text-{{ . }}{{ end }}">
+      {{- partial "uswds/icon" .icon }}
+    </div>
+    <div class="usa-icon-list__content">{{ .content | safeHTML }}</div>
+  </li>
+  {{- end }}
+</ul>

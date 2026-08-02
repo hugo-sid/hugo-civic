@@ -1,0 +1,64 @@
+{{- /*
+  usa-card — contract: packages/usa-card/src/usa-card.twig
+
+  Cards are always rendered as a group: USWDS's markup puts .usa-card inside
+  .usa-card-group, and a lone .usa-card outside that wrapper loses its layout.
+
+  @param cards      slice of {title, content, href, link_text, media, header_first,
+                              flag_direction, classes}
+  @param modifier   applied to every card, e.g. "usa-card--flag" | "usa-card--header-first"
+  @param grid       per-card grid classes, default "tablet:grid-col-6 desktop:grid-col-4"
+  @param heading_level  h2..h6, default h2
+
+  Media images go through Hugo's image pipeline when the source resolves to a
+  page or site resource; a bare URL is passed through untouched.
+*/ -}}
+{{- $modifier := .modifier | default "" -}}
+{{- $grid := .grid | default "tablet:grid-col-6 desktop:grid-col-4" -}}
+{{- $h := .heading_level | default "h2" -}}
+{{- /* Heading tags are built as strings and marked safeHTML: Go's html/template
+       cannot parse a dynamic tag name, and `<{{ $h }}>` is emitted escaped as
+       `&lt;h4>` rather than as an element. */ -}}
+{{- $hOpen := printf "<%s class=\"usa-card__heading\">" $h | safeHTML -}}
+{{- $hClose := printf "</%s>" $h | safeHTML -}}
+{{- $page := .page -}}
+<ul class="usa-card-group">
+  {{- range .cards }}
+  {{- $classes := slice "usa-card" -}}
+  {{- with $modifier }}{{ $classes = $classes | append . }}{{ end -}}
+  {{- if .header_first }}{{ $classes = $classes | append "usa-card--header-first" }}{{ end -}}
+  {{- if eq .flag_direction "right" }}{{ $classes = $classes | append "usa-card--media-right" }}{{ end -}}
+  {{- $classes = $classes | append (.classes | default $grid) -}}
+  <li class="{{ delimit $classes " " }}">
+    <div class="usa-card__container">
+      <div class="usa-card__header">
+        {{ $hOpen }}{{ .title }}{{ $hClose }}
+      </div>
+      {{- with .media }}
+      <div class="usa-card__media">
+        <div class="usa-card__img">
+          {{- $src := .image_src -}}
+          {{- $img := "" -}}
+          {{- with $page }}{{ $img = .Resources.GetMatch $src }}{{ end -}}
+          {{- if not $img }}{{ $img = resources.Get $src }}{{ end -}}
+          {{- with $img -}}
+            {{- $r := .Resize "600x webp q80" -}}
+            <img src="{{ $r.RelPermalink }}" width="{{ $r.Width }}" height="{{ $r.Height }}" alt="{{ $.image_alt_text | default "" }}" loading="lazy">
+          {{- else -}}
+            <img src="{{ $src }}" alt="{{ .image_alt_text | default "" }}" loading="lazy">
+          {{- end }}
+        </div>
+      </div>
+      {{- end }}
+      {{- with .content }}
+      <div class="usa-card__body"><p>{{ . | safeHTML }}</p></div>
+      {{- end }}
+      {{- with .href }}
+      <div class="usa-card__footer">
+        <a href="{{ . }}" class="usa-button">{{ $.link_text | default (i18n "read_more" | default "Read more") }}</a>
+      </div>
+      {{- end }}
+    </div>
+  </li>
+  {{- end }}
+</ul>

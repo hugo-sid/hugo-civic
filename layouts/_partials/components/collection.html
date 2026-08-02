@@ -1,0 +1,57 @@
+{{- /*
+  usa-collection — contract: packages/usa-collection/src/usa-collection*.twig
+
+  Renders a Hugo page collection as a USWDS collection list. This is the
+  component a listing page should use.
+
+  @param pages      page collection
+  @param variant    "" | "condensed" | "calendar" | "media"
+  @param show_meta  bool, default true
+  @param show_tags  bool, default true
+*/ -}}
+{{- $variant := .variant | default "" -}}
+{{- $showMeta := ne .show_meta false -}}
+{{- $showTags := ne .show_tags false -}}
+<ul class="usa-collection{{ if eq $variant "condensed" }} usa-collection--condensed{{ end }}">
+  {{- range .pages }}
+  <li class="usa-collection__item">
+    {{- if eq $variant "calendar" }}
+    <div class="usa-collection__calendar-date">
+      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+        <span class="usa-collection__calendar-date-month">{{ .Date.Format "Jan" | upper }}</span>
+        <span class="usa-collection__calendar-date-day">{{ .Date.Format "2" }}</span>
+      </time>
+    </div>
+    {{- else if eq $variant "media" }}
+      {{- with .Params.image }}
+      {{- $img := $.Resources.GetMatch . | default (resources.Get .) -}}
+      {{- with $img }}
+      {{- $r := .Resize "150x webp q80" }}
+      <img class="usa-collection__img" src="{{ $r.RelPermalink }}" width="{{ $r.Width }}" height="{{ $r.Height }}" alt="" loading="lazy">
+      {{- end }}
+      {{- end }}
+    {{- end }}
+    <div class="usa-collection__body">
+      <h3 class="usa-collection__heading">
+        <a class="usa-link" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+      </h3>
+      {{- with .Description | default .Summary }}
+      <p class="usa-collection__description">{{ . | plainify | truncate 220 }}</p>
+      {{- end }}
+      {{- if and $showMeta (not .Date.IsZero) }}
+      <ul class="usa-collection__meta" aria-label="{{ i18n "more_information" | default "More information" }}">
+        {{- with .Params.author }}<li class="usa-collection__meta-item">{{ . }}</li>{{ end }}
+        <li class="usa-collection__meta-item"><time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date | time.Format ":date_long" }}</time></li>
+      </ul>
+      {{- end }}
+      {{- if and $showTags .Params.tags }}
+      <ul class="usa-collection__meta" aria-label="{{ i18n "topics" | default "Topics" }}">
+        {{- range .Params.tags }}
+        <li class="usa-collection__meta-item usa-tag">{{ . }}</li>
+        {{- end }}
+      </ul>
+      {{- end }}
+    </div>
+  </li>
+  {{- end }}
+</ul>

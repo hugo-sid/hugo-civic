@@ -1,0 +1,28 @@
+{
+  "name": "uswds-hugo-theme",
+  "version": "0.1.0",
+  "description": "A Hugo theme for the U.S. Web Design System, built for upgradeability and web performance.",
+  "license": "CC0-1.0",
+  "keywords": ["hugo", "hugo-theme", "uswds", "government", "accessibility"],
+  "scripts": {
+    "dev": "cd exampleSite && hugo server --disableFastRender",
+    "build": "cd exampleSite && hugo --minify",
+    "check": "npm run check:no-vendor && npm run check:build && npm run check:assets && npm run check:utilities && npm run check:budget",
+    "check:no-vendor": "tools/check-no-vendored.sh",
+    "check:build": "tools/check-build.sh",
+    "check:assets": "tools/check-assets.sh",
+    "check:utilities": "tools/check-utilities.sh",
+    "check:budget": "tools/check-budget.sh",
+    "upgrade:diff": "tools/upgrade-diff.sh"
+  },
+  "dependencies": {
+    "@uswds/uswds": "3.13.0"
+  },
+  "devDependencies": {
+    "hugo-extended": "0.164.0",
+    "sass-embedded": "^1.80.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

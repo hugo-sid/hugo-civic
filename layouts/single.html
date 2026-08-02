@@ -1,0 +1,70 @@
+{{ define "main" }}
+{{- /* The nav is rooted at the TOP of the section tree, not at .Parent. Rooted
+       at the parent, a page two levels down (docs/components/navigation/x) would
+       list only its immediate siblings — the reader would lose every other part
+       of the documentation the moment they opened a subsection. .FirstSection
+       is the section directly below home, so the whole tree travels with them
+       and chrome/sidenav opens the branch they are in. */ -}}
+{{- $navRoot := .FirstSection -}}
+{{- $hasSidenav := and $navRoot (not $navRoot.IsHome) $navRoot.Pages -}}
+{{- $inPageNav := .Params.in_page_nav | default false -}}
+{{- /* Not .usa-section: its 2rem of top padding sits on top of the breadcrumb's
+       own 1rem, and on a docs page — where the reader arrived to read something
+       specific — that pushed the h1 nearly 100px below the header. The bottom
+       keeps usa-section's 2rem. */ -}}
+<div class="padding-top-1 padding-bottom-4">
+  {{- /* The three-column arrangement below (sidenav + content + in-page nav)
+         needs more room than USWDS's default `desktop` container: at 1024px the
+         two navs take ~510px and leave the prose about 450px — roughly 50
+         characters a line, with code paths wrapping mid-token. A site using this
+         layout should set params.uswds.theme.gridContainerMaxWidth to
+         "desktop-lg" or wider; exampleSite does. */ -}}
+  <div class="grid-container">
+    {{- partial "chrome/breadcrumb" . }}
+    <div class="grid-row grid-gap">
+      {{- if $hasSidenav }}
+      {{- /* USWDS's docs template ships this nav twice — hidden on desktop after
+             the content, hidden on mobile before it — which puts the section nav
+             BELOW the whole article on a phone: no way to reach the next page
+             without scrolling past everything, including the footer.
+
+             Rendering it once, before the content, fixes that at every width.
+             Nothing is lost on mobile because skipnav already jumps past it to
+             #main-content, and one instance means one landmark instead of two
+             identical unlabelled lists in the DOM. */ -}}
+      <nav class="usa-layout-docs__sidenav grid-col-12 desktop:grid-col-3"
+           aria-label="{{ i18n "section_navigation" | default "Section navigation" }}">
+        {{- partial "chrome/sidenav" (dict "pages" $navRoot.Pages "current" . "level" 0) }}
+      </nav>
+      {{- end }}
+
+      <div class="grid-col-12 {{ if $hasSidenav }}desktop:grid-col-9{{ else }}desktop:grid-col-12{{ end }}">
+        {{- /* .usa-in-page-nav-container is a flex row whose direct children are
+               the aside and <main>, so the aside must be a SIBLING of main, not
+               inside it, or the nav never lays out beside the content.
+
+               That is why this is front matter (in_page_nav: true) and not a
+               shortcode: a shortcode can only ever render inside main. */ -}}
+        {{- if $inPageNav }}
+        <div class="usa-in-page-nav-container">
+          {{- partial "components/in-page-nav" (dict
+                "page" .
+                "title_text" .Params.in_page_nav_title
+                "heading_elements" .Params.in_page_nav_headings
+                "min_headings" .Params.in_page_nav_min_headings) }}
+        {{- end }}
+
+        <main id="main-content" class="usa-prose">
+          <h1>{{ .Title }}</h1>
+          {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
+          {{ .Content }}
+        </main>
+
+        {{- if $inPageNav }}
+        </div>
+        {{- end }}
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

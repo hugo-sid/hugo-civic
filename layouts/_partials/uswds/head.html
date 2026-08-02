@@ -1,0 +1,55 @@
+{{- $u := site.Params.uswds | default dict -}}
+{{- $sheet := partial "uswds/stylesheet" . -}}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+
+{{- with (.Description | default .Summary | default site.Params.description) }}
+<meta name="description" content="{{ . | plainify | truncate 160 }}">
+{{- end }}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* Preload the body face only, and before the stylesheet link so it starts
+       downloading in the same round trip. Preloading every weight competes with
+       the stylesheet for early bandwidth and usually makes LCP worse — the
+       regular weight is what renders first-paint text.
+
+       The regex is a heuristic across USWDS's four inconsistent naming schemes
+       (PublicSans-Regular, Latin-Merriweather-Regular,
+       roboto-mono-v5-latin-regular, sourcesanspro-regular-webfont). If it
+       matches nothing we simply skip the hint rather than guess wrong. */ -}}
+{{- $bodyFamily := (($u.theme | default dict).fontTypeSans) | default "public-sans" -}}
+{{- $preload := "" -}}
+{{- range $sheet.fonts -}}
+  {{- if and (not $preload) (strings.Contains . (printf "/%s/" $bodyFamily)) (findRE `(?i)regular` .) -}}
+    {{- $preload = . -}}
+  {{- end -}}
+{{- end }}
+{{- with $preload }}
+<link rel="preload" href="{{ . }}" as="font" type="font/woff2" crossorigin>
+{{- end }}
+
+{{- with $sheet.css }}
+  {{- if hugo.IsProduction }}
+<link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}">
+  {{- else }}
+<link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{- end }}
+{{- end }}
+
+{{- /* Publishes the fonts and icons the stylesheet references. Side effects
+       only — no markup. */ -}}
+{{- partial "uswds/assets" (dict "sheet" $sheet) -}}
+
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
+{{- end }}
+
+{{- /* Open Graph: cheap, and government pages get shared. */ -}}
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{- with (.Description | default site.Params.description) }}
+<meta property="og:description" content="{{ . | plainify | truncate 160 }}">
+{{- end }}

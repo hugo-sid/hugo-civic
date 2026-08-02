@@ -1,0 +1,152 @@
+baseURL = "https://example.com/"
+locale = "en-us"
+title = "Example Agency"
+theme = "uswds"
+
+enableRobotsTXT = true
+
+# ---------------------------------------------------------------------------
+# Mounts
+#
+# IMPORTANT: declaring even one mount replaces ALL of Hugo's defaults, so the
+# standard six are re-declared below before the USWDS one is added. Dropping
+# them produces a site with zero pages and only a "found no layout file"
+# warning — see DESIGN.md §3.2.
+#
+# Only the dist mount is strictly required: Sass resolves USWDS through
+# includePaths and js.Build resolves it through node_modules, neither of which
+# needs a mount. This one exists so fonts and icons can be published through
+# Hugo's asset pipeline instead of being copied by hand.
+# ---------------------------------------------------------------------------
+[module]
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "i18n"
+    target = "i18n"
+  [[module.mounts]]
+    source = "archetypes"
+    target = "archetypes"
+  [[module.mounts]]
+    source = "node_modules/@uswds/uswds/dist"
+    target = "assets/uswds-dist"
+
+[params]
+  description = "An example site built with the USWDS Hugo theme."
+
+[params.uswds]
+  preset = "standard"
+  iconMode = "inline"
+
+[params.uswds.theme]
+  colorPrimary = "blue-60v"
+  colorPrimaryDarker = "blue-warm-80v"
+
+  # USWDS defaults this to `desktop` (1024px), which is too narrow for the docs
+  # layout: a side nav and an in-page nav together take ~510px, leaving the
+  # prose around 450px — about 50 characters a line. At `desktop-lg` (1200px)
+  # the reading column lands near the 68ex measure USWDS caps paragraphs at.
+  #
+  # It is set globally rather than on the docs template alone so the header,
+  # footer and identifier stay aligned with the content below them.
+  gridContainerMaxWidth = "desktop-lg"
+
+  # Publish one font family instead of three. USWDS declares @font-face for
+  # every configured type whether the site uses it or not, so switching serif
+  # and mono off is what actually removes the files.
+  fontTypeSerif = false
+  fontTypeMono = false
+  fontRoleAlt = "sans"
+
+[params.uswds.header]
+  variant = "extended"
+  search = true
+
+[params.uswds.footer]
+  variant = "default"
+  [params.uswds.footer.contact]
+    agencyName = "Example Agency"
+    heading = "Agency Contact Center"
+    phone = "1-800-555-5555"
+    email = "info@example.gov"
+
+[params.uswds.identifier]
+  domain = "example.gov"
+  showUsagov = true
+  [params.uswds.identifier.parent]
+    name = "Example Parent Agency"
+    shortname = "EPA"
+    url = "https://example.gov"
+  [params.uswds.identifier.links]
+    about = "/about/"
+    accessibility = "/accessibility/"
+    foia = "/foia/"
+    no_fear_act = "/no-fear-act/"
+    inspector_general = "/inspector-general/"
+    performance = "/performance/"
+    privacy = "/privacy/"
+
+[menus]
+  [[menus.main]]
+    name = "About"
+    url = "/about/"
+    weight = 10
+  [[menus.main]]
+    name = "Documentation"
+    url = "/docs/"
+    weight = 20
+  [[menus.main]]
+    name = "News"
+    url = "/news/"
+    weight = 30
+
+  [[menus.secondary]]
+    name = "Contact"
+    url = "/contact/"
+    weight = 10
+
+  [[menus.footer]]
+    name = "About"
+    url = "/about/"
+    weight = 10
+  [[menus.footer]]
+    name = "Documentation"
+    url = "/docs/"
+    weight = 20
+  [[menus.footer]]
+    name = "News"
+    url = "/news/"
+    weight = 30
+  [[menus.footer]]
+    name = "Privacy"
+    url = "/privacy/"
+    weight = 40
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+
+  # Chroma defaults to `monokai` — a dark editor theme, which is not what a
+  # federal page should drop into the middle of its body copy. `github` is the
+  # closest light style to USWDS's own palette. noClasses inlines the colours,
+  # so no highlight stylesheet has to be published or budgeted for.
+  [markup.highlight]
+    noClasses = true
+    style = "github"
+    tabWidth = 2

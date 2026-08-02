@@ -1,0 +1,16 @@
+{{ define "main" }}
+<main id="main-content">
+  <div class="usa-section">
+    <div class="grid-container">
+      <div class="grid-row grid-gap">
+        <main class="usa-layout-docs__main desktop:grid-col-8 usa-prose">
+          <h1>{{ i18n "error_404_heading" | default "Page not found" }}</h1>
+          <p class="usa-intro">{{ i18n "error_404_intro" | default "We're sorry, we can't find the page you're looking for. It might have been removed, changed its name, or is otherwise unavailable." }}</p>
+          <p>{{ i18n "error_404_help" | default "If you typed the URL directly, check your spelling and capitalization. Our URLs look like this:" }} <strong>{{ site.BaseURL }}example-page</strong></p>
+          <p><a href="{{ site.Home.RelPermalink }}" class="usa-button">{{ i18n "error_404_home" | default "Visit the homepage" }}</a></p>
+        </main>
+      </div>
+    </div>
+  </div>
+</main>
+{{ end }}

@@ -1,0 +1,153 @@
+# Spanish strings.
+#
+# Banner and identifier wording is copied verbatim from USWDS's own Spanish
+# content (the 'es' branch of _banner.twig / _identifier.twig and the
+# *~lang-es.json files). Do not retranslate it — this is the federally
+# published wording.
+
+[skipnav]
+other = "Pasar al contenido principal"
+
+[menu]
+other = "Menú"
+
+[close]
+other = "Cerrar"
+
+[search]
+other = "Buscar"
+
+[search_component]
+other = "Componente de búsqueda"
+
+[primary_navigation]
+other = "Navegación principal"
+
+[section_navigation]
+other = "Navegación de la sección"
+
+[footer_navigation]
+other = "Navegación del pie de página"
+
+[return_to_top]
+other = "Volver al inicio"
+
+[breadcrumbs]
+other = "Ruta de navegación"
+
+[introduction]
+other = "Introducción"
+
+[on_this_page]
+other = "En esta página"
+
+[key_information]
+other = "Información clave"
+
+[read_more]
+other = "Leer más"
+
+[more_information]
+other = "Más información"
+
+[topics]
+other = "Temas"
+
+[site_alert]
+other = "Alerta del sitio"
+
+# --- Official .gov banner -----------------------------------------------
+
+[banner_aria_label]
+other = "Un sitio oficial del Gobierno de Estados Unidos"
+
+[banner_text]
+other = "Un sitio oficial del Gobierno de Estados Unidos"
+
+[banner_action]
+other = "Así es como usted puede verificarlo"
+
+[banner_domain_heading]
+other = "Los sitios web oficiales usan .gov"
+
+[banner_domain_text]
+other = "Un sitio web <strong>.gov</strong> pertenece a una organización oficial del Gobierno de Estados Unidos."
+
+[banner_https_heading]
+other = "Los sitios web seguros .gov usan HTTPS"
+
+[banner_https_pretext]
+other = "Un <strong>candado</strong>"
+
+[banner_https_posttext]
+other = "o <strong>https://</strong> significa que usted se conectó de forma segura a un sitio web .gov. Comparta información sensible sólo en sitios web oficiales y seguros."
+
+[banner_lock_title]
+other = "Candado"
+
+[banner_lock_description]
+other = "Icono de candado cerrado"
+
+# --- Agency identifier ---------------------------------------------------
+
+[identifier_masthead_aria]
+other = "Identificador de la agencia"
+
+[identifier_identity_aria]
+other = "Descripción de la agencia"
+
+[identifier_content_prefix]
+other = ""
+
+[identifier_content]
+other = "Un sitio web oficial de"
+
+[identifier_taxpayer]
+other = "Producido y publicado con dinero de los contribuyentes de impuestos."
+
+[identifier_required_links_aria]
+other = "Enlaces importantes"
+
+[identifier_link_about]
+other = "Acerca de"
+
+[identifier_link_accessibility]
+other = "Soporte de accesibilidad"
+
+[identifier_link_foia]
+other = "Solicitud a través de FOIA"
+
+[identifier_link_no_fear_act]
+other = "Datos de la ley No FEAR"
+
+[identifier_link_inspector_general]
+other = "Oficina del Inspector General"
+
+[identifier_link_performance]
+other = "Informes de desempeño"
+
+[identifier_link_privacy]
+other = "Política de privacidad"
+
+[identifier_usagov_aria]
+other = "Información y servicios del Gobierno de EE. UU."
+
+[identifier_usagov_description]
+other = "¿Necesita información y servicios del Gobierno?"
+
+[identifier_usagov_link]
+other = "Visite USAGov en Español"
+
+# --- Errors ---------------------------------------------------------------
+
+[error_404_heading]
+other = "Página no encontrada"
+
+[error_404_intro]
+other = "Lo sentimos, no podemos encontrar la página que busca. Es posible que se haya eliminado, que haya cambiado de nombre o que no esté disponible."
+
+[error_404_help]
+other = "Si escribió la dirección directamente, revise la ortografía y el uso de mayúsculas. Nuestras direcciones se ven así:"
+
+[error_404_home]
+other = "Visite la página de inicio"

@@ -1,0 +1,28 @@
+// MINIMAL preset — site chrome and text only.
+//
+// Enough for an accessible, compliant government page: banner, header, nav,
+// footer, identifier, and prose. No cards, no interactive components beyond the
+// nav itself.
+//
+// RULE FOR ALL PRESETS: every line here is a verbatim subset of upstream's
+// packages/uswds/_index.scss, in upstream's order. Do not reorder and do not
+// invent paths — CSS cascade depends on that order, and keeping the shape
+// identical is what makes `tools/upgrade-diff.sh` able to spot when upstream
+// adds, removes, or renames a package.
+//
+// `uswds-global` pulls in normalize, uswds-core, fonts and elements.
+// `uswds-typography` pulls in prose, link, list, paragraph, intro and display.
+
+@forward "uswds-global";
+@forward "uswds-helpers";
+@forward "uswds-typography";
+@forward "usa-banner/src/styles";
+@forward "usa-footer/src/styles";
+@forward "usa-header/src/styles";
+@forward "usa-identifier/src/styles";
+@forward "usa-layout-grid/src/styles";
+@forward "usa-nav/src/styles";
+@forward "usa-search/src/styles";
+@forward "usa-section/src/styles";
+@forward "usa-skipnav/src/styles";
+@forward "uswds-utilities/src/styles";

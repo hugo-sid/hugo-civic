@@ -1,0 +1,35 @@
+{{- /*
+  usa-breadcrumb — built from the page ancestry.
+  Contract: packages/usa-breadcrumb/src/usa-breadcrumb.twig
+            packages/usa-breadcrumb/src/metadata/usa-breadcrumb--metadata.twig
+
+  Takes the PAGE directly, not an options dict: the trail is derived entirely
+  from .Ancestors, and every caller wants the same thing.
+
+  Emits schema.org BreadcrumbList metadata by default — it costs nothing at
+  render time and government pages benefit from the search-result treatment.
+  Set params.uswds.breadcrumb.metadata = false for the plain variant.
+
+  The current page is a <span>, never a link, and carries aria-current="page".
+  Renders nothing at the top level, where a breadcrumb would be noise.
+*/ -}}
+{{- $meta := ne ((site.Params.uswds.breadcrumb | default dict).metadata) false -}}
+{{- $ancestors := .Ancestors.Reverse -}}
+{{- if gt (len $ancestors) 1 -}}
+<nav class="usa-breadcrumb" aria-label="{{ i18n "breadcrumbs" | default "Breadcrumbs" }}">
+  <ol{{ if $meta }} vocab="http://schema.org/" typeof="BreadcrumbList"{{ end }} class="usa-breadcrumb__list">
+    {{- $pos := 0 -}}
+    {{- range $ancestors -}}
+    {{- $pos = add $pos 1 -}}
+    <li{{ if $meta }} property="itemListElement" typeof="ListItem"{{ end }} class="usa-breadcrumb__list-item">
+      <a{{ if $meta }} property="item" typeof="WebPage"{{ end }} href="{{ .RelPermalink }}" class="usa-breadcrumb__link"><span{{ if $meta }} property="name"{{ end }}>{{ .LinkTitle }}</span></a>
+      {{- if $meta }}<meta property="position" content="{{ $pos }}">{{ end }}
+    </li>
+    {{- end }}
+    <li{{ if $meta }} property="itemListElement" typeof="ListItem"{{ end }} class="usa-breadcrumb__list-item usa-current" aria-current="page">
+      <span{{ if $meta }} property="name"{{ end }}>{{ .LinkTitle }}</span>
+      {{- if $meta }}<meta property="position" content="{{ add $pos 1 }}">{{ end }}
+    </li>
+  </ol>
+</nav>
+{{- end -}}

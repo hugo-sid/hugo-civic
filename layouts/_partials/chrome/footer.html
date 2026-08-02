@@ -1,0 +1,128 @@
+{{- /*
+  usa-footer — default, slim and big variants.
+  Contract: packages/usa-footer/src/usa-footer.twig
+            packages/usa-footer/src/usa-footer--slim/usa-footer--slim.twig
+            packages/usa-footer/src/usa-footer--big/usa-footer--big.twig
+            packages/usa-footer/src/_includes/usa-footer-nav-primary*.twig
+
+  Primary links come from the "footer" menu; the big variant uses its nested
+  children as collapsible sections.
+
+  The big variant is the only one with JS (collapsible sections on mobile), so
+  it is the only one that registers a behaviour.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $f := $u.footer | default dict -}}
+{{- $variant := $f.variant | default "default" -}}
+{{- $contact := $f.contact | default dict -}}
+{{- $links := site.Menus.footer -}}
+{{- $img := $u.imagePath | default "/img/uswds" -}}
+
+{{- $modifier := "" -}}
+{{- if eq $variant "slim" }}{{ $modifier = "usa-footer--slim" }}{{ end -}}
+{{- if eq $variant "big" }}{{ $modifier = "usa-footer--big" }}{{ end -}}
+{{- if eq $variant "big" }}{{ partial "uswds/require" (dict "page" . "component" "usa-footer") }}{{ end -}}
+
+<footer class="usa-footer{{ with $modifier }} {{ . }}{{ end }}">
+  {{- if ne $f.returnToTop false }}
+  <div class="grid-container usa-footer__return-to-top">
+    <a href="#">{{ i18n "return_to_top" | default "Return to top" }}</a>
+  </div>
+  {{- end }}
+
+  <div class="usa-footer__primary-section">
+    {{- if eq $variant "big" }}
+    <div class="grid-container">
+      <div class="grid-row grid-gap">
+        <div class="tablet:grid-col-8">
+          <nav class="usa-footer__nav" aria-label="{{ i18n "footer_navigation" | default "Footer navigation" }}">
+            <div class="grid-row grid-gap-4">
+              {{- range $links }}
+              <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
+                <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
+                  <h4 class="usa-footer__primary-link">{{ .Name }}</h4>
+                  <ul class="usa-list usa-list--unstyled">
+                    {{- range .Children }}
+                    <li class="usa-footer__secondary-link"><a href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+                    {{- end }}
+                  </ul>
+                </section>
+              </div>
+              {{- end }}
+            </div>
+          </nav>
+        </div>
+        <div class="tablet:grid-col-4">
+          {{- with $contact.signupHeading }}
+          <div class="usa-sign-up">
+            <h3 class="usa-sign-up__heading">{{ . }}</h3>
+          </div>
+          {{- end }}
+        </div>
+      </div>
+    </div>
+
+    {{- else if eq $variant "slim" }}
+    <div class="usa-footer__primary-container grid-row">
+      <div class="mobile-lg:grid-col-8">
+        {{- partial "chrome/footer-nav" (dict "links" $links "modifier" $modifier) }}
+      </div>
+      <div class="mobile-lg:grid-col-4">
+        <address class="usa-footer__address">
+          <div class="grid-row grid-gap">
+            {{- with $contact.phone }}
+            <div class="grid-col-auto mobile-lg:grid-col-12 desktop:grid-col-auto">
+              <div class="usa-footer__contact-info"><a href="tel:{{ . }}">{{ . }}</a></div>
+            </div>
+            {{- end }}
+            {{- with $contact.email }}
+            <div class="grid-col-auto mobile-lg:grid-col-12 desktop:grid-col-auto">
+              <div class="usa-footer__contact-info"><a href="mailto:{{ . }}">{{ . }}</a></div>
+            </div>
+            {{- end }}
+          </div>
+        </address>
+      </div>
+    </div>
+
+    {{- else }}
+    {{- partial "chrome/footer-nav" (dict "links" $links "modifier" $modifier) }}
+    {{- end }}
+  </div>
+
+  <div class="usa-footer__secondary-section">
+    <div class="grid-container">
+      {{- if eq $variant "slim" }}
+      <div class="usa-footer__logo grid-row grid-gap-2">
+        <div class="grid-col-auto">
+          <p class="usa-footer__logo-heading">{{ $contact.agencyName | default site.Title }}</p>
+        </div>
+      </div>
+      {{- else }}
+      <div class="grid-row grid-gap">
+        <div class="usa-footer__logo grid-row mobile-lg:grid-col-6 mobile-lg:grid-gap-2">
+          <div class="mobile-lg:grid-col-auto">
+            <p class="usa-footer__logo-heading">{{ $contact.agencyName | default site.Title }}</p>
+          </div>
+        </div>
+        <div class="usa-footer__contact-links mobile-lg:grid-col-6">
+          {{- with $contact.heading }}
+          <p class="usa-footer__contact-heading">{{ . }}</p>
+          {{- end }}
+          <address class="usa-footer__address">
+            <div class="usa-footer__contact-info grid-row grid-gap">
+              {{- with $contact.phone }}
+              <div class="grid-col-auto"><a href="tel:{{ . }}">{{ . }}</a></div>
+              {{- end }}
+              {{- with $contact.email }}
+              <div class="grid-col-auto"><a href="mailto:{{ . }}">{{ . }}</a></div>
+              {{- end }}
+            </div>
+          </address>
+        </div>
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</footer>

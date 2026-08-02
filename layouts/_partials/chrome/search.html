@@ -1,0 +1,25 @@
+{{- /*
+  usa-search — contract: packages/usa-search/src/usa-search.twig
+
+  @param modifier  "" | "usa-search--small" | "usa-search--big"
+  @param id        unique input id; required when more than one search form is
+                   on the page (the extended header renders two)
+  @param action    form target, defaults to params.uswds.header.searchAction
+*/ -}}
+{{- $modifier := .modifier | default "" -}}
+{{- $id := .id | default "search-field" -}}
+{{- $label := i18n "search" | default "Search" -}}
+{{- $action := .action | default (site.Params.uswds.header.searchAction | default "/search/") -}}
+{{- $u := site.Params.uswds | default dict -}}
+<section aria-label="{{ i18n "search_component" | default "Search component" }}">
+  <form class="usa-search {{ $modifier }}" role="search" action="{{ $action }}" method="get">
+    <label class="usa-sr-only" for="{{ $id }}">{{ $label }}</label>
+    <input class="usa-input" id="{{ $id }}" type="search" name="q">
+    <button class="usa-button" type="submit">
+      {{- if ne $modifier "usa-search--small" }}
+      <span class="usa-search__submit-text">{{ $label }}</span>
+      {{- end }}
+      <img src="{{ $u.imagePath | default "/img/uswds" }}/usa-icons-bg/search--white.svg" class="usa-search__submit-icon" alt="{{ $label }}">
+    </button>
+  </form>
+</section>

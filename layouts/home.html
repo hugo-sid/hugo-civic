@@ -1,0 +1,24 @@
+{{ define "main" }}
+<main id="main-content">
+  {{- with .Params.hero }}
+    {{- partial "components/hero" . }}
+  {{- end }}
+
+  {{- with .Content }}
+  <section class="grid-container usa-section">
+    <div class="usa-prose">{{ . }}</div>
+  </section>
+  {{- end }}
+
+  {{- with .Params.graphic_list }}
+    {{- partial "components/graphic-list" . }}
+  {{- end }}
+
+  {{- with .Params.cards }}
+  <section class="grid-container usa-section">
+    {{- with $.Params.cards_heading }}<h2 class="font-heading-xl margin-y-0">{{ . }}</h2>{{ end }}
+    {{- partial "components/card-group" (dict "cards" . "page" $) }}
+  </section>
+  {{- end }}
+</main>
+{{ end }}

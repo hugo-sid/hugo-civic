@@ -1,0 +1,12 @@
+{{- /* A single step. Must be nested inside {{< process-list >}}. */ -}}
+{{- $h := "h4" -}}
+{{- with .Parent }}{{ $h = .Get "heading_level" | default "h4" }}{{ end -}}
+{{- /* Heading tags are built as strings and marked safeHTML: Go's html/template
+       cannot parse a dynamic tag name, and `<{{ $h }}>` is emitted escaped as
+       `&lt;h4>` rather than as an element. */ -}}
+{{- $hOpen := printf "<%s class=\"usa-process-list__heading\">" $h | safeHTML -}}
+{{- $hClose := printf "</%s>" $h | safeHTML -}}
+<li class="usa-process-list__item">
+  {{ $hOpen }}{{ .Get "heading" }}{{ $hClose }}
+  {{ .Inner | .Page.RenderString (dict "display" "block") }}
+</li>

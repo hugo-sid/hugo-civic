@@ -1,0 +1,23 @@
+{{- /*
+  usa-process-list — contract: packages/usa-process-list/src/usa-process-list.twig
+
+  @param items          slice of {heading, content}
+  @param heading_level  h2..h6, default h4
+  @param modifier       e.g. "usa-process-list--counters-sm"
+
+  An <ol>, not a <ul>: the numbering is semantic, not decorative.
+*/ -}}
+{{- $h := .heading_level | default "h4" -}}
+{{- /* Heading tags are built as strings and marked safeHTML: Go's html/template
+       cannot parse a dynamic tag name, and `<{{ $h }}>` is emitted escaped as
+       `&lt;h4>` rather than as an element. */ -}}
+{{- $hOpen := printf "<%s class=\"usa-process-list__heading\">" $h | safeHTML -}}
+{{- $hClose := printf "</%s>" $h | safeHTML -}}
+<ol class="usa-process-list{{ with .modifier }} {{ . }}{{ end }}">
+  {{- range .items }}
+  <li class="usa-process-list__item">
+    {{ $hOpen }}{{ .heading }}{{ $hClose }}
+    {{- with .content }}{{ . | safeHTML }}{{ end }}
+  </li>
+  {{- end }}
+</ol>

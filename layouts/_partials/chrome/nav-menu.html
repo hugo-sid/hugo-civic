@@ -1,0 +1,89 @@
+{{- /*
+  Recursive primary-nav renderer.
+  Contract: packages/usa-nav/src/usa-nav__primary/_primary-menu-macro.twig
+
+  The three list shapes below are not interchangeable — usa-header's JS keys off
+  usa-accordion__button/aria-controls to drive submenus, and off usa-nav__submenu
+  to find them. Changing a class here silently breaks the mobile menu.
+
+  @param items      slice of Hugo menu entries
+  @param level      0 for the top level
+  @param megamenu   bool; renders level-1 as a 3-column grid
+  @param page       the page, for .IsMenuCurrent
+*/ -}}
+
+{{- $items := .items -}}
+{{- $level := .level | default 0 -}}
+{{- $megamenu := .megamenu | default false -}}
+{{- $page := .page -}}
+
+{{- if eq $level 0 -}}
+  <ul class="usa-nav__primary usa-accordion">
+{{- else if not $megamenu -}}
+  <ul id="{{ .id }}" class="usa-nav__submenu">
+{{- else -}}
+  <ul class="usa-nav__submenu-list">
+{{- end -}}
+
+{{- range $i, $item := $items -}}
+  {{- $id := printf "nav-%d-%d-%s" $level $i (anchorize $item.Name) -}}
+
+  {{- /* .IsMenuCurrent matches the page's OWN url and .HasMenuCurrent only walks
+         a menu entry's CHILDREN — neither knows anything about page ancestry. A
+         config entry like `url = "/docs/"` has no children, so on
+         /docs/getting-started/ every top-level link rendered unmarked and the
+         nav showed no location at all.
+
+         The prefix test below is what restores it. The trailing slash is forced
+         on both sides so /news/ cannot match /newsletter/, an entry resolving to
+         "/" is skipped (it would own every page), and anything not starting with
+         "/" is skipped as an external link. */ -}}
+  {{- $isCurrent := or ($page.IsMenuCurrent "main" $item) ($page.HasMenuCurrent "main" $item) -}}
+  {{- if not $isCurrent -}}
+    {{- $section := strings.TrimSuffix "/" ($item.URL | relLangURL) -}}
+    {{- if hasPrefix $section "/" -}}
+      {{- $isCurrent = hasPrefix $page.RelPermalink (printf "%s/" $section) -}}
+    {{- end -}}
+  {{- end -}}
+  <li class="{{ if gt $level 0 }}usa-nav__submenu-item{{ else }}usa-nav__primary-item{{ end }}">
+    {{- if and (eq $level 0) $item.HasChildren -}}
+      <button type="button" class="usa-accordion__button usa-nav__link{{ if $isCurrent }} usa-current{{ end }}" aria-expanded="false" aria-controls="{{ $id }}">
+        <span>{{ $item.Name }}</span>
+      </button>
+      {{- if $megamenu -}}
+        <div id="{{ $id }}" class="usa-nav__submenu usa-megamenu">
+          <div class="grid-row grid-gap-4">
+            {{- /* USWDS batches megamenu children into columns of 3. */ -}}
+            {{- $children := $item.Children -}}
+            {{- $cols := math.Ceil (div (len $children) 3.0) -}}
+            {{- range $c := seq (int $cols) -}}
+              {{- $start := mul (sub $c 1) 3 -}}
+              {{- $end := math.Min (add $start 3) (len $children) -}}
+              <div class="usa-col">
+                {{- partial "chrome/nav-menu" (dict
+                      "items" (first (sub (int $end) $start) (after $start $children))
+                      "level" (add $level 1)
+                      "megamenu" true
+                      "id" $id
+                      "page" $page) -}}
+              </div>
+            {{- end -}}
+          </div>
+        </div>
+      {{- else -}}
+        {{- partial "chrome/nav-menu" (dict
+              "items" $item.Children
+              "level" (add $level 1)
+              "megamenu" false
+              "id" $id
+              "page" $page) -}}
+      {{- end -}}
+    {{- else -}}
+      <a href="{{ $item.URL | relLangURL }}"{{ if eq $level 0 }} class="usa-nav-link{{ if $isCurrent }} usa-current{{ end }}"{{ else if $isCurrent }} class="usa-current"{{ end }}>
+        {{- if $megamenu }}{{ $item.Name }}{{ else }}<span>{{ $item.Name }}</span>{{ end -}}
+      </a>
+    {{- end -}}
+  </li>
+{{- end -}}
+
+</ul>

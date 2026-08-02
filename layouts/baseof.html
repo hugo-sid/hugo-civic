@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale | default "en" }}" class="no-js">
+<head>
+  {{- partial "uswds/head" . }}
+</head>
+<body class="{{ with .Type }}type-{{ . }}{{ end }}{{ if .IsHome }} is-home{{ end }}">
+  {{- /* Order is fixed by USWDS: skipnav, then banner, then header. The skip
+         link must be the first focusable element on the page. */ -}}
+  {{- partial "chrome/skipnav" . }}
+  {{- partial "chrome/banner" . }}
+  {{- partial "chrome/header" . }}
+
+  {{- block "main" . }}
+  <main id="main-content">
+    <div class="grid-container">
+      {{ .Content }}
+    </div>
+  </main>
+  {{- end }}
+
+  {{- partial "chrome/footer" . }}
+  {{- partial "chrome/identifier" . }}
+
+  {{- /* Emitted here, after the body, so every component that rendered above
+         has already registered its JS needs via uswds/require. */ -}}
+  {{- partial "uswds/js" . }}
+</body>
+</html>

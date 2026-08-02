@@ -1,0 +1,43 @@
+{{- /*
+  Markdown table -> usa-table.
+  Contract: packages/usa-table/src/usa-table.twig
+            packages/usa-table/src/usa-table--scrollable/
+
+  Without this hook Goldmark emits a bare <table>, and USWDS styles almost
+  nothing on a bare table — the borders, header treatment and cell padding all
+  live on .usa-table. A markdown table therefore rendered as unstyled rows.
+
+  The scrollable wrapper is not optional dressing: the docs layout gives content
+  a column, not the viewport, and a table wide enough to overflow it would push
+  the whole page sideways. tabindex="0" is USWDS's own markup — a scroll region
+  has to be reachable from the keyboard.
+
+  Note for content authors: inside .usa-prose USWDS sets `white-space: nowrap`
+  on cells in a scrollable container, so cells do not wrap. Keep them short —
+  a sentence in a cell becomes a long horizontal scroll rather than a paragraph.
+
+  Alignment comes from the markdown delimiter row (|:---|---:|) and maps onto
+  the text-align utilities.
+*/ -}}
+<div class="usa-table-container--scrollable" tabindex="0">
+  <table class="usa-table">
+    <thead>
+      {{- range .THead }}
+      <tr>
+        {{- range . }}
+        <th scope="col"{{ with .Alignment }} class="text-{{ . }}"{{ end }}>{{ .Text }}</th>
+        {{- end }}
+      </tr>
+      {{- end }}
+    </thead>
+    <tbody>
+      {{- range .TBody }}
+      <tr>
+        {{- range . }}
+        <td{{ with .Alignment }} class="text-{{ . }}"{{ end }}>{{ .Text }}</td>
+        {{- end }}
+      </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>

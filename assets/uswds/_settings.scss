@@ -1,0 +1,110 @@
+// USWDS settings.
+//
+// This is the ONLY place uswds-core is configured, and it must be loaded before
+// anything else pulls in uswds-core — `@forward ... with` may configure a module
+// only on first load. main-*.scss forwards this file first for that reason.
+//
+// Values come from hugo.toml via Hugo's `vars` option on css.Sass, exposed here
+// as the `hugo:vars` module. That is what lets a site retheme without editing
+// any SCSS. See DESIGN.md §3.3 and layouts/_partials/uswds/sass-vars.html.
+//
+// A site that needs a setting not exposed here can shadow this file by creating
+// assets/uswds/_settings.scss in its own project — Hugo's union filesystem gives
+// the project precedence. That is still not a fork: the theme is untouched.
+
+@use "hugo:vars" as v;
+@use "sass:string";
+
+// Hugo's `vars` option only carries scalars — passing a Go slice fails with
+// "$string: [...] is not a string". So list-valued settings arrive as a comma
+// separated string and are split back into a Sass list here. Requires Dart Sass
+// >= 1.80 for sass:string's split(); package.json pins that floor.
+//
+// The literal "default" is passed through untouched: USWDS compares
+// $output-these-utilities against the string "default" to mean "the standard
+// set". Note there is no "all" or "none" keyword — any unrecognised value
+// silently emits no utilities at all (DESIGN.md §5.2).
+$_utilities: if(
+  v.$output-utilities == "default",
+  "default",
+  string.split(v.$output-utilities, ",")
+);
+
+// Hugo's `vars` rejects booleans outright — both `true` and `false` produce
+// "expected \")\"" from Dart Sass, while strings and numbers pass fine. So
+// settings that accept `false` to switch a feature off arrive as the STRING
+// "false" and are converted back here.
+//
+// These are variables rather than a shared _off() helper because Sass requires
+// @forward to precede every rule in the file, and a @function counts as a rule
+// while a variable declaration does not.
+//
+// This matters because `$theme-font-type-serif: false` is what stops USWDS
+// emitting @font-face for a family the site never uses — the difference
+// between publishing one font family and publishing three.
+$_font-serif: if(v.$font-type-serif == "false", false, v.$font-type-serif);
+$_font-mono: if(v.$font-type-mono == "false", false, v.$font-type-mono);
+$_weight-light: if(v.$font-weight-light == "false", false, v.$font-weight-light);
+
+@forward "uswds-core" with (
+  $output-these-utilities: $_utilities,
+
+  // --- Asset paths -------------------------------------------------------
+  $theme-image-path: v.$image-path,
+  $theme-font-path: v.$font-path,
+
+  // --- Color families ----------------------------------------------------
+  $theme-color-primary-family: v.$color-primary-family,
+  $theme-color-secondary-family: v.$color-secondary-family,
+  $theme-color-accent-warm-family: v.$color-accent-warm-family,
+  $theme-color-accent-cool-family: v.$color-accent-cool-family,
+
+  // --- Color assignments -------------------------------------------------
+  $theme-color-primary: v.$color-primary,
+  $theme-color-primary-dark: v.$color-primary-dark,
+  $theme-color-primary-darker: v.$color-primary-darker,
+  $theme-color-primary-light: v.$color-primary-light,
+  $theme-color-primary-lighter: v.$color-primary-lighter,
+  $theme-color-primary-vivid: v.$color-primary-vivid,
+  $theme-color-secondary: v.$color-secondary,
+  $theme-color-base: v.$color-base,
+  $theme-color-base-dark: v.$color-base-dark,
+
+  // --- Typography --------------------------------------------------------
+  // A type set to `false` emits no @font-face at all. USWDS declares faces for
+  // every configured type whether or not the site uses them, so switching off
+  // serif and mono is the difference between publishing one font family and
+  // publishing three.
+  $theme-font-type-sans: v.$font-type-sans,
+  $theme-font-type-serif: $_font-serif,
+  $theme-font-type-mono: $_font-mono,
+  $theme-font-weight-light: $_weight-light,
+  $theme-font-role-heading: v.$font-role-heading,
+  $theme-font-role-body: v.$font-role-body,
+  $theme-font-role-ui: v.$font-role-ui,
+  $theme-font-role-code: v.$font-role-code,
+  $theme-font-role-alt: v.$font-role-alt,
+
+  // --- Layout ------------------------------------------------------------
+  $theme-grid-container-max-width: v.$grid-container-max-width,
+
+  // The banner, header, footer and identifier do NOT read the grid container
+  // width — USWDS gives each its own setting, and all five default to
+  // "desktop". Left alone, widening the container widens the content and
+  // nothing else, so the chrome ends up visibly narrower than the page it
+  // wraps. Binding them to the same value is a no-op at the default and keeps
+  // the edges aligned at any other. A site that genuinely wants full-bleed
+  // chrome can shadow this file.
+  $theme-banner-max-width: v.$grid-container-max-width,
+  $theme-header-max-width: v.$grid-container-max-width,
+  $theme-footer-max-width: v.$grid-container-max-width,
+  $theme-identifier-max-width: v.$grid-container-max-width,
+
+  $theme-banner-background-color: v.$banner-background-color,
+
+  // --- Build behaviour ---------------------------------------------------
+  // Upstream compile warnings and the release notification banner are noise in
+  // a Hugo build loop and would drown out our own diagnostics.
+  $theme-show-compile-warnings: false,
+  $theme-show-notifications: false
+);

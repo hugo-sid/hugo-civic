@@ -1,0 +1,6 @@
+{{- /* {{< summary-box title="Key information" >}}- point{{< /summary-box >}} */ -}}
+{{- partial "components/summary-box" (dict
+      "title" (.Get "title")
+      "id" (printf "summary-%s-%d" (.Page.File.ContentBaseName | default "p") .Ordinal)
+      "content" (.Inner | .Page.RenderString (dict "display" "block"))
+) -}}

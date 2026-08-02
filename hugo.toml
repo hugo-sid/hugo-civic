@@ -1,0 +1,93 @@
+# Theme-level configuration and default params.
+#
+# NOTE: this file deliberately declares NO [[module.mounts]]. Declaring even one
+# mount replaces ALL of Hugo's default mounts (assets, layouts, static, i18n,
+# data, archetypes) — a silent failure that produces zero pages with only a
+# "found no layout file" warning. See DESIGN.md §3.2.
+#
+# Sass and JS both resolve @uswds/uswds from the SITE's node_modules without any
+# mount. Only font/icon copying needs one, and that mount belongs in the site's
+# own config (see exampleSite/hugo.toml).
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.146.0"
+
+[params.uswds]
+  # Path to the USWDS Sass packages, relative to the SITE root.
+  # Must be a real on-disk path — Hugo's virtual filesystem is not consulted
+  # for Sass load paths (DESIGN.md §3.1).
+  packagesPath = "node_modules/@uswds/uswds/packages"
+
+  # Where mounted USWDS dist assets appear inside assets/.
+  distPath = "uswds-dist"
+
+  # Which component set to compile: minimal | standard | full | custom.
+  # "custom" compiles assets/uswds/_manifest.scss, which the site supplies.
+  preset = "standard"
+
+  # Published asset locations. These feed $theme-image-path / $theme-font-path.
+  imagePath = "/img/uswds"
+  fontPath = "/fonts"
+
+  # Icon delivery: "inline" embeds individual SVGs (best for a few icons per
+  # page), "sprite" publishes the 71 KB sprite and references it via <use>.
+  iconMode = "inline"
+
+
+[params.uswds.theme]
+  # Curated USWDS settings exposed to hugo.toml. Everything here is passed into
+  # Sass via the hugo:vars module, so retheming needs no SCSS edits.
+  colorPrimaryFamily = "blue"
+  colorSecondaryFamily = "red"
+  colorAccentWarmFamily = "orange"
+  colorAccentCoolFamily = "cyan"
+
+  colorPrimary = "blue-60v"
+  colorPrimaryDark = "blue-warm-70v"
+  colorPrimaryDarker = "blue-warm-80v"
+  colorPrimaryLight = "blue-30"
+  colorPrimaryLighter = "blue-5"
+  colorPrimaryVivid = "blue-warm-60v"
+
+  colorSecondary = "red-50"
+  colorBase = "gray-cool-60"
+  colorBaseDark = "gray-cool-70"
+
+  fontTypeSans = "public-sans"
+  fontTypeSerif = "merriweather"
+  fontTypeMono = "roboto-mono"
+
+  fontRoleHeading = "sans"
+  fontRoleBody = "sans"
+  fontRoleUi = "sans"
+  fontRoleCode = "mono"
+  fontRoleAlt = "serif"
+
+  gridContainerMaxWidth = "desktop"
+  bannerBackgroundColor = "base-lightest"
+
+[params.uswds.banner]
+  enable = true
+
+[params.uswds.identifier]
+  enable = true
+  domain = "example.gov"
+  taxpayerDisclaimer = false
+  showUsagov = true
+  [params.uswds.identifier.parent]
+    name = "Example Parent Agency"
+    shortname = "EPA"
+    url = "https://example.gov"
+
+[params.uswds.header]
+  # "basic" or "extended"
+  variant = "basic"
+  megamenu = false
+  search = true
+
+[params.uswds.footer]
+  # "default", "slim", or "big"
+  variant = "default"
+  returnToTop = true

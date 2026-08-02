@@ -1,0 +1,16 @@
+{{- /*
+  usa-media-block — contract: packages/usa-media-block/src/usa-media-block.twig
+
+  @param heading  optional
+  @param content  body HTML
+  @param image    optional image src
+  @param alt      alt text; empty means decorative
+  @param grid     grid classes, default "tablet:grid-col"
+*/ -}}
+<div class="usa-media-block {{ .grid | default "tablet:grid-col" }}">
+  {{- with .image }}<img class="usa-media-block__img" src="{{ . }}" alt="{{ $.alt | default "" }}">{{ end }}
+  <div class="usa-media-block__body">
+    {{- with .heading }}<h2 class="usa-graphic-list__heading">{{ . }}</h2>{{ end }}
+    {{- with .content }}{{ . | safeHTML }}{{ end }}
+  </div>
+</div>

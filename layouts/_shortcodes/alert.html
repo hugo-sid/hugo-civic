@@ -1,0 +1,15 @@
+{{- /*
+  {{< alert type="warning" title="Heads up" >}}Body markdown{{< /alert >}}
+
+  .Inner renders as BLOCK markdown, so it is passed as `content` (emitted
+  as-is) rather than `text` (wrapped in <p class="usa-alert__text">). Passing
+  it as `text` produced <p class="usa-alert__text"><p>...</p></p> — invalid
+  nesting that browsers break apart, showing up as stray space in the alert.
+*/ -}}
+{{- partial "components/alert" (dict
+      "type" (.Get "type" | default "info")
+      "title" (.Get "title")
+      "content" (.Inner | .Page.RenderString (dict "display" "block"))
+      "slim" (eq (.Get "slim") "true")
+      "no_icon" (eq (.Get "no_icon") "true")
+) -}}

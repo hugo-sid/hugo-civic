@@ -1,0 +1,35 @@
+{{ define "main" }}
+{{- /* A section index INSIDE a tree keeps the tree — otherwise clicking a
+       subsection in the sidenav drops the reader onto a page with no navigation
+       at all, which is where they are least likely to want it gone.
+
+       A top-level landing page (/docs/, /news/) is excluded: it is the root of
+       its own tree, so a sidenav there would list exactly what the page already
+       lists below the heading. */ -}}
+{{- $navRoot := .FirstSection -}}
+{{- $hasSidenav := and $navRoot (not $navRoot.IsHome) (ne $navRoot .) $navRoot.Pages -}}
+<div class="padding-top-1 padding-bottom-4">
+  <div class="grid-container">
+    {{- partial "chrome/breadcrumb" . }}
+    <div class="grid-row grid-gap">
+      {{- if $hasSidenav }}
+      <nav class="usa-layout-docs__sidenav grid-col-12 desktop:grid-col-3"
+           aria-label="{{ i18n "section_navigation" | default "Section navigation" }}">
+        {{- partial "chrome/sidenav" (dict "pages" $navRoot.Pages "current" . "level" 0) }}
+      </nav>
+      {{- end }}
+
+      <div class="grid-col-12 {{ if $hasSidenav }}desktop:grid-col-9{{ else }}desktop:grid-col-12{{ end }}">
+        <main id="main-content">
+          <h1>{{ .Title }}</h1>
+          {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
+          {{- with .Content }}<div class="usa-prose">{{ . }}</div>{{ end }}
+          {{- with .Pages }}
+            {{- partial "components/collection" (dict "pages" . "variant" ($.Params.collection_variant | default "")) }}
+          {{- end }}
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

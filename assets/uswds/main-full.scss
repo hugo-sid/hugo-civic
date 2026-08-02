@@ -1,0 +1,13 @@
+// Entry point: the full preset.
+//
+// Load order is significant and mirrors upstream's theme/styles.scss:
+//   settings -> components -> custom
+// "settings" must come first because `@forward ... with` can configure
+// uswds-core only on its first load. Anything that loads uswds-core earlier
+// would silently lock in the defaults.
+//
+// Selected by params.uswds.preset; see layouts/_partials/uswds/css.html.
+
+@forward "settings";
+@forward "presets/full";
+@forward "custom";

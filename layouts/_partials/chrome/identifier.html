@@ -1,0 +1,73 @@
+{{- /*
+  usa-identifier — the agency identifier required on federal sites.
+  Contract: packages/usa-identifier/src/usa-identifier.twig
+            packages/templates/usa-base/includes/_identifier.twig
+
+  The seven required links are federally mandated and their labels come from
+  i18n, matching USWDS's own en/es strings. A site supplies only the URLs, via
+  params.uswds.identifier.links — a map keyed by the same identifiers used in
+  i18n (about, accessibility, foia, no_fear_act, inspector_general,
+  performance, privacy). Links without a URL are still rendered, because
+  omitting a required link is a compliance problem, not a styling choice; they
+  point at "#" and check:build reports them.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $id := $u.identifier | default dict -}}
+{{- if ne $id.enable false -}}
+{{- $parent := $id.parent | default dict -}}
+{{- $urls := $id.links | default dict -}}
+{{- $lang := site.Language.Lang | default "en" -}}
+
+{{- $required := slice "about" "accessibility" "foia" "no_fear_act" "inspector_general" "performance" "privacy" -}}
+
+<div class="usa-identifier">
+  <section class="usa-identifier__section usa-identifier__section--masthead" aria-label="{{ i18n "identifier_masthead_aria" }}">
+    <div class="usa-identifier__container">
+      {{- with $parent.logo }}
+      <div class="usa-identifier__logos">
+        <a href="{{ $parent.url | default "#" }}" class="usa-identifier__logo">
+          {{- with resources.Get . }}
+          <img class="usa-identifier__logo-img" src="{{ .RelPermalink }}" alt="{{ $parent.name }} logo" role="img">
+          {{- end }}
+        </a>
+      </div>
+      {{- end }}
+      <section class="usa-identifier__identity" aria-label="{{ i18n "identifier_identity_aria" }}">
+        <p class="usa-identifier__identity-domain">{{ $id.domain | default site.BaseURL }}</p>
+        <p class="usa-identifier__identity-disclaimer">
+          <span aria-hidden="true">{{ i18n "identifier_content_prefix" }}</span>
+          {{ i18n "identifier_content" }}
+          <a href="{{ $parent.url | default "#" }}">{{ $parent.name }}</a>{{ if $id.taxpayerDisclaimer }}. {{ i18n "identifier_taxpayer" }}{{ end }}
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <nav class="usa-identifier__section usa-identifier__section--required-links" aria-label="{{ i18n "identifier_required_links_aria" }}">
+    <div class="usa-identifier__container">
+      <ul class="usa-identifier__required-links-list">
+        {{- range $required }}
+        {{- $url := index $urls . -}}
+        {{- if not $url }}{{ warnf "uswds: identifier link %q has no URL — set params.uswds.identifier.links.%s" . . }}{{ end }}
+        <li class="usa-identifier__required-links-item">
+          <a href="{{ $url | default "#" }}" class="usa-identifier__required-link usa-link">
+            {{- i18n (printf "identifier_link_%s" .) -}}
+            {{- if eq . "about" }} {{ $parent.shortname }}{{ end -}}
+          </a>
+        </li>
+        {{- end }}
+      </ul>
+    </div>
+  </nav>
+
+  {{- if ne $id.showUsagov false }}
+  <section class="usa-identifier__section usa-identifier__section--usagov" aria-label="{{ i18n "identifier_usagov_aria" }}">
+    <div class="usa-identifier__container">
+      <div class="usa-identifier__usagov-description">{{ i18n "identifier_usagov_description" }}</div>
+      <a href="{{ if eq $lang "es" }}https://www.usa.gov/es/{{ else }}https://www.usa.gov/{{ end }}" class="usa-link">{{ i18n "identifier_usagov_link" }}</a>
+    </div>
+  </section>
+  {{- end }}
+</div>
+{{- end -}}

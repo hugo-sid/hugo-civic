@@ -1,0 +1,39 @@
+{{- /*
+  usa-sidenav — recursive section navigation.
+  Contract: packages/usa-sidenav/src/usa-sidenav.twig
+
+  Level 0 is <ul class="usa-sidenav">, deeper levels are
+  <ul class="usa-sidenav__sublist">. Sublists are rendered only for the current
+  branch; rendering every descendant would put the whole site in every page's
+  DOM, which is both a payload and a screen-reader problem.
+
+  @param pages    page collection to render
+  @param current  the page being rendered
+  @param level    recursion depth, 0 at the top
+*/ -}}
+{{- $pages := .pages -}}
+{{- $current := .current -}}
+{{- $level := .level | default 0 -}}
+{{- with $pages }}
+<ul class="{{ if eq $level 0 }}usa-sidenav{{ else }}usa-sidenav__sublist{{ end }}">
+  {{- range . }}
+  {{- $isCurrent := eq . $current -}}
+  {{- $inBranch := or $isCurrent ($current.IsDescendant .) -}}
+  {{- /* usa-current marks the whole open branch, not just the page — see
+         usa-sidenav~three-levels.json, where the expanded parent and the
+         grandchild are both `current: true`. It is what draws the blue rule
+         beside the open section; USWDS suppresses that rule inside a sublist,
+         so without it a nested page has no position marker at all.
+
+         aria-current is NOT spread across the branch. Assistive tech needs to
+         know which one is the page, and that distinction is exactly what the
+         shared class throws away. */ -}}
+  <li class="usa-sidenav__item">
+    <a href="{{ .RelPermalink }}"{{ if $inBranch }} class="usa-current"{{ end }}{{ if $isCurrent }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
+    {{- if and $inBranch .Pages }}
+      {{- partial "chrome/sidenav" (dict "pages" .Pages "current" $current "level" (add $level 1)) }}
+    {{- end }}
+  </li>
+  {{- end }}
+</ul>
+{{- end -}}

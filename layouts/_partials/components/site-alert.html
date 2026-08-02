@@ -1,0 +1,23 @@
+{{- /*
+  usa-site-alert — contract: packages/usa-site-alert/src/usa-site-alert.twig
+
+  @param type    info | emergency
+  @param title   optional heading
+  @param text    INLINE body; wrapped in <p class="usa-alert__text">
+  @param content BLOCK body (already contains <p>/<ul>/...); emitted as-is
+                 See components/alert.html on why mixing the two is invalid.
+  @param slim    bool
+  @param no_icon bool
+*/ -}}
+{{- $type := .type | default "info" -}}
+{{- $classes := slice (printf "usa-site-alert--%s" $type) -}}
+{{- if .slim }}{{ $classes = $classes | append "usa-site-alert--slim" }}{{ end -}}
+{{- if .no_icon }}{{ $classes = $classes | append "usa-site-alert--no-icon" }}{{ end -}}
+<section class="usa-site-alert {{ delimit $classes " " }}" aria-label="{{ .aria_label | default (i18n "site_alert" | default "Site alert") }}">
+  <div class="usa-alert">
+    <div class="usa-alert__body">
+      {{- with .title }}<h3 class="usa-alert__heading">{{ . }}</h3>{{ end }}
+      {{- with .content }}{{ . | safeHTML }}{{ else }}{{ with .text }}<p class="usa-alert__text">{{ . | safeHTML }}</p>{{ end }}{{ end }}
+    </div>
+  </div>
+</section>

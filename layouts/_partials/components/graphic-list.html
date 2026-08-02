@@ -1,0 +1,25 @@
+{{- /*
+  usa-graphic-list — contract: packages/usa-graphic-list/src/usa-graphic-list.twig
+
+  USWDS lays these out two per row, each row its own .usa-graphic-list__row.
+  Rather than ask callers to pre-group (nested lists are awkward in front
+  matter), items are flat and the row boundaries are emitted on even indices.
+
+  @param items     flat slice of {heading, content, image, alt}
+  @param modifier  section modifier, default "usa-section--dark"
+*/ -}}
+<section class="usa-graphic-list usa-section {{ .modifier | default "usa-section--dark" }}">
+  <div class="grid-container">
+    {{- range $i, $item := .items }}
+    {{- if eq (mod $i 2) 0 }}<div class="usa-graphic-list__row grid-row grid-gap">{{ end }}
+      <div class="usa-media-block tablet:grid-col">
+        {{- with $item.image }}<img class="usa-media-block__img" src="{{ . }}" alt="{{ $item.alt | default "" }}">{{ end }}
+        <div class="usa-media-block__body">
+          <h2 class="usa-graphic-list__heading">{{ $item.heading }}</h2>
+          {{- with $item.content }}<p>{{ . | safeHTML }}</p>{{ end }}
+        </div>
+      </div>
+    {{- if or (eq (mod $i 2) 1) (eq $i (sub (len $.items) 1)) }}</div>{{ end }}
+    {{- end }}
+  </div>
+</section>

@@ -1,0 +1,85 @@
+{{- /*
+  Publishes exactly the USWDS assets the compiled stylesheet references.
+
+  USWDS's dist/ is 19 MB — 8.3 MB of it deprecated material-icons, 5.3 MB of
+  fonts in three formats across four families. Copying it wholesale is the
+  single largest performance mistake available in this theme, and copying a
+  hand-maintained subset is the second (the list rots at the next upgrade).
+
+  So nothing here is a directory copy and nothing here is a hardcoded filename:
+  uswds/stylesheet.html reports the url() references from the compiled CSS, and
+  this partial resolves each one back to the mount and publishes it. A site
+  using one font family publishes roughly 100-300 KB of fonts and ~10 icons.
+
+  Each file is routed through resources.Copy before publishing: assets are read
+  from the mount (assets/uswds-dist/...) but the CSS references them at
+  $theme-image-path / $theme-font-path, so the published path must be rewritten
+  to match or every request 404s.
+
+  @param sheet  the dict returned by uswds/stylesheet
+  Side effects only; emits no markup.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $dist := $u.distPath | default "uswds-dist" -}}
+{{- $fontPath := $u.fontPath | default "/fonts" -}}
+{{- $imagePath := $u.imagePath | default "/img/uswds" -}}
+
+{{- $missing := slice -}}
+
+{{- /* Fonts: /fonts/public-sans/PublicSans-Regular.woff2
+              -> uswds-dist/fonts/public-sans/PublicSans-Regular.woff2 */ -}}
+{{- range .sheet.fonts -}}
+  {{- $rel := strings.TrimPrefix $fontPath . -}}
+  {{- $src := printf "%s/fonts%s" $dist $rel -}}
+  {{- with resources.Get $src -}}
+    {{- (resources.Copy (printf "%s%s" $fontPath $rel) .).Publish -}}
+  {{- else -}}
+    {{- $missing = $missing | append $src -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Images: /img/uswds/usa-icons/close.svg
+               -> uswds-dist/img/usa-icons/close.svg */ -}}
+{{- range .sheet.images -}}
+  {{- $rel := strings.TrimPrefix $imagePath . -}}
+  {{- $src := printf "%s/img%s" $dist $rel -}}
+  {{- with resources.Get $src -}}
+    {{- (resources.Copy (printf "%s%s" $imagePath $rel) .).Publish -}}
+  {{- else -}}
+    {{- $missing = $missing | append $src -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Referenced from MARKUP, not CSS, so the stylesheet scan cannot find them.
+       This is the only hardcoded list. Anything a partial hardcodes an <img
+       src> for must be listed here or it 404s silently — tools/check-assets.sh
+       audits the rendered HTML against what was published, because a missing
+       icon degrades to its alt text and looks like a styling bug rather than a
+       missing file. */ -}}
+{{- $fromMarkup := slice
+      "us_flag_small.png" "icon-dot-gov.svg" "icon-https.svg" -}}
+{{- $fromMarkupBg := slice "search--white.svg" -}}
+{{- range $fromMarkupBg -}}
+  {{- $src := printf "%s/img/usa-icons-bg/%s" $dist . -}}
+  {{- with resources.Get $src -}}
+    {{- (resources.Copy (printf "%s/usa-icons-bg/%s" $imagePath (path.Base $src)) .).Publish -}}
+  {{- else -}}
+    {{- $missing = $missing | append $src -}}
+  {{- end -}}
+{{- end -}}
+{{- if eq ($u.iconMode | default "inline") "sprite" -}}
+  {{- $fromMarkup = $fromMarkup | append "sprite.svg" -}}
+{{- end -}}
+{{- range $fromMarkup -}}
+  {{- $src := printf "%s/img/%s" $dist . -}}
+  {{- with resources.Get $src -}}
+    {{- (resources.Copy (printf "%s/%s" $imagePath (path.Base $src)) .).Publish -}}
+  {{- else -}}
+    {{- $missing = $missing | append $src -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with $missing -}}
+  {{- warnf "uswds: %d referenced asset(s) not found, e.g. %q — is the USWDS dist mount present in the site config? See exampleSite/hugo.toml." (len .) (index . 0) -}}
+{{- end -}}

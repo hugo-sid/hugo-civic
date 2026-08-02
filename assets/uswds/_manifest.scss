@@ -1,0 +1,8 @@
+// Custom manifest — active only when params.uswds.preset = "custom".
+//
+// Copy the preset you are closest to from presets/, delete what you do not use,
+// and keep upstream's order. Sites override this file by creating their own
+// assets/uswds/_manifest.scss; Hugo's union filesystem gives the project
+// precedence, so no theme fork is needed.
+
+@forward "presets/standard";

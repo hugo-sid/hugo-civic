@@ -1,0 +1,31 @@
+{{- /*
+  Declares that a page needs a USWDS JS behaviour.
+
+  Component partials call this instead of emitting their own <script>. The
+  footer collects the accumulated set once and builds a single bundle, so a page
+  using five interactive components still loads exactly one extra file.
+
+  Usage:  {{ partial "uswds/require" (dict "page" $page "component" "usa-accordion") }}
+
+  The page MUST be passed explicitly. The global `page` refers to the page whose
+  TEMPLATE is executing, not the page whose CONTENT is being rendered, and those
+  differ whenever one page renders another's content — a list page reading
+  .Summary of its children, for instance. Using the global here caused a child
+  page's components to register against the list page, so the list page loaded
+  a bundle it had no use for while the child that needed it loaded nothing.
+
+  Ordering works because the bundle is emitted after {{ block "main" }} in
+  baseof.html — by then every component on the page has registered. A component
+  needing JS registered before </head> would require templates.Defer.
+
+  Registering a component with no JS behaviour is harmless; uswds/js.html
+  filters against the known set rather than failing the build, so a typo costs
+  a missing behaviour, not a broken site.
+*/ -}}
+
+{{- $page := .page -}}
+{{- if not $page -}}
+  {{- errorf "uswds/require: no page passed for component %q — see the partial's docs" .component -}}
+{{- end -}}
+{{- $current := $page.Store.Get "uswdsJS" | default slice -}}
+{{- $page.Store.Set "uswdsJS" ($current | append .component | uniq) -}}

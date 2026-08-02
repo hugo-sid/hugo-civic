@@ -1,0 +1,6 @@
+{{- /* usa-tag — contract: packages/usa-tag/src/usa-tag.twig */ -}}
+{{- if reflect.IsMap . -}}
+<span class="usa-tag{{ if .big }} usa-tag--big{{ end }}">{{ .title }}</span>
+{{- else -}}
+<span class="usa-tag">{{ . }}</span>
+{{- end -}}

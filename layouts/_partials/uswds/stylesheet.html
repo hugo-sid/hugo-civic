@@ -1,0 +1,77 @@
+{{- /*
+  Compiles USWDS Sass and reports what the result references.
+
+  Returns a dict:
+    css    the compiled (and in production, fingerprinted) resource
+    fonts  slice of font URLs the stylesheet references
+    images slice of image URLs the stylesheet references
+
+  Callers use the two URL lists to publish exactly the assets that are needed —
+  see uswds/assets.html. Deriving them from the compiled output rather than a
+  hardcoded list is deliberate: USWDS names font files differently in every
+  family (PublicSans-Regular, Latin-Merriweather-Regular,
+  roboto-mono-v5-latin-regular, sourcesanspro-regular-webfont), and any list we
+  maintained by hand would silently rot at the next upgrade. Whatever the
+  stylesheet asks for is what gets published, at any USWDS version.
+
+  Two things here are load-bearing and easy to break:
+
+  1. `includePaths` entries must be REAL on-disk paths relative to the site
+     root. Hugo's virtual filesystem is not consulted for Sass load paths, so
+     mounting USWDS into assets/ does NOT make `@use "uswds-core"` resolve.
+  2. Dart Sass must be a real binary on PATH. Hugo Extended alone is not
+     enough — it ships LibSass, which cannot compile USWDS 3's Sass modules.
+     `sass-embedded` from npm provides one.
+
+  See DESIGN.md §3.1 and §5.4.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $preset := $u.preset | default "standard" -}}
+{{- $entry := printf "uswds/main-%s.scss" $preset -}}
+
+{{- $res := resources.Get $entry -}}
+{{- if not $res -}}
+  {{- errorf "uswds: no Sass entry point at %q. params.uswds.preset must be one of: minimal, standard, full, custom." $entry -}}
+{{- end -}}
+
+{{- /* silenceDeprecations lists the known-noisy deprecations USWDS 3.13 emits
+       itself. Silencing the upstream set keeps OUR warnings visible; a new
+       warning class appearing in a build is an upgrade signal (DESIGN.md
+       §8.4). Do not add to it without checking the warning is upstream's. */ -}}
+{{- $opts := dict
+      "transpiler"   "dartsass"
+      "targetPath"   "css/uswds.css"
+      "includePaths" (slice ($u.packagesPath | default "node_modules/@uswds/uswds/packages"))
+      "outputStyle"  (cond hugo.IsProduction "compressed" "expanded")
+      "enableSourceMap" (not hugo.IsProduction)
+      "vars" (partial "uswds/sass-vars" .)
+      "silenceDeprecations" (slice "import" "global-builtin" "if-function" "color-functions")
+-}}
+
+{{- $css := $res | css.Sass $opts -}}
+
+{{- /* Extract before fingerprinting — the content is identical either way, but
+       reading it after minification keeps the regex working on one line. */ -}}
+{{- $urls := slice -}}
+{{- range findRE `url\(["']?([^"')]+)["']?\)` $css.Content -}}
+  {{- $raw := . | replaceRE `^url\(["']?` "" | replaceRE `["']?\)$` "" -}}
+  {{- with $raw }}{{ $urls = $urls | append . }}{{ end -}}
+{{- end -}}
+{{- $urls = uniq $urls -}}
+
+{{- $fonts := slice -}}
+{{- $images := slice -}}
+{{- range $urls -}}
+  {{- if strings.HasSuffix . ".woff2" -}}
+    {{- $fonts = $fonts | append . -}}
+  {{- else if or (strings.HasSuffix . ".svg") (strings.HasSuffix . ".png") (strings.HasSuffix . ".gif") -}}
+    {{- $images = $images | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if hugo.IsProduction -}}
+  {{- $css = $css | minify | fingerprint "sha512" -}}
+{{- end -}}
+
+{{- return (dict "css" $css "fonts" $fonts "images" $images) -}}

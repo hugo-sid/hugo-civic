@@ -1,0 +1,36 @@
+{{- /*
+  usa-accordion — contract: packages/usa-accordion/src/usa-accordion.twig
+                            packages/usa-accordion/src/content/usa-accordion.json
+
+  @param items            slice of {title, content, expanded, id}
+  @param modifier         "" | "usa-accordion--bordered"
+  @param multiselectable  bool -> data-allow-multiple
+  @param id_prefix        string, namespaces generated ids
+  @param heading_level     h2..h6, default h4
+  @param page             the owning page; required so JS registration lands on it
+
+  Upstream hardcodes <h4> and flags it in a comment: the heading level must
+  match the surrounding document outline. It is a parameter here so callers can
+  get that right rather than inheriting a wrong one.
+*/ -}}
+{{- partial "uswds/require" (dict "page" .page "component" "usa-accordion") -}}
+{{- $prefix := .id_prefix | default "a" -}}
+{{- $h := .heading_level | default "h4" -}}
+{{- /* Heading tags are built as strings and marked safeHTML: Go's html/template
+       cannot parse a dynamic tag name, and `<{{ $h }}>` is emitted escaped as
+       `&lt;h4>` rather than as an element. */ -}}
+{{- $hOpen := printf "<%s class=\"usa-accordion__heading\">" $h | safeHTML -}}
+{{- $hClose := printf "</%s>" $h | safeHTML -}}
+<div class="usa-accordion{{ with .modifier }} {{ . }}{{ end }}"{{ if .multiselectable }} data-allow-multiple{{ end }}>
+  {{- range $i, $item := .items }}
+  {{- $id := printf "%s-%d" $prefix $i -}}
+  {{ $hOpen }}
+    <button type="button" class="usa-accordion__button" aria-expanded="{{ if $item.expanded }}true{{ else }}false{{ end }}" aria-controls="{{ $id }}">
+      {{ $item.title }}
+    </button>
+  {{ $hClose }}
+  <div id="{{ $id }}" class="usa-accordion__content usa-prose">
+    {{ $item.content | safeHTML }}
+  </div>
+  {{- end }}
+</div>

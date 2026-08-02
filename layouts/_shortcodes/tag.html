@@ -1,0 +1,2 @@
+{{- /* {{< tag >}}New{{< /tag >}}  or  {{< tag big="true" >}}New{{< /tag >}} */ -}}
+{{- partial "components/tag" (dict "title" (trim .Inner " \n") "big" (eq (.Get "big") "true")) -}}

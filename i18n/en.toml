@@ -1,0 +1,153 @@
+# English strings.
+#
+# The banner and identifier wording is federally standardised — it is copied
+# verbatim from packages/templates/usa-base/includes/_banner.twig and
+# _identifier.twig. Do not paraphrase it. Everything else is UI chrome and is
+# safe for a site to override.
+
+[skipnav]
+other = "Skip to main content"
+
+[menu]
+other = "Menu"
+
+[close]
+other = "Close"
+
+[search]
+other = "Search"
+
+[search_component]
+other = "Search component"
+
+[primary_navigation]
+other = "Primary navigation"
+
+[section_navigation]
+other = "Section navigation"
+
+[footer_navigation]
+other = "Footer navigation"
+
+[return_to_top]
+other = "Return to top"
+
+[breadcrumbs]
+other = "Breadcrumbs"
+
+[introduction]
+other = "Introduction"
+
+[on_this_page]
+other = "On this page"
+
+[key_information]
+other = "Key information"
+
+[read_more]
+other = "Read more"
+
+[more_information]
+other = "More information"
+
+[topics]
+other = "Topics"
+
+[site_alert]
+other = "Site alert"
+
+# --- Official .gov banner -----------------------------------------------
+
+[banner_aria_label]
+other = "Official website of the United States government"
+
+[banner_text]
+other = "An official website of the United States government"
+
+[banner_action]
+other = "Here's how you know"
+
+[banner_domain_heading]
+other = "Official websites use .gov"
+
+[banner_domain_text]
+other = "A <strong>.gov</strong> website belongs to an official government organization in the United States."
+
+[banner_https_heading]
+other = "Secure .gov websites use HTTPS"
+
+[banner_https_pretext]
+other = "A <strong>lock</strong>"
+
+[banner_https_posttext]
+other = "or <strong>https://</strong> means you've safely connected to the .gov website. Share sensitive information only on official, secure websites."
+
+[banner_lock_title]
+other = "Lock"
+
+[banner_lock_description]
+other = "Locked padlock icon"
+
+# --- Agency identifier ---------------------------------------------------
+
+[identifier_masthead_aria]
+other = "Agency identifier"
+
+[identifier_identity_aria]
+other = "Agency description"
+
+[identifier_content_prefix]
+other = "An"
+
+[identifier_content]
+other = "official website of the"
+
+[identifier_taxpayer]
+other = "Produced and published at taxpayer expense."
+
+[identifier_required_links_aria]
+other = "Important links"
+
+[identifier_link_about]
+other = "About"
+
+[identifier_link_accessibility]
+other = "Accessibility support"
+
+[identifier_link_foia]
+other = "FOIA requests"
+
+[identifier_link_no_fear_act]
+other = "No FEAR Act data"
+
+[identifier_link_inspector_general]
+other = "Office of the Inspector General"
+
+[identifier_link_performance]
+other = "Performance reports"
+
+[identifier_link_privacy]
+other = "Privacy policy"
+
+[identifier_usagov_aria]
+other = "U.S. government information and services"
+
+[identifier_usagov_description]
+other = "Looking for U.S. government information and services?"
+
+[identifier_usagov_link]
+other = "Visit USA.gov"
+
+# --- Errors ---------------------------------------------------------------
+
+[error_404_heading]
+other = "Page not found"
+
+[error_404_intro]
+other = "We're sorry, we can't find the page you're looking for. It might have been removed, changed its name, or is otherwise unavailable."
+
+[error_404_help]
+other = "If you typed the URL directly, check your spelling and capitalization. Our URLs look like this:"
+
+[error_404_home]
+other = "Visit the homepage"

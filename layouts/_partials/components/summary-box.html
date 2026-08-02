@@ -1,0 +1,18 @@
+{{- /*
+  usa-summary-box — contract: packages/usa-summary-box/src/usa-summary-box.twig
+
+  @param title    heading, default from i18n
+  @param content  body HTML
+  @param id       unique; wired to aria-labelledby, so it must differ if more
+                  than one summary box appears on a page
+
+  role="region" plus aria-labelledby is what makes this a landmark; both are
+  required by the contract.
+*/ -}}
+{{- $id := .id | default "summary-box-key-information" -}}
+<div class="usa-summary-box" role="region" aria-labelledby="{{ $id }}">
+  <div class="usa-summary-box__body">
+    <h3 class="usa-summary-box__heading" id="{{ $id }}">{{ .title | default (i18n "key_information" | default "Key information") }}</h3>
+    <div class="usa-summary-box__text">{{ .content | safeHTML }}</div>
+  </div>
+</div>

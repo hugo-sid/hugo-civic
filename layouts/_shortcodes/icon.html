@@ -1,0 +1,6 @@
+{{- /* {{< icon name="search" size="3" label="Search" >}} */ -}}
+{{- partial "uswds/icon" (dict
+      "name" (.Get "name")
+      "class" (cond (ne (.Get "size") "") (printf "usa-icon--size-%s" (.Get "size")) "")
+      "aria-label" (.Get "label" | default "")
+) -}}

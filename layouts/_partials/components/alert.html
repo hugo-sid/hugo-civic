@@ -1,0 +1,31 @@
+{{- /*
+  usa-alert — contract: packages/usa-alert/src/usa-alert.twig
+
+  @param type      info | warning | error | success | emergency
+  @param title     optional heading
+  @param text      INLINE body; wrapped in <p class="usa-alert__text">
+  @param content   BLOCK body (already contains <p>/<ul>/...); emitted as-is
+
+  Use one or the other. Passing block HTML as `text` produces
+  <p class="usa-alert__text"><p>...</p></p> — invalid nesting that browsers
+  break apart, which shows up as stray vertical space inside the alert.
+  @param slim      bool
+  @param no_icon   bool
+  @param role      set to "alert" for content that appears after load
+
+  role is deliberately not defaulted: a static page alert with role="alert"
+  makes screen readers interrupt on load. Callers that inject alerts
+  dynamically should pass it explicitly.
+*/ -}}
+{{- $type := .type | default "info" -}}
+{{- $classes := slice (printf "usa-alert--%s" $type) -}}
+{{- if .slim }}{{ $classes = $classes | append "usa-alert--slim" }}{{ end -}}
+{{- if .no_icon }}{{ $classes = $classes | append "usa-alert--no-icon" }}{{ end -}}
+<div class="usa-alert {{ delimit $classes " " }}"{{ with .role }} role="{{ . }}"{{ end }}>
+  <div class="usa-alert__body">
+    {{- with .title }}<h4 class="usa-alert__heading">{{ . }}</h4>{{ end }}
+    {{- with .content }}{{ . | safeHTML }}{{ else }}
+    <p class="usa-alert__text">{{ .text | safeHTML }}</p>
+    {{- end }}
+  </div>
+</div>

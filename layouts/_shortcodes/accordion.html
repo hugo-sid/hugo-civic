@@ -1,0 +1,17 @@
+{{- /*
+  {{< accordion bordered="true" multiselectable="true" heading_level="h3" >}}
+    {{< accordion-item title="First" expanded="true" >}}Body markdown{{< /accordion-item >}}
+  {{< /accordion >}}
+
+  The wrapper renders .Inner directly and the item shortcodes emit their own
+  markup. An earlier version had items push into .Page.Store and the wrapper
+  read it back, which silently produced empty accordions: Hugo renders NESTED
+  shortcodes BEFORE their parent, so the parent's store initialisation ran after
+  the children had already written, wiping them. Rendering in place has no
+  ordering dependency at all.
+*/ -}}
+{{- partial "uswds/require" (dict "page" .Page "component" "usa-accordion") -}}
+<div class="usa-accordion{{ if eq (.Get "bordered") "true" }} usa-accordion--bordered{{ end }}"
+  {{- if eq (.Get "multiselectable") "true" }} data-allow-multiple{{ end }}>
+{{ .Inner }}
+</div>

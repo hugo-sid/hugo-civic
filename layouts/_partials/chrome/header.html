@@ -1,0 +1,87 @@
+{{- /*
+  usa-header — basic and extended variants.
+  Contract: packages/usa-header/src/usa-header.twig
+            packages/usa-header/src/usa-header--extended/usa-header--extended.twig
+            packages/usa-header/src/_includes/usa-navbar.twig
+
+  Selected by params.uswds.header.variant ("basic" | "extended").
+
+  The two variants differ structurally, not just cosmetically: extended moves
+  .usa-nav outside .usa-nav-container and wraps it in .usa-nav__inner, and only
+  extended carries a secondary nav row. They are kept as separate markup blocks
+  rather than one parameterised block because interleaving them produced markup
+  that matched neither contract.
+
+  The .usa-overlay div and .usa-menu-btn are required by the usa-header
+  behaviour (core JS tier) to run the mobile menu.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $h := $u.header | default dict -}}
+{{- $variant := $h.variant | default "basic" -}}
+{{- $megamenu := $h.megamenu | default false -}}
+{{- $showSearch := ne $h.search false -}}
+{{- $items := site.Menus.main -}}
+{{- $secondary := site.Menus.secondary -}}
+
+<div class="usa-overlay"></div>
+
+{{- if eq $variant "extended" -}}
+<header class="usa-header usa-header--extended">
+  <div class="usa-navbar">
+    {{- partial "chrome/site-title" . }}
+    {{- with $items }}
+    <button type="button" class="usa-menu-btn">{{ i18n "menu" | default "Menu" }}</button>
+    {{- end }}
+  </div>
+  {{- with $items }}
+  <nav aria-label="{{ i18n "primary_navigation" | default "Primary navigation" }}" class="usa-nav">
+    <div class="usa-nav__inner">
+      <button type="button" class="usa-nav__close">
+        <img src="{{ $u.imagePath | default "/img/uswds" }}/usa-icons/close.svg" role="img" alt="{{ i18n "close" | default "Close" }}">
+      </button>
+      {{- partial "chrome/nav-menu" (dict "items" . "level" 0 "megamenu" $megamenu "page" $) }}
+      {{- if or $secondary $showSearch }}
+      <div class="usa-nav__secondary">
+        {{- with $secondary }}
+        <ul class="usa-nav__secondary-links">
+          {{- range . }}
+          <li class="usa-nav__secondary-item">
+            <a href="{{ .URL | relLangURL }}"{{ if $.IsMenuCurrent "secondary" . }} class="usa-current"{{ end }}>{{ .Name }}</a>
+          </li>
+          {{- end }}
+        </ul>
+        {{- end }}
+        {{- if $showSearch }}
+          {{- partial "chrome/search" (dict "modifier" "usa-search--small" "id" "search-field-small") }}
+        {{- end }}
+      </div>
+      {{- end }}
+    </div>
+  </nav>
+  {{- end }}
+</header>
+
+{{- else -}}
+<header class="usa-header usa-header--basic">
+  <div class="usa-nav-container">
+    <div class="usa-navbar">
+      {{- partial "chrome/site-title" . }}
+      {{- with $items }}
+      <button type="button" class="usa-menu-btn">{{ i18n "menu" | default "Menu" }}</button>
+      {{- end }}
+    </div>
+    {{- with $items }}
+    <nav aria-label="{{ i18n "primary_navigation" | default "Primary navigation" }}" class="usa-nav">
+      <button type="button" class="usa-nav__close">
+        <img src="{{ $u.imagePath | default "/img/uswds" }}/usa-icons/close.svg" role="img" alt="{{ i18n "close" | default "Close" }}">
+      </button>
+      {{- partial "chrome/nav-menu" (dict "items" . "level" 0 "megamenu" $megamenu "page" $) }}
+      {{- if $showSearch }}
+        {{- partial "chrome/search" (dict "modifier" "" "id" "search-field") }}
+      {{- end }}
+    </nav>
+    {{- end }}
+  </div>
+</header>
+{{- end -}}

@@ -1,0 +1,114 @@
+// Theme-level additive styles.
+//
+// This file loads AFTER all USWDS output, so plain declarations here win on
+// equal specificity without !important.
+//
+// Additive only. Never restate a USWDS rule to change it — set the relevant
+// USWDS setting in _settings.scss (or hugo.toml) instead, so the change
+// survives an upgrade. See DESIGN.md §4.1.
+//
+// USWDS functions and mixins are available via uswds-core, e.g.
+//   @use "uswds-core" as *;
+//   .my-thing { padding: units(2); color: color("primary-vivid"); }
+// Using tokens rather than raw values keeps custom CSS in step with retheming.
+
+@use "uswds-core" as *;
+
+// The sidenav in the docs layout is sticky on wide screens only; USWDS ships no
+// setting for this, and it is purely additive.
+@include at-media("desktop") {
+  .usa-layout-docs__sidenav {
+    position: sticky;
+    top: units(2);
+    align-self: start;
+  }
+}
+
+// USWDS rules the sidenav horizontally — a border-top on every item and a
+// border-bottom on the list — but gives it no sides, so in a wide column it
+// reads as loose text floating next to the content rather than as a panel you
+// can navigate. Closing the left and right edges is all it takes; the rules
+// upstream already draws become the divisions inside a box.
+//
+// Additive: no USWDS rule sets border-left or border-right here. The top edge
+// is deliberately left alone — .usa-sidenav__item already draws one above the
+// first item, and adding another would double the line.
+//
+// Scoped to tablet and up because below that USWDS pulls the list out to the
+// screen edges with a negative margin, where a boxed edge would sit outside the
+// page gutter.
+@include at-media("tablet") {
+  .usa-layout-docs__sidenav .usa-sidenav {
+    background-color: color("white");
+    border-left: units(1px) solid color("base-lighter");
+    border-right: units(1px) solid color("base-lighter");
+  }
+
+}
+
+// Nested lists are deliberately left untinted. base-lightest is the only shade
+// subtle enough for the job and it is already USWDS's link hover colour, so a
+// tint there would swallow the hover state on every nested item. The indent
+// USWDS applies, plus the blue rule on the open parent, already separate them.
+
+// Markdown produces four things USWDS has no component for, so nothing styles
+// them at all: blockquotes, code (inline and fenced), definition lists, and
+// task list checkboxes. A theme whose input is markdown cannot leave them to
+// browser defaults — an unstyled <code> is indistinguishable from body copy,
+// and an unstyled <pre> widens the column instead of scrolling.
+//
+// Everything here is additive: no USWDS rule targets these elements. Do not add
+// a font-family — `code` inherits the monospace stack from normalize, which is
+// what a site running fontTypeMono = false should get.
+.usa-prose {
+  blockquote {
+    border-left: units("05") solid color("primary-light");
+    color: color("base-dark");
+    margin-left: 0;
+    padding: units(1) 0 units(1) units(2);
+  }
+
+  code {
+    background-color: color("base-lightest");
+    border-radius: radius("sm");
+    font-size: 0.9em;
+    padding: units("2px") units("05");
+  }
+
+  // Chroma paints its own background on the <pre> when highlighting is on; this
+  // adds the frame and the horizontal scroll. The scroll is the load-bearing
+  // part — one long line must not be able to widen the reading column.
+  pre {
+    border: 1px solid color("base-lighter");
+    overflow-x: auto;
+    padding: units(2);
+  }
+
+  // Inside a code block the inline treatment would double up.
+  pre code {
+    background-color: transparent;
+    border-radius: 0;
+    font-size: 1em;
+    padding: 0;
+  }
+
+  dt {
+    font-weight: font-weight("bold");
+    margin-top: units(2);
+  }
+
+  dd {
+    margin-left: units(3);
+  }
+
+  // Goldmark renders a task list as a normal list item with a checkbox in it,
+  // so the bullet and the box sit side by side. :has removes the redundant
+  // marker where supported and degrades to that double marker where not.
+  li:has(> input[type="checkbox"]) {
+    list-style: none;
+  }
+
+  li > input[type="checkbox"] {
+    margin-right: units(1);
+  }
+}

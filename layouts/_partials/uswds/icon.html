@@ -1,0 +1,54 @@
+{{- /*
+  Renders a USWDS icon.
+
+  Default mode inlines the individual SVG. USWDS's sprite.svg is 71 KB for all
+  245 icons; a page using three icons should not pay that. Inlining costs a few
+  hundred bytes per icon and removes a request entirely.
+
+  Set params.uswds.iconMode = "sprite" for icon-dense pages, where one cached
+  71 KB file beats hundreds of inlined copies.
+
+  Usage:
+    {{ partial "uswds/icon" "search" }}
+    {{ partial "uswds/icon" (dict "name" "search" "class" "usa-icon--size-3" "aria-label" "Search") }}
+
+  Icons are named as in dist/img/usa-icons/, without the .svg extension.
+*/ -}}
+
+{{- $name := "" -}}
+{{- $class := "" -}}
+{{- $label := "" -}}
+{{- if reflect.IsMap . -}}
+  {{- $name = .name -}}
+  {{- $class = .class | default "" -}}
+  {{- $label = (index . "aria-label") | default "" -}}
+{{- else -}}
+  {{- $name = . -}}
+{{- end -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $dist := $u.distPath | default "uswds-dist" -}}
+{{- $classes := printf "usa-icon %s" $class | strings.TrimSpace -}}
+
+{{- /* Decorative icons must be hidden from assistive tech; a labelled icon is
+       announced instead. Getting this wrong is an accessibility defect, so the
+       two cases are kept explicit rather than merged. */ -}}
+{{- $a11y := "aria-hidden=\"true\"" -}}
+{{- with $label -}}
+  {{- $a11y = printf "role=\"img\" aria-label=%q" . -}}
+{{- end -}}
+
+{{- if eq ($u.iconMode | default "inline") "sprite" -}}
+  <svg class="{{ $classes }}" focusable="false" {{ $a11y | safeHTMLAttr }}><use href="{{ printf "%s/sprite.svg#%s" ($u.imagePath | default "/img/uswds") $name }}"></use></svg>
+{{- else -}}
+  {{- $path := printf "%s/img/usa-icons/%s.svg" $dist $name -}}
+  {{- with resources.Get $path -}}
+    {{- /* Strip the XML prologue and graft our classes and a11y attributes onto
+           the root <svg>, so the inlined markup matches the sprite output. */ -}}
+    {{- $svg := .Content | replaceRE `<\?xml[^>]*\?>` "" -}}
+    {{- $svg = $svg | replaceRE `<svg` (printf `<svg class=%q focusable="false" %s` $classes $a11y) -}}
+    {{- $svg | safeHTML -}}
+  {{- else -}}
+    {{- warnf "uswds: icon %q not found at %q — is the USWDS dist mount present in the site config?" $name $path -}}
+  {{- end -}}
+{{- end -}}

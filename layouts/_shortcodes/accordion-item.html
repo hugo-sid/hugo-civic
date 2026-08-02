@@ -1,0 +1,25 @@
+{{- /*
+  A single accordion panel. Must be nested inside {{< accordion >}} — it reads
+  heading_level from .Parent so the whole group keeps one consistent heading
+  level in the document outline.
+
+  aria-controls and the panel id are derived from .Ordinal, which is unique per
+  shortcode name per page, so ids stay stable and collision-free across multiple
+  accordions on one page.
+*/ -}}
+{{- $h := "h4" -}}
+{{- with .Parent }}{{ $h = .Get "heading_level" | default "h4" }}{{ end -}}
+{{- $id := printf "accordion-%d" .Ordinal -}}
+{{- /* Heading tags are built as strings and marked safeHTML: Go's html/template
+       cannot parse a dynamic tag name, and `<{{ $h }}>` is emitted escaped as
+       `&lt;h4>` rather than as an element. */ -}}
+{{- $hOpen := printf "<%s class=\"usa-accordion__heading\">" $h | safeHTML -}}
+{{- $hClose := printf "</%s>" $h | safeHTML -}}
+{{ $hOpen }}
+  <button type="button" class="usa-accordion__button" aria-expanded="{{ if eq (.Get "expanded") "true" }}true{{ else }}false{{ end }}" aria-controls="{{ $id }}">
+    {{ .Get "title" }}
+  </button>
+{{ $hClose }}
+<div id="{{ $id }}" class="usa-accordion__content usa-prose">
+{{ .Inner | .Page.RenderString (dict "display" "block") }}
+</div>

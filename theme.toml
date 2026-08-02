@@ -1,0 +1,12 @@
+name = "USWDS"
+license = "MIT"
+licenselink = "https://github.com/uswds/uswds/blob/develop/LICENSE.md"
+description = "A Hugo theme for the U.S. Web Design System, built for upgradeability and web performance."
+homepage = "https://designsystem.digital.gov/"
+demosite = ""
+tags = ["government", "uswds", "accessibility", "section508", "performance"]
+features = ["uswds", "accessible", "responsive", "multilingual", "performance-budgeted"]
+min_version = "0.146.0"
+
+[author]
+  name = "Sidharth R"

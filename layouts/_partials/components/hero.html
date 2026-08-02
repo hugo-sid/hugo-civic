@@ -1,0 +1,23 @@
+{{- /*
+  usa-hero — contract: packages/usa-hero/src/usa-hero.twig
+
+  @param callout    small emphasised lead-in inside the h1
+  @param title      required
+  @param paragraph  optional
+  @param button     optional {text, href}
+  @param image      optional; set as a background via an inline custom property
+
+  The heading is an <h1>: USWDS treats the hero as the page's main heading, so
+  a page with a hero should not also open its content with an h1.
+*/ -}}
+<section class="usa-hero" aria-label="{{ .aria_label | default (i18n "introduction" | default "Introduction") }}"{{ with .image }} style="background-image: url('{{ . }}')"{{ end }}>
+  <div class="grid-container">
+    <div class="usa-hero__callout">
+      <h1 class="usa-hero__heading">
+        {{- with .callout }}<span class="usa-hero__heading--alt">{{ . }}</span>{{ end }}{{ .title -}}
+      </h1>
+      {{- with .paragraph }}<p>{{ . | safeHTML }}</p>{{ end }}
+      {{- with .button }}<a class="usa-button" href="{{ .href }}">{{ .text }}</a>{{ end }}
+    </div>
+  </div>
+</section>

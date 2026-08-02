@@ -1,0 +1,30 @@
+{{- /*
+  usa-in-page-navigation — contract: packages/usa-in-page-navigation/src/usa-in-page-navigation.twig
+
+  The aside is empty by design: the usa-in-page-navigation behaviour scans the
+  main content for headings and builds the list at runtime, driven entirely by
+  the data-* attributes below.
+
+  Because it depends on JS to produce anything, it registers a behaviour and
+  degrades to nothing when JS is off — which is correct, since the underlying
+  headings remain in the content.
+
+  @param title_text      heading text, default "On this page"
+  @param heading_level   heading level for the nav title, default h4
+  @param min_headings    suppress the nav below this many headings
+  @param scroll_offset   px offset for sticky headers
+  @param heading_elements  space-separated levels to scan, e.g. "h2" or "h2 h3".
+                 USWDS defaults to h2+h3, which sweeps up headings belonging to
+                 COMPONENTS — a summary box's h3 shows up as a page section.
+                 Narrow this when the page uses components with headings.
+  @param page            the owning page; required so JS registration lands on it
+*/ -}}
+{{- partial "uswds/require" (dict "page" .page "component" "usa-in-page-navigation") -}}
+<aside class="usa-in-page-nav"
+  data-title-text="{{ .title_text | default (i18n "on_this_page" | default "On this page") }}"
+  data-title-heading-level="{{ .heading_level | default "h4" }}"
+  data-scroll-offset="{{ .scroll_offset | default 0 }}"
+  data-root-margin="0px 0px 0px 0px"
+  data-threshold="1"
+  {{- with .heading_elements }} data-heading-elements="{{ . }}"{{ end }}
+  {{- with .min_headings }} data-minimum-heading-count="{{ . }}"{{ end }}></aside>
