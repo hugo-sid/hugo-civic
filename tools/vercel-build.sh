@@ -174,7 +174,7 @@ main() {
   export PATH="${HOME}/.local/hugo:${PATH}"
 
   # Install Node.js
-  if [[ -f "package-lock.json" ]]; then
+  if [[ -f "package.json" ]]; then
     echo "Installing Node.js ${NODE_VERSION}..."
     curl -sfL --output-dir "${build_temp_dir}" -O "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz"
     tar -C "${HOME}/.local" -xf "${build_temp_dir}/node-v${NODE_VERSION}-linux-x64.tar.gz"
@@ -211,13 +211,18 @@ main() {
   # exist so local dev and CI use pinned binaries; here the tarballs above are
   # already on PATH, and installing them again would download ~60 MB for
   # nothing.
+  #
+  # package-lock.json is gitignored, so on Vercel this is normally the
+  # `npm install` branch: every direct dependency is pinned to an exact version
+  # in package.json, and what floats is the transitive set under @uswds/uswds
+  # (lit, and its lit-html/lit-element/@lit-* tree — bundled by js.Build, not
+  # by Sass). `npm ci` is still used if a lockfile happens to be present, since
+  # it is both faster and exact.
+  echo "Installing Node.js dependencies..."
   if [[ -f package-lock.json ]]; then
-    echo "Installing Node.js dependencies..."
     npm ci --omit=dev
   else
-    echo "ERROR: package-lock.json is missing. @uswds/uswds would not be" >&2
-    echo "       installed and the Sass build would fail on the first @use." >&2
-    exit 1
+    npm install --omit=dev --no-audit --no-fund
   fi
 
   # Recreate the symlinks a fresh clone does not have
