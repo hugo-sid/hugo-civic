@@ -9,6 +9,10 @@ resources/
 .hugo_build.lock
 hugo_stats.json
 
+# Vercel CLI project linking (.vercel/project.json holds the org and project
+# IDs) and the local build cache that tools/vercel-build.sh points Hugo at.
+.vercel/
+
 # Symlinks inside exampleSite that point back into this repo. These are NOT
 # covered by the patterns above: a trailing slash matches directories only, and
 # git records a symlink as a blob, not a directory. Left tracked,

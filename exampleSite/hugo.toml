@@ -1,7 +1,7 @@
 baseURL = "https://example.com/"
 locale = "en-us"
 title = "Example Agency"
-theme = "uswds"
+theme = "hugo-civic"
 
 enableRobotsTXT = true
 
@@ -134,6 +134,12 @@ enableRobotsTXT = true
     name = "Privacy"
     url = "/privacy/"
     weight = 40
+
+# Keep processed images in Hugo's cacheDir rather than ./resources, so that a CI
+# platform which restores cacheDir between builds does not reprocess every image
+# from scratch. tools/vercel-build.sh points HUGO_CACHEDIR at .vercel/cache.
+[caches.images]
+  dir = ':cacheDir/images'
 
 [markup]
   [markup.goldmark.renderer]

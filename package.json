@@ -1,9 +1,15 @@
 {
-  "name": "uswds-hugo-theme",
+  "name": "hugo-civic",
   "version": "0.1.0",
   "description": "A Hugo theme for the U.S. Web Design System, built for upgradeability and web performance.",
-  "license": "CC0-1.0",
-  "keywords": ["hugo", "hugo-theme", "uswds", "government", "accessibility"],
+  "license": "MIT",
+  "keywords": [
+    "hugo",
+    "hugo-theme",
+    "uswds",
+    "government",
+    "accessibility"
+  ],
   "scripts": {
     "dev": "cd exampleSite && hugo server --disableFastRender",
     "build": "cd exampleSite && hugo --minify",
@@ -23,6 +29,6 @@
     "sass-embedded": "^1.80.0"
   },
   "engines": {
-    "node": ">=20"
+    "node": "24.x"
   }
 }
