@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "npm install",
+  "installCommand": "echo 'Dependencies are installed by tools/vercel-build.sh'",
   "buildCommand": "bash tools/vercel-build.sh",
   "outputDirectory": "exampleSite/public",
   "cleanUrls": true,
