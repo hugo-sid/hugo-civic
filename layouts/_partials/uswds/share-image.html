@@ -1,0 +1,81 @@
+{{- /*
+  Resolves the image a page should be shared with.
+
+  Takes the PAGE. Returns a dict — empty when there is nothing to share:
+
+    url     absolute URL, always (crawlers do not resolve relative ones)
+    width   pixels, 0 when unknown
+    height  pixels, 0 when unknown
+    alt     alt text, "" when unset
+
+  Looked up in order:
+
+    1. front matter `images` — Hugo's own convention, a list; first wins
+    2. front matter `image`  — what most authors reach for
+    3. params.uswds.ogImage  — the site-wide fallback
+
+  A value may be an absolute URL, a page-bundle resource name, a path under
+  assets/, or a path to a file in static/. They are tried in that order, so
+  `image: cover.jpg` picks up the copy inside the page bundle rather than a
+  same-named file elsewhere.
+
+  Images found in the asset pipeline are capped at 1200px wide — the width
+  Facebook and Twitter render at, above which the bytes are simply discarded by
+  the crawler. They are never CROPPED to the recommended 1200x630: a site whose
+  share image is a square seal or a portrait would have it beheaded, and a
+  letterboxed card is a better failure than a decapitated one.
+
+  SVG is passed through untouched. It has no intrinsic pixel size for Hugo to
+  read, and no major crawler renders it in a card anyway — a site using one
+  gets whatever its own testing showed, rather than a build error.
+*/ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $page := . -}}
+
+{{- $candidate := "" -}}
+{{- with .Params.images }}{{ $candidate = index . 0 }}{{ end -}}
+{{- if not $candidate }}{{ with .Params.image }}{{ $candidate = . }}{{ end }}{{ end -}}
+{{- if not $candidate }}{{ with $u.ogImage }}{{ $candidate = . }}{{ end }}{{ end -}}
+
+{{- $url := "" -}}
+{{- $width := 0 -}}
+{{- $height := 0 -}}
+
+{{- /* One return statement, at the end. Hugo rewrites `return` at parse time
+       and a partial carrying two of them fails to build with a misleading
+       "wrong number of args for return" — so the no-image case falls through
+       to an empty dict rather than returning early. */ -}}
+{{- if not $candidate -}}
+{{- else if strings.HasPrefix $candidate "http" -}}
+  {{- $url = $candidate -}}
+{{- else -}}
+  {{- $res := $page.Resources.GetMatch $candidate -}}
+  {{- if not $res }}{{ $res = resources.Get $candidate }}{{ end -}}
+  {{- with $res -}}
+    {{- if and (eq .ResourceType "image") (ne .MediaType.Type "image/svg+xml") -}}
+      {{- $img := . -}}
+      {{- if gt $img.Width 1200 }}{{ $img = $img.Resize "1200x" }}{{ end -}}
+      {{- $width = $img.Width -}}
+      {{- $height = $img.Height -}}
+      {{- $url = $img.Permalink -}}
+    {{- else -}}
+      {{- $url = .Permalink -}}
+    {{- end -}}
+  {{- else -}}
+    {{- /* Not in the asset pipeline: assume static/, which Hugo copies
+           verbatim and has no resource object for. */ -}}
+    {{- $url = $candidate | absURL -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $result := dict -}}
+{{- with $url -}}
+  {{- $result = dict
+        "url"    .
+        "width"  $width
+        "height" $height
+        "alt"    ($page.Params.imageAlt | default $u.ogImageAlt | default "") -}}
+{{- end -}}
+
+{{- return $result -}}

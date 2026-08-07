@@ -51,6 +51,11 @@ enableRobotsTXT = true
   preset = "standard"
   iconMode = "inline"
 
+  # The image a page is shared with when its front matter names none. Resolved
+  # through the asset pipeline, so this is a path under assets/.
+  ogImage = "img/og-default.png"
+  ogImageAlt = "Example Agency"
+
 [params.uswds.theme]
   colorPrimary = "blue-60v"
   colorPrimaryDarker = "blue-warm-80v"

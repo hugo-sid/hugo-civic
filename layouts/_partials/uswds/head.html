@@ -47,9 +47,59 @@
 {{- end }}
 
 {{- /* Open Graph: cheap, and government pages get shared. */ -}}
-<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+{{- $shareTitle := cond .IsHome site.Title .Title -}}
+{{- $shareDesc := "" -}}
+{{- with (.Description | default .Summary | default site.Params.description) }}{{ $shareDesc = . | plainify | truncate 160 }}{{ end -}}
+{{- $share := partial "uswds/share-image" . -}}
+<meta property="og:title" content="{{ $shareTitle }}">
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
-{{- with (.Description | default site.Params.description) }}
-<meta property="og:description" content="{{ . | plainify | truncate 160 }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+{{- /* og:locale wants language_TERRITORY (en_US); Hugo's Locale is a BCP 47
+       tag (en-us). Anything that is not two parts is passed through as-is
+       rather than mangled. */ -}}
+{{- with (site.Language.Locale | default site.Language.Lang) }}
+  {{- $parts := split . "-" }}
+<meta property="og:locale" content="{{ if eq (len $parts) 2 }}{{ index $parts 0 }}_{{ upper (index $parts 1) }}{{ else }}{{ . }}{{ end }}">
+{{- end }}
+{{- with $shareDesc }}
+<meta property="og:description" content="{{ . }}">
+{{- end }}
+{{- with $share.url }}
+<meta property="og:image" content="{{ . }}">
+{{- with $share.width }}
+<meta property="og:image:width" content="{{ . }}">
+<meta property="og:image:height" content="{{ $share.height }}">
+{{- end }}
+{{- with $share.alt }}
+<meta property="og:image:alt" content="{{ . }}">
+{{- end }}
+{{- end }}
+{{- /* Dates are Open Graph's article namespace, not Twitter's, and only mean
+       anything on a page that has one. */ -}}
+{{- if and .IsPage (not .Date.IsZero) }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+  {{- if .Lastmod.After .Date }}
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+  {{- end }}
+  {{- range .GetTerms "tags" }}
+<meta property="article:tag" content="{{ .LinkTitle }}">
+  {{- end }}
+{{- end }}
+
+{{- /* Twitter reads the og:* tags for everything it can, so the only tags that
+       have to be repeated are the ones with no Open Graph equivalent. The card
+       type is the important one: without it a shared link renders as a bare
+       text row even when og:image is present.
+
+       summary_large_image needs an image of at least 300x157; below that
+       Twitter falls back to `summary` on its own, but declaring the smaller
+       card ourselves keeps the preview from being cropped to a square. An
+       image whose size we could not read (SVG, or an off-site URL) is assumed
+       large — the tag is a hint, and the crawler measures for itself. */ -}}
+{{- $largeCard := false }}
+{{- with $share.url }}{{ $largeCard = or (eq $share.width 0) (ge $share.width 300) }}{{ end }}
+<meta name="twitter:card" content="{{ cond $largeCard "summary_large_image" "summary" }}">
+{{- with (site.Params.uswds.twitter | default "") }}
+<meta name="twitter:site" content="{{ . }}">
 {{- end }}
