@@ -51,6 +51,59 @@
 // tint there would swallow the hover state on every nested item. The indent
 // USWDS applies, plus the blue rule on the open parent, already separate them.
 
+// .usa-in-page-nav-container is a flex row, and USWDS gives its <main> a
+// max-width and a width but no min-width — so it keeps the flex default of
+// `auto`, a floor equal to the min-content width of its widest child. A fenced
+// code block has `white-space: pre`, so its min-content width is its LONGEST
+// LINE IN FULL, and main cannot shrink past it. The in-page nav, being the only
+// other item in the row, pays for every character.
+//
+// Measured at a 1337px viewport, docs column 844px:
+//
+//   /docs/getting-started/  widest block 504px  ->  main 572, nav 240  (correct)
+//   /docs/blog/             75-char fence 757px ->  main 757, nav 137  (broken,
+//                                                   one word per line)
+//
+// The `overflow-x: auto` on `pre` below does NOT prevent this, which is the
+// counter-intuitive part and the reason this rule is separate from it: the
+// "automatic minimum size is zero when overflow is not visible" rule applies to
+// a scroll container that IS the flex item, not to one nested inside it. The
+// pre only gets to scroll once something else has settled main's width.
+//
+// min-width: 0 is what settles it. Additive — USWDS sets max-width and width on
+// this element and never min-width.
+.usa-in-page-nav-container main {
+  min-width: 0;
+}
+
+// One reading column, whether or not the article has an in-page nav.
+//
+// The nav is 15rem wide with a 2rem gutter and lays out as a flex sibling of
+// <main>, so an article that has one gets 17rem less width than an article that
+// does not. Between two documentation pages that are otherwise identical, that
+// moved the h1, the code blocks and the reading measure — the width of the page
+// depended on how many h2s the author happened to write.
+//
+// Reserving the same 17rem on every article makes the column independent of the
+// nav. Where the nav IS present this changes nothing: the flex algorithm already
+// arrives at container - 15rem - 2rem, and this max-width computes to the same
+// number. It only does work where the nav is absent.
+//
+// Below tablet the nav is display: none and the reserve would be dead space, so
+// the rule starts at the breakpoint USWDS reveals the nav at.
+//
+// This is the theme's only class of its own. It exists because the alternative
+// selectors are accidents rather than intent: `main.usa-prose` would also catch
+// the inner main in 404.html, and `.usa-layout-docs__main` is USWDS vocabulary
+// that carries no styles of its own upstream and is used on that same 404 main.
+@include at-media("tablet") {
+  .article-column {
+    max-width: calc(
+      100% - #{units("card-lg") + units($theme-in-page-nav-margin-left)}
+    );
+  }
+}
+
 // Markdown produces four things USWDS has no component for, so nothing styles
 // them at all: blockquotes, code (inline and fenced), definition lists, and
 // task list checkboxes. A theme whose input is markdown cannot leave them to
@@ -76,8 +129,13 @@
   }
 
   // Chroma paints its own background on the <pre> when highlighting is on; this
-  // adds the frame and the horizontal scroll. The scroll is the load-bearing
-  // part — one long line must not be able to widen the reading column.
+  // adds the frame and the horizontal scroll.
+  //
+  // The scroll only takes effect once an ancestor has a width of its own to
+  // impose. In block layout that is automatic. Inside the in-page-nav flex row
+  // it is not, and the min-width: 0 rule above is what supplies it — the two
+  // rules are a pair, and removing either one puts a long line back into the
+  // page layout.
   pre {
     border: 1px solid color("base-lighter");
     overflow-x: auto;

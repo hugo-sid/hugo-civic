@@ -54,7 +54,10 @@
                 "min_headings" .Params.in_page_nav_min_headings) }}
         {{- end }}
 
-        <main id="main-content" class="usa-prose">
+        {{- /* .article-column reserves the in-page nav's width whether or not
+               this page has one, so the reading column does not change size
+               between two otherwise identical articles. See _custom.scss. */ -}}
+        <main id="main-content" class="usa-prose article-column">
           <h1>{{ .Title }}</h1>
           {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
           {{ .Content }}
