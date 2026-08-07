@@ -93,6 +93,18 @@ other = "Última página,"
 [pagination_overflow]
 other = "puntos suspensivos que indican páginas no visibles"
 
+# --- Taxonomies -----------------------------------------------------------
+
+[tagged_with]
+other = "Etiquetado con"
+
+[browse_topics]
+other = "Explorar por tema"
+
+[item_count]
+one = "{{ . }} página"
+other = "{{ . }} páginas"
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

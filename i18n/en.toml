@@ -95,6 +95,18 @@ other = "Last page,"
 [pagination_overflow]
 other = "ellipsis indicating non-visible pages"
 
+# --- Taxonomies -----------------------------------------------------------
+
+[tagged_with]
+other = "Tagged with"
+
+[browse_topics]
+other = "Browse by topic"
+
+[item_count]
+one = "{{ . }} page"
+other = "{{ . }} pages"
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

@@ -1,0 +1,29 @@
+{{ define "main" }}
+{{- /* One term of a taxonomy: /tags/accessibility/, /categories/policy/.
+
+       Without this template Hugo falls back to list.html, which is built for a
+       section: it looks for a sidenav rooted at .FirstSection, and on a term
+       page .FirstSection is the taxonomy itself, so every term page grew a
+       navigation box listing every other term.
+
+       The heading is the term alone. Its context comes from the breadcrumb
+       directly above it ("Home / Tags / Accessibility"), which is both shorter
+       and translatable — a hardcoded "Tagged with:" prefix is wrong the moment
+       the taxonomy is `categories` or a site-specific one. */ -}}
+<div class="padding-top-1 padding-bottom-4">
+  <div class="grid-container">
+    {{- partial "chrome/breadcrumb" . }}
+    <main id="main-content">
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
+      {{- with .Content }}<div class="usa-prose">{{ . }}</div>{{ end }}
+      {{- with .Pages }}
+      <p class="font-body-3xs text-base">{{ i18n "item_count" (len .) }}</p>
+      {{- $paginator := $.Paginate . }}
+      {{- partial "components/collection" (dict "pages" $paginator.Pages) }}
+      {{- partial "components/pagination" $paginator }}
+      {{- end }}
+    </main>
+  </div>
+</div>
+{{ end }}

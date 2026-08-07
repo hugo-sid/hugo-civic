@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{- /* The index of a taxonomy: /tags/, /categories/.
+
+       .Pages on a taxonomy page is the list of TERM pages, so each entry's own
+       .Pages is the content filed under it — that is where the count comes
+       from, with no reach into .Data.Terms.
+
+       Deliberately not paginated, unlike term.html. A term index is a
+       navigation aid: splitting the vocabulary of a site across numbered pages
+       hides exactly the terms a reader is scanning for. Sections and terms
+       paginate because those are lists of articles.
+
+       The markup is usa-collection, written out here rather than delegated to
+       components/collection, because the heading level (h2 under the page h1)
+       and the meta line (a count, not a date) both differ from an article
+       listing. */ -}}
+<div class="padding-top-1 padding-bottom-4">
+  <div class="grid-container">
+    {{- partial "chrome/breadcrumb" . }}
+    <main id="main-content">
+      <h1>{{ .Title | default (i18n "browse_topics" | default "Browse by topic") }}</h1>
+      {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
+      {{- with .Content }}<div class="usa-prose">{{ . }}</div>{{ end }}
+      {{- with .Pages }}
+      <ul class="usa-collection">
+        {{- range . }}
+        <li class="usa-collection__item">
+          <div class="usa-collection__body">
+            <h2 class="usa-collection__heading">
+              <a class="usa-link" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+            </h2>
+            <ul class="usa-collection__meta" aria-label="{{ i18n "more_information" | default "More information" }}">
+              <li class="usa-collection__meta-item">{{ i18n "item_count" (len .Pages) }}</li>
+            </ul>
+          </div>
+        </li>
+        {{- end }}
+      </ul>
+      {{- end }}
+    </main>
+  </div>
+</div>
+{{ end }}
