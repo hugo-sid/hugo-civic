@@ -6,8 +6,9 @@
        A top-level landing page (/docs/, /news/) is excluded: it is the root of
        its own tree, so a sidenav there would list exactly what the page already
        lists below the heading. */ -}}
+{{- /* `sidenav: false` opts a section out entirely — see single.html. */ -}}
 {{- $navRoot := .FirstSection -}}
-{{- $hasSidenav := and $navRoot (not $navRoot.IsHome) (ne $navRoot .) $navRoot.Pages -}}
+{{- $hasSidenav := and $navRoot (not $navRoot.IsHome) (ne $navRoot .) $navRoot.Pages (ne .Params.sidenav false) -}}
 <div class="padding-top-1 padding-bottom-4">
   <div class="grid-container">
     {{- partial "chrome/breadcrumb" . }}

@@ -5,8 +5,14 @@
        of the documentation the moment they opened a subsection. .FirstSection
        is the section directly below home, so the whole tree travels with them
        and chrome/sidenav opens the branch they are in. */ -}}
+{{- /* `sidenav: false` — usually cascaded from a section's _index.md — opts a
+       whole section out of the side navigation. A flat, dated feed is not a
+       tree: listing every sibling down the left of an article is a table of
+       contents for something that has no order to read it in, and it competes
+       with the onward block at the foot of the page. Documentation sections,
+       which ARE trees, leave it unset. */ -}}
 {{- $navRoot := .FirstSection -}}
-{{- $hasSidenav := and $navRoot (not $navRoot.IsHome) $navRoot.Pages -}}
+{{- $hasSidenav := and $navRoot (not $navRoot.IsHome) $navRoot.Pages (ne .Params.sidenav false) -}}
 {{- $inPageNav := .Params.in_page_nav | default false -}}
 {{- /* Not .usa-section: its 2rem of top padding sits on top of the breadcrumb's
        own 1rem, and on a docs page — where the reader arrived to read something

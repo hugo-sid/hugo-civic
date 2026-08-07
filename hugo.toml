@@ -100,6 +100,11 @@
   # An article ends with ONE onward block, never two: related content when the
   # related index matches, previous/next when it does not. See
   # _partials/article/onward.html for why.
+  #
+  # The side navigation is not here. It is per-section front matter
+  # (`sidenav: false`, usually cascaded from the section's _index.md), because
+  # a site normally wants a tree in its documentation and a flat feed in its
+  # news.
   date = true       # date/author byline under the title
   prevNext = true   # the fallback onward block, when nothing is related
   related = 3       # related pages to list; 0 makes prev/next the only branch
