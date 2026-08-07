@@ -38,6 +38,11 @@
     }
   ],
   "packages": {
-    ".": {}
+    ".": {
+      "release-type": "node",
+      "package-name": "hugo-civic",
+      "include-component-in-tag": false,
+      "changelog-path": "CHANGELOG.md"
+    }
   }
 }

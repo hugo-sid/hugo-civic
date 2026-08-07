@@ -14,6 +14,8 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
+      # Manifest mode. Passing `release-type` here would bootstrap from inline
+      # inputs instead and silently ignore release-please-config.json, taking
+      # the changelog sections with it. The action finds the config and
+      # manifest by their default names, so it takes no inputs at all.
       - uses: googleapis/release-please-action@v4
-        with:
-          release-type: simple
