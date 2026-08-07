@@ -26,7 +26,20 @@
           {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
           {{- with .Content }}<div class="usa-prose">{{ . }}</div>{{ end }}
           {{- with .Pages }}
-            {{- partial "components/collection" (dict "pages" . "variant" ($.Params.collection_variant | default "")) }}
+            {{- $variant := $.Params.collection_variant | default "" }}
+            {{- /* "cards" is usa-card-group rather than usa-collection — a
+                   different component, so the choice is made here rather than
+                   inside the collection partial. Cards carry a kicker, a
+                   description and an image; a collection is denser and reads
+                   better once a section is long. */ -}}
+            {{- if eq $variant "cards" }}
+              {{- partial "components/card-group" (dict
+                    "pages" .
+                    "page" $
+                    "grid" ($.Params.card_grid | default "tablet:grid-col-6 desktop:grid-col-4")) }}
+            {{- else }}
+              {{- partial "components/collection" (dict "pages" . "variant" $variant) }}
+            {{- end }}
           {{- end }}
         </main>
       </div>

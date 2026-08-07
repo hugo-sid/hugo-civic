@@ -4,14 +4,28 @@
   Cards are always rendered as a group: USWDS's markup puts .usa-card inside
   .usa-card-group, and a lone .usa-card outside that wrapper loses its layout.
 
-  @param cards      slice of {title, content, href, link_text, media, header_first,
-                              flag_direction, classes}
+  @param cards      slice of {title, content, href, link_text, media, kicker,
+                              meta, heading_href, header_first, flag_direction,
+                              classes}
+  @param pages      page collection, rendered as cards INSTEAD of `cards`
   @param modifier   applied to every card, e.g. "usa-card--flag" | "usa-card--header-first"
   @param grid       per-card grid classes, default "tablet:grid-col-6 desktop:grid-col-4"
   @param heading_level  h2..h6, default h2
 
   Media images go through Hugo's image pipeline when the source resolves to a
   page or site resource; a bare URL is passed through untouched.
+
+  `pages` is the listing form, used by list.html for
+  `collection_variant: "cards"`. Each page becomes a card carrying its first
+  tag as a kicker, its description, and its byline — the shape USWDS's own site
+  gives a news item (_includes/post-preview.html), expressed through the card
+  component rather than through custom classes.
+
+  Cards are derived here rather than in the template because the image has to
+  be resolved against the CARD'S page, not the list page: `image: cover.jpg` in
+  a post's front matter means the copy in that post's bundle. The resolved
+  resource is handed back through `media.image`, which is why that key exists
+  alongside `media.image_src`.
 */ -}}
 {{- $modifier := .modifier | default "" -}}
 {{- $grid := .grid | default "tablet:grid-col-6 desktop:grid-col-4" -}}
@@ -22,40 +36,101 @@
 {{- $hOpen := printf "<%s class=\"usa-card__heading\">" $h | safeHTML -}}
 {{- $hClose := printf "</%s>" $h | safeHTML -}}
 {{- $page := .page -}}
+
+{{- /* Derive cards from a page collection. */ -}}
+{{- $cards := .cards -}}
+{{- with .pages -}}
+  {{- $derived := slice -}}
+  {{- range . -}}
+    {{- $p := . -}}
+
+    {{- /* The first tag, as USWDS's site does it: one kicker, not the whole
+           list. A card is a summary, and a row of tags competes with the
+           heading it sits above. */ -}}
+    {{- $kicker := "" -}}
+    {{- with $p.Params.tags }}{{ $kicker = index . 0 }}{{ end -}}
+
+    {{- $meta := slice -}}
+    {{- with $p.Params.author -}}
+      {{- $meta = $meta | append (printf "%s %s" (i18n "by_author" | default "By") (cond (reflect.IsSlice .) (delimit . ", ") (printf "%v" .))) -}}
+    {{- end -}}
+    {{- if not $p.Date.IsZero }}{{ $meta = $meta | append ($p.Date | time.Format ":date_long") }}{{ end -}}
+
+    {{- /* Front matter `images` (first) or `image`, resolved against this
+           page's own bundle before the site's assets. Absent is normal — a
+           card group without media is valid USWDS markup. */ -}}
+    {{- $src := "" -}}
+    {{- with $p.Params.images }}{{ $src = index . 0 }}{{ end -}}
+    {{- if not $src }}{{ with $p.Params.image }}{{ $src = . }}{{ end }}{{ end -}}
+    {{- $media := "" -}}
+    {{- with $src -}}
+      {{- $img := $p.Resources.GetMatch . -}}
+      {{- if not $img }}{{ $img = resources.Get . }}{{ end -}}
+      {{- $media = dict "image" $img "image_src" . "image_alt_text" ($p.Params.imageAlt | default "") -}}
+    {{- end -}}
+
+    {{- $derived = $derived | append (dict
+          "title"        $p.LinkTitle
+          "heading_href" $p.RelPermalink
+          "kicker"       $kicker
+          "content"      ($p.Description | default $p.Summary | plainify | truncate 160)
+          "meta"         (delimit $meta " · ")
+          "media"        $media
+          "href"         $p.RelPermalink
+          "link_text"    (i18n "read_more" | default "Read more")) -}}
+  {{- end -}}
+  {{- $cards = $derived -}}
+{{- end -}}
+
 <ul class="usa-card-group">
-  {{- range .cards }}
+  {{- range $cards }}
+  {{- /* The card, held in a variable. Inside `range` in a PARTIAL, `$` is the
+         partial's own argument, not the current item — reaching for `$.title`
+         or `$.link_text` here silently yields nothing. */ -}}
+  {{- $card := . -}}
   {{- $classes := slice "usa-card" -}}
   {{- with $modifier }}{{ $classes = $classes | append . }}{{ end -}}
-  {{- if .header_first }}{{ $classes = $classes | append "usa-card--header-first" }}{{ end -}}
-  {{- if eq .flag_direction "right" }}{{ $classes = $classes | append "usa-card--media-right" }}{{ end -}}
-  {{- $classes = $classes | append (.classes | default $grid) -}}
+  {{- if $card.header_first }}{{ $classes = $classes | append "usa-card--header-first" }}{{ end -}}
+  {{- if eq $card.flag_direction "right" }}{{ $classes = $classes | append "usa-card--media-right" }}{{ end -}}
+  {{- $classes = $classes | append ($card.classes | default $grid) -}}
   <li class="{{ delimit $classes " " }}">
     <div class="usa-card__container">
       <div class="usa-card__header">
-        {{ $hOpen }}{{ .title }}{{ $hClose }}
+        {{- with $card.kicker }}
+        <p class="font-body-3xs text-base margin-y-0">{{ . }}</p>
+        {{- end }}
+        {{ $hOpen }}{{ with $card.heading_href }}<a class="usa-link" href="{{ . }}">{{ $card.title }}</a>{{ else }}{{ $card.title }}{{ end }}{{ $hClose }}
       </div>
-      {{- with .media }}
+      {{- with $card.media }}
       <div class="usa-card__media">
         <div class="usa-card__img">
           {{- $src := .image_src -}}
-          {{- $img := "" -}}
-          {{- with $page }}{{ $img = .Resources.GetMatch $src }}{{ end -}}
+          {{- $alt := .image_alt_text | default "" -}}
+          {{- $img := .image -}}
+          {{- if not $img }}{{ with $page }}{{ $img = .Resources.GetMatch $src }}{{ end }}{{ end -}}
           {{- if not $img }}{{ $img = resources.Get $src }}{{ end -}}
           {{- with $img -}}
             {{- $r := .Resize "600x webp q80" -}}
-            <img src="{{ $r.RelPermalink }}" width="{{ $r.Width }}" height="{{ $r.Height }}" alt="{{ $.image_alt_text | default "" }}" loading="lazy">
+            <img src="{{ $r.RelPermalink }}" width="{{ $r.Width }}" height="{{ $r.Height }}" alt="{{ $alt }}" loading="lazy">
           {{- else -}}
-            <img src="{{ $src }}" alt="{{ .image_alt_text | default "" }}" loading="lazy">
+            <img src="{{ $src }}" alt="{{ $alt }}" loading="lazy">
           {{- end }}
         </div>
       </div>
       {{- end }}
-      {{- with .content }}
-      <div class="usa-card__body"><p>{{ . | safeHTML }}</p></div>
+      {{- if or $card.content $card.meta }}
+      <div class="usa-card__body">
+        {{- with $card.content }}<p>{{ . | safeHTML }}</p>{{ end }}
+        {{- with $card.meta }}<p class="font-body-3xs text-base">{{ . }}</p>{{ end }}
+      </div>
       {{- end }}
-      {{- with .href }}
+      {{- with $card.href }}
+      {{- /* The heading already links here when it is a page card, so the
+             button repeats the destination. It is labelled with the title so
+             that a screen reader reading links out of context does not get a
+             column of identical "Read more"s. */ -}}
       <div class="usa-card__footer">
-        <a href="{{ . }}" class="usa-button">{{ $.link_text | default (i18n "read_more" | default "Read more") }}</a>
+        <a href="{{ . }}" class="usa-button"{{ with $card.heading_href }} aria-label="{{ printf "%s: %s" ($card.link_text | default (i18n "read_more" | default "Read more")) $card.title }}"{{ end }}>{{ $card.link_text | default (i18n "read_more" | default "Read more") }}</a>
       </div>
       {{- end }}
     </div>
