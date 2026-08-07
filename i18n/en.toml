@@ -79,6 +79,22 @@ other = "Next"
 [related_content]
 other = "Related content"
 
+# --- Pagination -----------------------------------------------------------
+#
+# The aria-label wording is USWDS's own: packages/usa-pagination/src/content.
+
+[pagination]
+other = "Pagination"
+
+[page]
+other = "Page"
+
+[last_page]
+other = "Last page,"
+
+[pagination_overflow]
+other = "ellipsis indicating non-visible pages"
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

@@ -79,6 +79,20 @@ other = "Siguiente"
 [related_content]
 other = "Contenido relacionado"
 
+# --- Pagination -----------------------------------------------------------
+
+[pagination]
+other = "Paginación"
+
+[page]
+other = "Página"
+
+[last_page]
+other = "Última página,"
+
+[pagination_overflow]
+other = "puntos suspensivos que indican páginas no visibles"
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

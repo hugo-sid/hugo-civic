@@ -1,0 +1,93 @@
+{{- /*
+  usa-pagination — contract: packages/usa-pagination/src/usa-pagination.twig
+                             includes/_pagination-button.twig
+                             includes/_pagination-arrow.twig
+                             includes/_pagination-numbers--default.twig
+
+  Takes Hugo's PAGINATOR, not the page:
+
+      {{ $paginator := .Paginate .Pages }}
+      {{ partial "components/pagination" $paginator }}
+
+  The caller has to do the paginating because .Paginate may be invoked only
+  once per page, and it is the caller that decides what gets paginated.
+
+  Renders nothing for a single page of results.
+
+  The window of page numbers is upstream's, reproduced exactly — it is not
+  "show N either side", and the four cases below are not interchangeable:
+
+    <= 7 pages          every number, no ellipsis
+    current <= 4        1 2 3 4 5 … last
+    current >= last-3   1 … last-4 last-3 last-2 last-1 last
+    otherwise           1 … current-1 current current+1 … last
+
+  Seven slots is what keeps the row inside a phone's width at USWDS's target
+  size of 5 units per item; the ellipsis is a list item rather than a gap so
+  that the count of interactive targets stays stable as the reader moves
+  through the set.
+
+  usa-pagination hides the previous/next arrows below the `tablet` breakpoint
+  ($theme-pagination-breakpoint) on the reasoning that the numbers are the
+  mobile affordance. That is why this partial is not reused for article
+  previous/next links, where no numbers exist — see article/page-nav.html.
+*/ -}}
+
+{{- $p := . -}}
+{{- $total := $p.TotalPages -}}
+{{- $current := $p.PageNumber -}}
+
+{{- if gt $total 1 -}}
+{{- /* Page numbers to show. 0 is the ellipsis marker — real page numbers are
+       1-based, so it cannot collide with one. */ -}}
+{{- $items := slice -}}
+{{- if le $total 7 -}}
+  {{- $items = seq 1 $total -}}
+{{- else if le $current 4 -}}
+  {{- $items = (seq 1 5) | append 0 | append $total -}}
+{{- else if ge $current (sub $total 3) -}}
+  {{- $items = slice 1 0 -}}
+  {{- range seq (sub $total 4) $total }}{{ $items = $items | append . }}{{ end -}}
+{{- else -}}
+  {{- $items = slice 1 0 -}}
+  {{- range seq (sub $current 1) (add $current 1) }}{{ $items = $items | append . }}{{ end -}}
+  {{- $items = $items | append 0 | append $total -}}
+{{- end -}}
+
+{{- $pageLabel := i18n "page" | default "Page" -}}
+<nav aria-label="{{ i18n "pagination" | default "Pagination" }}" class="usa-pagination">
+  <ul class="usa-pagination__list">
+    {{- if $p.HasPrev }}
+    <li class="usa-pagination__item usa-pagination__arrow">
+      <a href="{{ $p.Prev.URL }}" class="usa-pagination__link usa-pagination__previous-page" aria-label="{{ i18n "previous" | default "Previous" }} {{ lower $pageLabel }}">
+        {{- partial "uswds/icon" "navigate_before" }}
+        <span class="usa-pagination__link-text">{{ i18n "previous" | default "Previous" }}</span>
+      </a>
+    </li>
+    {{- end }}
+    {{- range $items }}
+      {{- if eq . 0 }}
+    <li class="usa-pagination__item usa-pagination__overflow" aria-label="{{ i18n "pagination_overflow" | default "ellipsis indicating non-visible pages" }}">
+      <span>…</span>
+    </li>
+      {{- else }}
+        {{- $isCurrent := eq . $current }}
+        {{- $isLast := eq . $total }}
+        {{- $label := printf "%s %d" $pageLabel . }}
+        {{- if $isLast }}{{ $label = printf "%s %s %d" (i18n "last_page" | default "Last page,") (lower $pageLabel) . }}{{ end }}
+    <li class="usa-pagination__item usa-pagination__page-no">
+      <a href="{{ (index $p.Pagers (sub . 1)).URL }}" class="usa-pagination__button{{ if $isCurrent }} usa-current{{ end }}" aria-label="{{ $label }}"{{ if $isCurrent }} aria-current="page"{{ end }}>{{ . }}</a>
+    </li>
+      {{- end }}
+    {{- end }}
+    {{- if $p.HasNext }}
+    <li class="usa-pagination__item usa-pagination__arrow">
+      <a href="{{ $p.Next.URL }}" class="usa-pagination__link usa-pagination__next-page" aria-label="{{ i18n "next" | default "Next" }} {{ lower $pageLabel }}">
+        <span class="usa-pagination__link-text">{{ i18n "next" | default "Next" }}</span>
+        {{- partial "uswds/icon" "navigate_next" }}
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+</nav>
+{{- end -}}

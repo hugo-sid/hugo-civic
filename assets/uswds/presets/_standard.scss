@@ -3,8 +3,15 @@
 // Everything in `minimal`, plus the content components a typical government
 // site actually uses. Excludes the form-control and advanced-interaction set
 // (combo box, date pickers, file input, modal, tooltip, validation, step
-// indicator, pagination, language selector, embed) — add those by switching to
-// the `full` preset or supplying a custom manifest.
+// indicator, language selector, embed) — add those by switching to the `full`
+// preset or supplying a custom manifest.
+//
+// usa-pagination is here rather than in `full` because list.html paginates by
+// default: any section with more entries than [pagination].pagerSize emits the
+// component, and leaving it to `full` would render that control as a bare row
+// of numbers on the theme's own default preset. It travels with
+// usa-collection, which is already here for the same reason — `minimal` has
+// neither, and a listing page on `minimal` is unstyled by design.
 //
 // Subset of packages/uswds/_index.scss, in upstream order. See _minimal.scss.
 
@@ -31,6 +38,7 @@
 @forward "usa-layout-grid/src/styles";
 @forward "usa-media-block/src/styles";
 @forward "usa-nav/src/styles";
+@forward "usa-pagination/src/styles";
 @forward "usa-process-list/src/styles";
 @forward "usa-search/src/styles";
 @forward "usa-section/src/styles";

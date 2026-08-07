@@ -123,3 +123,10 @@
 # exampleSite/hugo.toml carries the one this theme recommends, and
 # _partials/article/onward.html falls back to previous/next links when a site
 # has not set it.
+
+# Pagination, applied by list.html and term.html.
+#
+# Hugo's own default is 10, restated here so that the number a site has to
+# change is visible in the theme's config rather than implied by Hugo's.
+[pagination]
+  pagerSize = 10

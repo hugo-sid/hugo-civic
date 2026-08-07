@@ -25,7 +25,17 @@
           <h1>{{ .Title }}</h1>
           {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
           {{- with .Content }}<div class="usa-prose">{{ . }}</div>{{ end }}
+          {{- /* Paginated, so a section that grows past [pagination].pagerSize
+                 does not silently turn into a thousand-item page. .Paginate
+                 may be called only once per page and its result is cached on
+                 the page, so the pager below is the same object rendered here.
+
+                 A section that fits on one page pays nothing for this: the
+                 partial renders nothing at a single page of results, and the
+                 URLs of the entries are unchanged. Set pagerSize to a large
+                 number to opt a whole site out. */ -}}
           {{- with .Pages }}
+            {{- $paginator := $.Paginate . }}
             {{- $variant := $.Params.collection_variant | default "" }}
             {{- /* "cards" is usa-card-group rather than usa-collection — a
                    different component, so the choice is made here rather than
@@ -34,12 +44,13 @@
                    better once a section is long. */ -}}
             {{- if eq $variant "cards" }}
               {{- partial "components/card-group" (dict
-                    "pages" .
+                    "pages" $paginator.Pages
                     "page" $
                     "grid" ($.Params.card_grid | default "tablet:grid-col-6 desktop:grid-col-4")) }}
             {{- else }}
-              {{- partial "components/collection" (dict "pages" . "variant" $variant) }}
+              {{- partial "components/collection" (dict "pages" $paginator.Pages "variant" $variant) }}
             {{- end }}
+            {{- partial "components/pagination" $paginator }}
           {{- end }}
         </main>
       </div>

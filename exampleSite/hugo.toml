@@ -99,6 +99,11 @@ enableRobotsTXT = true
     performance = "/performance/"
     privacy = "/privacy/"
 
+# Five, rather than Hugo's ten, so that the news section demonstrates the
+# pagination component with the eight posts it carries.
+[pagination]
+  pagerSize = 5
+
 # Related content, read by the theme's article/onward.html partial.
 #
 # This block has to live in the site config: Hugo's built-in default for
