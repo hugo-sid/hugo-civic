@@ -1,0 +1,67 @@
+{{- /*
+  The byline for an article: date, author, topics.
+
+  Takes the PAGE directly, not an options dict — everything is read from front
+  matter and every caller wants the same thing.
+
+  USWDS has no article-byline component. The listing equivalent is
+  usa-collection__meta, but those styles only make sense inside a collection
+  item, so this is built from typography and utilities instead. Everything used
+  here (`margin-y-0`, `font-body-3xs`, `text-base`, `display-inline-block`,
+  `margin-right-05`, `usa-list--unstyled`, `usa-tag`) exists in the `minimal`
+  preset as well as `standard`, so the byline is not a reason to move up a
+  preset. tools/check-utilities.sh is what keeps that true.
+
+  Renders NOTHING when the page carries no date, author or tags — which is what
+  makes it safe to call unconditionally from single.html, where most pages on a
+  documentation site have none of the three.
+
+  Topics link to their term pages via .GetTerms, so they follow whatever
+  permalink the taxonomy actually has. On a site with no `tags` taxonomy
+  .GetTerms returns nothing and the names render as plain tags rather than
+  links to a 404.
+*/ -}}
+
+{{- $date := and (not .Date.IsZero) (ne (site.Params.uswds.article | default dict).date false) -}}
+{{- $author := .Params.author -}}
+{{- if reflect.IsSlice $author }}{{ $author = delimit $author ", " }}{{ end -}}
+
+{{- /* Terms carry the URL, so prefer them; the raw front-matter list is the
+       fallback for a site with no `tags` taxonomy. They are NOT interchangeable
+       element-by-element — .GetTerms is ordered by the taxonomy's own weight
+       and title, not by the order the page listed them. */ -}}
+{{- $terms := .GetTerms "tags" -}}
+{{- $tags := .Params.tags -}}
+
+{{- /* .Lastmod defaults to .Date, so an "Updated" line only earns its place
+       when the page actually changed after publication. */ -}}
+{{- $updated := and $date (.Lastmod.After .Date) -}}
+
+{{- if or $date $author $tags }}
+<div class="margin-bottom-3">
+  {{- if or $date $author }}
+  <p class="margin-y-0 font-body-3xs text-base">
+    {{- with $author }}{{ i18n "by_author" | default "By" }} {{ . }}{{ end -}}
+    {{- if and $author $date }} &middot; {{ end -}}
+    {{- if $date }}<time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date | time.Format ":date_long" }}</time>{{ end -}}
+    {{- if $updated }} &middot; {{ i18n "updated_on" | default "Updated" }} <time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod | time.Format ":date_long" }}</time>{{ end -}}
+  </p>
+  {{- end }}
+  {{- if $tags }}
+  {{- /* padding-left-0 is not redundant with usa-list--unstyled: this list
+         renders inside .usa-prose, whose `> ul` rule is one element more
+         specific and puts the indent back. */ -}}
+  <ul class="usa-list usa-list--unstyled padding-left-0 margin-top-1" aria-label="{{ i18n "topics" | default "Topics" }}">
+    {{- if $terms }}
+      {{- range $terms }}
+    <li class="display-inline-block margin-right-05"><a class="usa-tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    {{- else }}
+      {{- range $tags }}
+    <li class="display-inline-block margin-right-05"><span class="usa-tag">{{ . }}</span></li>
+      {{- end }}
+    {{- end }}
+  </ul>
+  {{- end }}
+</div>
+{{- end -}}

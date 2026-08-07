@@ -60,6 +60,7 @@
         <main id="main-content" class="usa-prose article-column">
           <h1>{{ .Title }}</h1>
           {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
+          {{- partial "article/meta" . }}
           {{ .Content }}
         </main>
 

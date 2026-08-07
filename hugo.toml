@@ -91,3 +91,9 @@
   # "default", "slim", or "big"
   variant = "default"
   returnToTop = true
+
+[params.uswds.article]
+  # What appears around a single page's content. All of it is a no-op on a page
+  # that has nothing to show — a documentation page with no date, no siblings
+  # and no tags renders exactly what it did before these existed.
+  date = true       # date/author byline under the title

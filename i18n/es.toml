@@ -56,6 +56,17 @@ other = "Temas"
 [site_alert]
 other = "Alerta del sitio"
 
+# --- Articles -------------------------------------------------------------
+
+[by_author]
+other = "Por"
+
+[published_on]
+other = "Publicado"
+
+[updated_on]
+other = "Actualizado"
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]
