@@ -67,6 +67,14 @@
         {{- if $inPageNav }}
         </div>
         {{- end }}
+
+        {{- /* Outside <main>, and outside the in-page-nav container, for two
+               reasons. usa-in-page-nav-container is a flex row whose children
+               lay out side by side, so a third child would sit BESIDE the
+               article. And the in-page-navigation behaviour builds its list by
+               scanning <main> for headings — "Related content" would show up
+               there as if it were a section of the article. */ -}}
+        {{- partial "article/onward" . }}
       </div>
     </div>
   </div>

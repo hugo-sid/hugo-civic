@@ -96,4 +96,25 @@
   # What appears around a single page's content. All of it is a no-op on a page
   # that has nothing to show — a documentation page with no date, no siblings
   # and no tags renders exactly what it did before these existed.
+  #
+  # An article ends with ONE onward block, never two: related content when the
+  # related index matches, previous/next when it does not. See
+  # _partials/article/onward.html for why.
   date = true       # date/author byline under the title
+  prevNext = true   # the fallback onward block, when nothing is related
+  related = 3       # related pages to list; 0 makes prev/next the only branch
+
+# NOTE: [related] is deliberately NOT set here, and cannot usefully be.
+#
+# Hugo ships a built-in default for it (indices: keywords, date; threshold 80;
+# includeNewer false), and a theme's config can only ADD to a key the defaults
+# already occupy — never override it. Declaring `includeNewer = true` and
+# `[[related.indices]] name = "tags"` in this file merges down to the stock
+# keywords/date pair with a tags index appended at an unpredictable weight, and
+# includeNewer silently stays false. Verified against Hugo 0.164 with
+# `hugo config`.
+#
+# So the block belongs in the SITE's config, where it takes precedence.
+# exampleSite/hugo.toml carries the one this theme recommends, and
+# _partials/article/onward.html falls back to previous/next links when a site
+# has not set it.

@@ -67,6 +67,18 @@ other = "Published"
 [updated_on]
 other = "Updated"
 
+[article_navigation]
+other = "Article navigation"
+
+[previous]
+other = "Previous"
+
+[next]
+other = "Next"
+
+[related_content]
+other = "Related content"
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

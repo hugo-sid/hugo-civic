@@ -1,0 +1,46 @@
+{{- /*
+  The ONE onward-navigation block at the foot of an article.
+
+  Takes the PAGE. Renders related content when the related-content index finds
+  matches, previous/next sibling links when it does not, and nothing at all
+  when neither applies.
+
+  Only one, deliberately. An article that offered a side nav listing every
+  sibling, a previous/next pair drawn from the same siblings, and a related
+  list drawn from them again asks the reader to choose between three routes to
+  the same eight pages. On a content site that is not three times the
+  navigation, it is one decision made three times.
+
+  The two cases fall out of the content rather than of configuration:
+
+    tagged content   related wins — "more like this" beats "the next one
+                     along" when the section is a flat, dated feed and
+                     position in it carries no meaning
+    untagged content prev/next wins — a documentation tree IS ordered, and
+                     sequence is the thing the reader wants
+
+  A documentation site that tags its pages therefore gets related links
+  instead of sequential ones. If that is the wrong trade for a site, setting
+  params.uswds.article.related = 0 restores previous/next everywhere.
+
+  Related matching is Hugo's, scored against the indices declared under
+  [related] in the SITE's config — Hugo's built-in default takes precedence
+  over a theme's, so this theme cannot ship one. exampleSite/hugo.toml carries
+  the recommended block; until a site copies it, only the previous/next branch
+  can ever fire.
+*/ -}}
+
+{{- $limit := int ((site.Params.uswds.article | default dict).related | default 3) -}}
+{{- $related := slice -}}
+{{- if gt $limit 0 -}}
+  {{- $related = first $limit (site.RegularPages.Related .) -}}
+{{- end -}}
+
+{{- if $related }}
+<section class="margin-top-4" aria-labelledby="related-content">
+  <h2 id="related-content" class="font-heading-lg margin-bottom-1">{{ i18n "related_content" | default "Related content" }}</h2>
+  {{- partial "components/collection" (dict "pages" $related "variant" "condensed" "show_tags" false) }}
+</section>
+{{- else }}
+  {{- partial "article/page-nav" . }}
+{{- end }}

@@ -1,0 +1,61 @@
+{{- /*
+  Previous / next navigation between sibling pages.
+
+  Takes the PAGE directly. Renders nothing when the page has no siblings, so it
+  is safe to call unconditionally.
+
+  Siblings come from .CurrentSection.RegularPages rather than from
+  .PrevInSection / .NextInSection. Hugo's built-ins walk the SITE's regular
+  pages, so on a section whose pages are ordered by weight they hand back
+  neighbours from a different order than the one the reader sees in the side
+  navigation and the section listing — and, on a date-ordered section, "next"
+  silently means "older". Deriving both links from the section's own page order
+  makes this partial agree with whatever list the reader arrived from, at the
+  cost of one extra collection walk per page.
+
+  "Previous" and "Next" are therefore positions in that listing, not points in
+  time. On a news section (date-descending) "next" is the older post, which is
+  the same direction as reading down the listing page.
+
+  usa-pagination is deliberately NOT used here: its arrows carry
+  `display: none` below the tablet breakpoint, on the reasoning that a numbered
+  list is the mobile affordance. There is no numbered list at the foot of an
+  article, so on a phone the reader would be left with exactly the dead end
+  this partial exists to remove.
+
+  Set params.uswds.article.prevNext = false to switch it off site-wide.
+*/ -}}
+
+{{- if ne (site.Params.uswds.article | default dict).prevnext false -}}
+{{- $current := .RelPermalink -}}
+{{- $siblings := .CurrentSection.RegularPages -}}
+
+{{- $index := -1 -}}
+{{- range $i, $p := $siblings -}}
+  {{- if eq $p.RelPermalink $current }}{{ $index = $i }}{{ end -}}
+{{- end -}}
+
+{{- $prev := "" -}}
+{{- $next := "" -}}
+{{- if ge $index 0 -}}
+  {{- if gt $index 0 }}{{ $prev = index $siblings (sub $index 1) }}{{ end -}}
+  {{- if lt $index (sub (len $siblings) 1) }}{{ $next = index $siblings (add $index 1) }}{{ end -}}
+{{- end -}}
+
+{{- if or $prev $next }}
+<nav class="grid-row grid-gap margin-top-4" aria-label="{{ i18n "article_navigation" | default "Article navigation" }}">
+  <div class="grid-col-12 tablet:grid-col-6">
+    {{- with $prev }}
+    <span class="display-block font-body-3xs text-base">{{ i18n "previous" | default "Previous" }}</span>
+    <a class="usa-link" href="{{ .RelPermalink }}">{{ partial "uswds/icon" "navigate_before" }} {{ .LinkTitle }}</a>
+    {{- end }}
+  </div>
+  <div class="grid-col-12 tablet:grid-col-6 tablet:text-right">
+    {{- with $next }}
+    <span class="display-block font-body-3xs text-base">{{ i18n "next" | default "Next" }}</span>
+    <a class="usa-link" href="{{ .RelPermalink }}">{{ .LinkTitle }} {{ partial "uswds/icon" "navigate_next" }}</a>
+    {{- end }}
+  </div>
+</nav>
+{{- end }}
+{{- end -}}
