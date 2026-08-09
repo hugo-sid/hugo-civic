@@ -12,17 +12,21 @@
   ],
   "scripts": {
     "dev": "cd exampleSite && hugo server --disableFastRender",
-    "build": "cd exampleSite && hugo --minify",
-    "check": "npm run check:no-vendor && npm run check:build && npm run check:assets && npm run check:utilities && npm run check:budget",
+    "build": "npm run build:site && npm run build:search",
+    "build:site": "cd exampleSite && hugo --minify",
+    "build:search": "cd exampleSite && pagefind --site public",
+    "check": "npm run check:no-vendor && npm run check:build && npm run check:assets && npm run check:utilities && npm run check:search && npm run check:budget",
     "check:no-vendor": "tools/check-no-vendored.sh",
     "check:build": "tools/check-build.sh",
     "check:assets": "tools/check-assets.sh",
     "check:utilities": "tools/check-utilities.sh",
+    "check:search": "tools/check-search.sh",
     "check:budget": "tools/check-budget.sh",
     "upgrade:diff": "tools/upgrade-diff.sh"
   },
   "dependencies": {
-    "@uswds/uswds": "3.13.0"
+    "@uswds/uswds": "3.13.0",
+    "pagefind": "1.5.2"
   },
   "devDependencies": {
     "hugo-extended": "0.164.0",

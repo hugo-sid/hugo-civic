@@ -105,6 +105,47 @@ other = "Explorar por tema"
 one = "{{ . }} página"
 other = "{{ . }} páginas"
 
+# --- Búsqueda -------------------------------------------------------------
+#
+# `%d` y `%s` se sustituyen en el navegador, no en Hugo: el índice se construye
+# después de que Hugo termina, así que ni el número de resultados ni la consulta
+# se conocen en el momento de la compilación. Conserve el token y traduzca lo
+# demás. Véase i18n/en.toml.
+
+[search_results_count]
+one = "%d resultado"
+other = "%d resultados"
+
+[search_no_results]
+other = "No hay resultados para %s."
+
+[search_no_results_hint]
+other = "Revise la ortografía o pruebe con un término más corto o más general."
+
+[search_prompt]
+other = "Escriba un término arriba para buscar en este sitio."
+
+[search_searching]
+other = "Buscando…"
+
+[search_load_more]
+other = "Mostrar más resultados"
+
+[search_browse_heading]
+other = "Explorar el sitio"
+
+[search_unavailable_title]
+other = "La búsqueda no está disponible"
+
+[search_unavailable_text]
+other = "El índice de búsqueda se construye al publicar el sitio, por lo que la búsqueda no funciona en un servidor de desarrollo local."
+
+[search_needs_js_title]
+other = "La búsqueda necesita JavaScript"
+
+[search_needs_js_text]
+other = "Esta página busca en el sitio desde su navegador, lo que requiere JavaScript habilitado."
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

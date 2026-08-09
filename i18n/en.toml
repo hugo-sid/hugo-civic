@@ -107,6 +107,50 @@ other = "Browse by topic"
 one = "{{ . }} page"
 other = "{{ . }} pages"
 
+# --- Search ---------------------------------------------------------------
+#
+# Two of these carry `%d` and `%s` rather than Hugo's `{{ . }}`. They are
+# rendered into the page as TEMPLATES and substituted in the BROWSER, where the
+# number of results and the query are known — Hugo cannot know either, because
+# the index is not built until after it has exited. The one/other split is
+# still Hugo's: layouts/search.html renders both forms and the client picks
+# between them, so a language with different plural rules is handled the same
+# way item_count is. Keep the token; translate everything around it.
+
+[search_results_count]
+one = "%d result"
+other = "%d results"
+
+[search_no_results]
+other = "No results for %s."
+
+[search_no_results_hint]
+other = "Check the spelling, or try a shorter or more general term."
+
+[search_prompt]
+other = "Enter a term above to search this site."
+
+[search_searching]
+other = "Searching…"
+
+[search_load_more]
+other = "Show more results"
+
+[search_browse_heading]
+other = "Browse the site"
+
+[search_unavailable_title]
+other = "Search is not available"
+
+[search_unavailable_text]
+other = "The search index is built when the site is published, so search does not work in a local development server."
+
+[search_needs_js_title]
+other = "Search needs JavaScript"
+
+[search_needs_js_text]
+other = "This page searches the site in your browser, which needs JavaScript enabled."
+
 # --- Official .gov banner -----------------------------------------------
 
 [banner_aria_label]

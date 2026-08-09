@@ -1,0 +1,33 @@
+{{- /*
+  Builds and emits the search client. Called by layouts/search.html only — no
+  other page pays for it.
+
+  The one non-obvious line is `externals`. uswds/js/search.js loads Pagefind
+  with a runtime dynamic import of "/pagefind/pagefind.js", and that file does
+  not exist while Hugo is running: Pagefind indexes public/ AFTER Hugo has
+  exited. Without the external, esbuild tries to resolve the specifier, fails,
+  and takes the whole BUILD down — a missing search index turning into a broken
+  site. With it, the import survives into the output verbatim and is resolved by
+  the browser at runtime, where the file does exist.
+
+  `target` is es2020 here rather than the es2018 the two USWDS tiers use.
+  Dynamic import is an ES2020 feature and esbuild will not lower it for an IIFE
+  bundle; a browser old enough to reject it is also old enough to have no wasm
+  engine to run Pagefind in, so nothing is lost that was ever going to work.
+
+  Fingerprinted in production, mirroring uswds/js.html.
+*/ -}}
+
+{{- with resources.Get "uswds/js/search.js" -}}
+  {{- $js := . | js.Build (dict
+        "targetPath" "js/uswds-search.js"
+        "externals" (slice "/pagefind/pagefind.js")
+        "minify" hugo.IsProduction
+        "target" "es2020") -}}
+  {{- if hugo.IsProduction -}}
+    {{- $js = $js | fingerprint "sha512" -}}
+    <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+  {{- else -}}
+    <script src="{{ $js.RelPermalink }}" defer></script>
+  {{- end -}}
+{{- end -}}

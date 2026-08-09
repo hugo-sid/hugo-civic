@@ -34,8 +34,17 @@ GO_VERSION=1.26.4
 HUGO_VERSION=0.164.0
 NODE_VERSION=24.18.0
 
+# Pagefind is deliberately absent from this list. It is a regular dependency in
+# package.json, so npm installs it and `npm run build:search` runs it — one pin
+# and one command, both in the manifest. The four above cannot work that way:
+# they are what DOWNLOADS the toolchain, so they are needed before there is a
+# Node to read a manifest with.
+
 # Build from the repository root, wherever this script was invoked from
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+# Remember it: the build runs from inside SITE_DIR, and package.json is here
+REPO_ROOT="${PWD}"
 
 # Define the site directory and the name Hugo resolves the theme by
 SITE_DIR=exampleSite
@@ -206,11 +215,17 @@ main() {
 
   # Install Node.js dependencies
   #
-  # Only the production set: @uswds/uswds is the one dependency the site
-  # compiles against. hugo-extended and sass-embedded are devDependencies that
-  # exist so local dev and CI use pinned binaries; here the tarballs above are
-  # already on PATH, and installing them again would download ~60 MB for
-  # nothing.
+  # Only the production set. In this repository that set is "what the Vercel
+  # build needs": @uswds/uswds, which the site compiles against, and pagefind,
+  # which indexes the output afterwards. hugo-extended and sass-embedded are
+  # devDependencies because the tarballs above are already on PATH here, and
+  # installing them again would download ~60 MB for nothing.
+  #
+  # The dependency/devDependency line is drawn there rather than by "runtime vs
+  # build tool" because this package is never published to npm — it is consumed
+  # as a Hugo theme via git submodule, so nothing downstream inherits either
+  # list. If that ever changes, pagefind's 57 MB platform binary would start
+  # reaching consumers who may not use search, and the split needs revisiting.
   #
   # package-lock.json is gitignored, so on Vercel this is normally the
   # `npm install` branch: every direct dependency is pinned to an exact version
@@ -242,6 +257,22 @@ main() {
     echo "Building at the baseURL already in the configuration"
     hugo build --gc --minify
   fi
+
+  # Build the search index
+  #
+  # Pagefind is a POST-BUILD step: it reads the finished HTML in public/ and
+  # writes public/pagefind/. Hugo never sees any of it, which is exactly why
+  # this cannot live in the theme — a site adopting it gets the templates and
+  # has to add this step to its own build. Without it /search/ still renders,
+  # explains that the index is built at publish time, and offers the section
+  # list; the site is not broken, it just cannot search.
+  #
+  # Delegated to the npm script rather than spelled out here, so the command
+  # and its version live in package.json and nowhere else. Run from the
+  # repository root in a subshell because the build is currently inside
+  # SITE_DIR and build:search cd's there itself.
+  echo "Building the search index..."
+  (cd "${REPO_ROOT}" && npm run build:search)
 }
 
 main "$@"

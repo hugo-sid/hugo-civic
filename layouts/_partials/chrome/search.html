@@ -4,13 +4,23 @@
   @param modifier  "" | "usa-search--small" | "usa-search--big"
   @param id        unique input id; required when more than one search form is
                    on the page (the extended header renders two)
-  @param action    form target, defaults to params.uswds.header.searchAction
+  @param action    form target; defaults to header.searchAction, then to the
+                   configured search page
+
+  The action falls back in that order because the two keys answer different
+  questions. params.uswds.search.page is where THIS theme's results template
+  lives; params.uswds.header.searchAction is an escape hatch for a site that
+  sends its search somewhere else entirely (Search.gov, a scoped web search),
+  and a site that has set it means it. relLangURL'd so a multilingual site
+  reaches its own language's page rather than the default one's.
 */ -}}
 {{- $modifier := .modifier | default "" -}}
 {{- $id := .id | default "search-field" -}}
 {{- $label := i18n "search" | default "Search" -}}
-{{- $action := .action | default (site.Params.uswds.header.searchAction | default "/search/") -}}
 {{- $u := site.Params.uswds | default dict -}}
+{{- $s := $u.search | default dict -}}
+{{- $h := $u.header | default dict -}}
+{{- $action := .action | default ($h.searchAction | default (($s.page | default "/search/") | relLangURL)) -}}
 <section aria-label="{{ i18n "search_component" | default "Search component" }}">
   <form class="usa-search {{ $modifier }}" role="search" action="{{ $action }}" method="get">
     <label class="usa-sr-only" for="{{ $id }}">{{ $label }}</label>
