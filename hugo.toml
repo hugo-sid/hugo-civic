@@ -87,6 +87,34 @@
   megamenu = false
   search = true
 
+[params.uswds.search]
+  # What happens when the masthead form is submitted.
+  #
+  #   "pagefind"  the theme's own results page, backed by a Pagefind index that
+  #               is built AFTER Hugo exits — see DESIGN.md §15. A site that
+  #               does not run that step gets a results page which says so,
+  #               not a broken one.
+  #   "none"      no search box anywhere. The honest setting for a site that
+  #               has not wired up an indexer, and better than a form that
+  #               posts at a 404.
+  #   "external"  keeps the box and posts it at params.uswds.header.searchAction
+  #               (Search.gov, a site-scoped web search, anything).
+  #
+  # params.uswds.header.search is a different question — "is there a box in the
+  # masthead" is a layout choice, and an extended header without one is a
+  # legitimate arrangement. This key is "what does submitting it do".
+  provider = "pagefind"
+
+  # Where the results template lives. The masthead form's action defaults here,
+  # so moving the page is one edit rather than two. The page itself is content
+  # the SITE supplies (`layout: search` front matter); the theme only ships the
+  # template that renders it.
+  page = "/search/"
+
+  # Results rendered before the "load more" button appears. Pagefind returns
+  # every match at once, so this is a rendering budget, not a query limit.
+  resultsPerPage = 10
+
 [params.uswds.footer]
   # "default", "slim", or "big"
   variant = "default"

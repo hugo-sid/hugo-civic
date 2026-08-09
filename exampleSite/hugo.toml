@@ -80,6 +80,16 @@ enableRobotsTXT = true
   variant = "extended"
   search = true
 
+# Search is a two-part feature and only one part is a template: the index is
+# built by Pagefind AFTER Hugo exits, so `hugo` alone never produces one. Both
+# `npm run build` and tools/vercel-build.sh run that second step; `npm run dev`
+# does not, which is why /search/ in the dev server explains itself instead of
+# returning nothing. See DESIGN.md §15.
+[params.uswds.search]
+  provider = "pagefind"
+  page = "/search/"
+  resultsPerPage = 10
+
 [params.uswds.footer]
   variant = "default"
   [params.uswds.footer.contact]

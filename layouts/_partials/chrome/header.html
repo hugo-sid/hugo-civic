@@ -20,7 +20,14 @@
 {{- $h := $u.header | default dict -}}
 {{- $variant := $h.variant | default "basic" -}}
 {{- $megamenu := $h.megamenu | default false -}}
-{{- $showSearch := ne $h.search false -}}
+{{- /* Two switches, deliberately. header.search is the layout question — does
+       this masthead carry a box. search.provider is the deployment fact —
+       is there anything on the other end of it. `provider = "none"` wins over
+       both, because a box that submits into nothing is worse than no box:
+       the theme shipped one that posted at /search/ with no template behind
+       it, and every page in the site linked to a 404. */ -}}
+{{- $provider := ($u.search | default dict).provider | default "pagefind" -}}
+{{- $showSearch := and (ne $h.search false) (ne $provider "none") -}}
 {{- $items := site.Menus.main -}}
 {{- $secondary := site.Menus.secondary -}}
 

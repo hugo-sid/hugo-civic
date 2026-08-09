@@ -104,6 +104,23 @@
   }
 }
 
+// The whole CSS cost of search.
+//
+// Pagefind returns an excerpt with the matched terms wrapped in <mark>, and
+// browsers default that to a fixed yellow that ignores the site's palette and
+// fails contrast against several of them. USWDS has no <mark> rule and no
+// highlight component, so this is additive rather than an override, and it is
+// written in tokens so it follows a retheme.
+//
+// Scoped to the collection description because that is the only place a <mark>
+// this theme did not author can appear. A `mark` an author typed into their own
+// markdown keeps the browser default, which is what they asked for.
+.usa-collection__description mark {
+  background-color: color("accent-warm-lighter");
+  color: color("ink");
+  padding: units("2px") 0;
+}
+
 // Markdown produces four things USWDS has no component for, so nothing styles
 // them at all: blockquotes, code (inline and fenced), definition lists, and
 // task list checkboxes. A theme whose input is markdown cannot leave them to

@@ -1,0 +1,19 @@
+{{- /*
+  The site's top-level sections, as a usa-collection.
+
+  This is what a reader gets whenever search cannot answer them — JavaScript
+  off, or an index that was never built. A dead end that says "no results" and
+  nothing else is a worse page than the section index the site already has, and
+  every one of those states is reachable in normal use, not just in error.
+
+  In chrome/ rather than components/ because it composes usa-collection rather
+  than implementing a USWDS contract, and what it lists is navigation. Renders
+  nothing on a site with no sections.
+
+  Takes the page, for consistency with the other chrome partials; reads only
+  site.Sections.
+*/ -}}
+{{- with site.Sections }}
+<h2>{{ i18n "search_browse_heading" | default "Browse the site" }}</h2>
+{{- partial "components/collection" (dict "pages" . "show_meta" false "show_tags" false) }}
+{{- end -}}

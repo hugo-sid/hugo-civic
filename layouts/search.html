@@ -1,0 +1,118 @@
+{{ define "main" }}
+{{- /* The search results page. A site opts a page into this with
+       `layout: search` in its front matter — the theme ships the template, the
+       site supplies the page, exactly like every other layout here.
+
+       Three states are reachable in normal use and all three render something
+       true (DESIGN.md §15):
+
+         no JS     the masthead form still GETs ?q= and lands here; <noscript>
+                   explains why there are no results and offers the sections;
+         no index  `hugo server`, where Pagefind has never run. The dynamic
+                   import rejects, and the alert below is revealed;
+         index     results.
+
+       Everything the client needs is handed over as data-* attributes on
+       #js-search, because assets/uswds/js/search.js is compiled once and served
+       to every language. The ids below are a contract with that file.
+
+       Results are rendered as usa-collection, the same component list.html
+       uses, so they carry the same preset requirement: on `minimal`, which has
+       neither usa-collection nor usa-button, they render unstyled exactly as a
+       listing page already does there. That is deliberate — see
+       presets/_minimal.scss — and search adds no new constraint. */ -}}
+
+{{- $u := site.Params.uswds | default dict -}}
+{{- $s := $u.search | default dict -}}
+{{- $provider := $s.provider | default "pagefind" -}}
+{{- $perPage := $s.resultsPerPage | default 10 -}}
+{{- $searchPage := ($s.page | default "/search/") | relLangURL -}}
+
+<div class="padding-top-1 padding-bottom-4">
+  <div class="grid-container">
+    {{- partial "chrome/breadcrumb" . }}
+    <div class="grid-row grid-gap">
+      {{- /* No side navigation and no in-page nav: there is one thing to do on
+             this page. The column is capped at 8 so a result list keeps a
+             readable measure on a wide screen. */ -}}
+      <div class="grid-col-12 desktop:grid-col-8">
+        {{- /* data-pagefind-ignore is belt and braces — a page with no
+               data-pagefind-body is already excluded once ANY page in the build
+               has one — but it states the intent where someone editing this
+               file will see it. */ -}}
+        <main id="main-content" data-pagefind-ignore>
+          <h1>{{ .Title }}</h1>
+          {{- with .Description }}<p class="usa-intro">{{ . }}</p>{{ end }}
+          {{- with .Content }}<div class="usa-prose">{{ . }}</div>{{ end }}
+
+          {{- if eq $provider "pagefind" }}
+          <div id="js-search"
+               class="margin-top-3"
+               data-page-size="{{ $perPage }}"
+               data-base-url="{{ "/" | relLangURL }}"
+               data-prompt="{{ i18n "search_prompt" | default "Enter a term above to search this site." }}"
+               data-searching="{{ i18n "search_searching" | default "Searching…" }}"
+               {{- /* Rendered as TEMPLATES carrying %d and %s, substituted in
+                      the browser where the number and the query are known. The
+                      one/other choice is still Hugo's — both forms are rendered
+                      here and the client picks between them. */}}
+               data-count-one="{{ i18n "search_results_count" 1 | default "%d result" }}"
+               data-count-other="{{ i18n "search_results_count" 2 | default "%d results" }}"
+               data-no-results="{{ i18n "search_no_results" | default "No results for %s." }}"
+               data-no-results-hint="{{ i18n "search_no_results_hint" | default "Check the spelling, or try a shorter or more general term." }}"
+               data-load-more="{{ i18n "search_load_more" | default "Show more results" }}"
+               data-unavailable="{{ i18n "search_unavailable_title" | default "Search is not available" }}"
+               data-more-information="{{ i18n "more_information" | default "More information" }}"
+               data-topics="{{ i18n "topics" | default "Topics" }}">
+
+            {{- /* A real form, submitting to this page by GET. With JS the
+                   submit is intercepted; without it the page reloads and the
+                   <noscript> below is what the reader gets — nothing is broken
+                   and nothing lies. */ -}}
+            {{- partial "chrome/search" (dict
+                  "modifier" "usa-search--big"
+                  "id" "search-field-page"
+                  "action" $searchPage) }}
+
+            {{- /* The count line, and the ONLY live region on the page.
+                   The results list deliberately is not one: a polite region
+                   wrapping the list announces every result in full on every
+                   keystroke, which is not an improvement on announcing "12
+                   results". Server-rendered with the prompt so that the first
+                   thing the region ever holds is not an announcement. */ -}}
+            <p id="search-status" class="margin-top-1 margin-bottom-0 font-body-3xs text-base" role="status">{{ i18n "search_prompt" | default "Enter a term above to search this site." }}</p>
+
+            <div id="search-results" class="margin-top-2"></div>
+
+            <div id="search-unavailable" class="display-none margin-top-2">
+              {{- partial "components/alert" (dict
+                    "type" "info"
+                    "title" (i18n "search_unavailable_title" | default "Search is not available")
+                    "text" (i18n "search_unavailable_text" | default "The search index is built when the site is published, so search does not work in a local development server.")) }}
+              {{- partial "chrome/browse-sections" . }}
+            </div>
+          </div>
+
+          <noscript>
+            {{- partial "components/alert" (dict
+                  "type" "info"
+                  "title" (i18n "search_needs_js_title" | default "Search needs JavaScript")
+                  "text" (i18n "search_needs_js_text" | default "This page searches the site in your browser, which needs JavaScript enabled.")) }}
+            {{- partial "chrome/browse-sections" . }}
+          </noscript>
+          {{- else }}
+          {{- /* provider is "none" or "external": there is no index to query
+                 and no client to load, so the page is a directory rather than a
+                 dead search box. */ -}}
+          {{- partial "chrome/browse-sections" . }}
+          {{- end }}
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{- if eq $provider "pagefind" }}
+{{- partial "uswds/search-assets" . }}
+{{- end }}
+{{ end }}
