@@ -12,14 +12,24 @@
 //
 // `uswds-global` pulls in normalize, uswds-core, fonts and elements.
 // `uswds-typography` pulls in prose, link, list, paragraph, intro and display.
+//
+// usa-language-selector is chrome, not a content component: the theme renders
+// it on any site that declares a second language, at every preset, so every
+// preset has to be able to style it. usa-accordion comes with it and is not
+// optional — `.usa-language__primary` carries the `usa-accordion` class and
+// gets its list reset (list-style-type:none, padding-left:0) from it, so the
+// three-or-more dropdown renders as a bulleted, indented list without it. That
+// reset is also what the nav's own submenu buttons have been missing here.
 
 @forward "uswds-global";
 @forward "uswds-helpers";
 @forward "uswds-typography";
+@forward "usa-accordion/src/styles";
 @forward "usa-banner/src/styles";
 @forward "usa-footer/src/styles";
 @forward "usa-header/src/styles";
 @forward "usa-identifier/src/styles";
+@forward "usa-language-selector/src/styles";
 @forward "usa-layout-grid/src/styles";
 @forward "usa-nav/src/styles";
 @forward "usa-search/src/styles";

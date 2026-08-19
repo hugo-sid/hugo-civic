@@ -1,0 +1,31 @@
+{{- /*
+  rel="alternate" hreflang links for a page's translations.
+
+  Without these a search engine sees two unrelated sites rather than one site in
+  two languages, and cannot serve a Spanish reader the Spanish page.
+
+  Emits nothing at all on a single-language site — alternates that point only at
+  the page itself say nothing — which is what keeps this partial a no-op for
+  every site using the theme today.
+
+  .AllTranslations, not .Translations: it includes the current page, and Google
+  asks that every page in a set list every page in the set, itself included.
+
+  The hreflang value is the language's `locale` (es-es), matching the lang
+  attribute baseof.html puts on <html>, and falling back to `lang` (es) for a
+  language configured without one. x-default goes to defaultContentLanguage's
+  copy: it is what a crawler serves a reader whose language matches nothing.
+
+  hugo.Sites.Default rather than site.Sites — .Site.Sites and .Site.Languages
+  were both deprecated in Hugo 0.156 and emit a WARN, which tools/check-build.sh
+  fails the build on.
+*/ -}}
+{{- if hugo.IsMultilingual -}}
+{{- $default := hugo.Sites.Default.Language.Lang -}}
+{{- range .AllTranslations }}
+<link rel="alternate" hreflang="{{ .Language.Locale | default .Language.Lang }}" href="{{ .Permalink }}">
+  {{- if eq .Language.Lang $default }}
+<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
+  {{- end }}
+{{- end }}
+{{- end -}}
