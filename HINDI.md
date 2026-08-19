@@ -15,7 +15,10 @@ against the result. What follows is what actually happened, file by file:
 
 - `layouts/_partials/uswds/hindi-font.html` (new) — publishes the two
   weights and preloads the regular one, only when `site.Language.Lang` is
-  `hi`.
+  `hi`. **Superseded:** adding Odia turned this into
+  `layouts/_partials/uswds/script-font.html`, driven by a
+  `params.uswds.scriptFonts` table keyed by language code rather than by a
+  hardcoded `hi`. Nothing about the Hindi build changed. See ODIA.md §3.
 - `assets/uswds/_custom.scss` — the `@font-face` pair and the `:lang(hi)`
   rule.
 - `layouts/_partials/uswds/assets.html` — gained a fallback lookup
@@ -89,10 +92,12 @@ MULTILINGUAL.md §8.5 for what was checked.
   added to whichever preset(s) render Hindi text — likely alongside where
   `usa-language-selector` was added, since it's the same "chrome the theme
   renders unprompted, styled everywhere" argument.
-- `tools/check-budget.sh`: `FONT_BUDGET_KB` is documented as "one family,
-  woff2 only" — a second family needs either its own budget line or an
-  explicit bump with the same before/after accounting the language-selector
-  budget change used.
+- `tools/check-budget.sh`: `FONT_BUDGET_KB` was documented as "one family,
+  woff2 only" — a second family needed either its own budget line or an
+  explicit bump. Superseded by ODIA.md's decision to remove the FONT check
+  entirely once a third family made "bump it again per language" the
+  pattern: a font family's size is a property of the script, not a
+  regression, so it isn't the kind of thing a fixed-KB budget should gate.
 
 ### i18n
 - `i18n/hi.toml` — new, all 75 keys from `i18n/en.toml`, including
@@ -178,7 +183,7 @@ content/search.md
 
 | Option | Trade-off |
 |---|---|
-| **Noto Sans Devanagari, self-hosted woff2** (recommended) | OFL-licensed, matches the theme's existing "no external font requests" stance (README/PAGEFIND already avoid CDN calls), consistent rendering across browsers/OS. Costs real KB against `FONT_BUDGET_KB`, scoped to `[lang="hi"]` so English/Spanish pages pay nothing. |
+| **Noto Sans Devanagari, self-hosted woff2** (recommended) | OFL-licensed, matches the theme's existing "no external font requests" stance (README/PAGEFIND already avoid CDN calls), consistent rendering across browsers/OS. Costs real KB on disk (no longer budget-gated — see ODIA.md), scoped to `:lang(hi)` so English/Spanish pages pay nothing. |
 | System font stack only (`ui-sans-serif`, native Devanagari fallbacks) | Zero asset cost, but rendering is inconsistent — older Android/Windows builds and some Linux setups lack a Devanagari system font, so this risks the "tofu" problem it's meant to avoid for exactly the low-end/older-device audience `ACCESSIBILITY-CHECKLIST.md` calls out. |
 
 ## 5. Manual verification checklist (can't be scripted)
@@ -194,9 +199,14 @@ content/search.md
 - [ ] Identifier's `identifier_content_prefix` renders correctly for `hi`
       (the empty-string-vs-missing-key trap that broke Spanish once —
       `identifier.html`'s fix should already generalise, but verify).
-- [ ] Pagefind: confirm `hi` gets word stemming per Pagefind's support table,
+- [x] Pagefind: confirm `hi` gets word stemming per Pagefind's support table,
       not silent unstemmed/segmented indexing; re-measure `SEARCH_BUDGET_GZ`
-      per language once three partitions exist.
+      per language once three partitions exist. **It does.** Pagefind names
+      only the languages it cannot stem, and across a four-language index it
+      names `or-in` alone — Hindi is stemmed, Odia is not. MULTILINGUAL.md
+      §8.5 asserted the opposite about Hindi for a while on no evidence; that
+      is corrected there. `hi-in` is also the largest search partition
+      (107 KB of the 110 KB budget), so it is the one `SRCH` reports.
 - [ ] `check-search.sh`'s per-language masthead-action check passes for `hi`
       with the no-slug-override approach from §2.
 

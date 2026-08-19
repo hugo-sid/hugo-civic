@@ -667,15 +667,47 @@ ran:
   Spanish included, since crossing the two-language threshold flips their
   variant too. This was the untested path §8.5 flagged; it is now exercised
   by `exampleSite` on every build.
-- Devanagari is not in Pagefind's Snowball-based stemming table the way `es`
-  is, so Hindi search is unstemmed word matching, not stemmed. `check-search.sh`
-  passed regardless — its assertions are about index completeness and the
-  masthead action, not stemming quality — but the search *feel* for Hindi
-  should not be assumed equivalent to English or Spanish's.
+- ~~Devanagari is not in Pagefind's Snowball-based stemming table the way `es`
+  is, so Hindi search is unstemmed word matching, not stemmed.~~ **Wrong — see
+  the Odia update below.** `hi-in` *is* stemmed; this claim was written from
+  the assumption that a non-Latin script implies no stemmer, and never checked
+  against what Pagefind actually reports. Pagefind names the languages it
+  cannot stem, on stderr, on every index run; that output is the support table.
 - No font question existed for `es` — Spanish is Latin script. Hindi's is the
   one real blocker of the three: Devanagari has no glyphs in any USWDS font,
   so `@fontsource/noto-sans-devanagari` is self-hosted and scoped to
   `:lang(hi)`. See HINDI.md §4.
+
+**Update: a fourth language landed too.** Odia (`or-in`), full-site, 25 pages
+— see ODIA.md. Three of §8.5's four language-count worries were already spent
+by Hindi and cost nothing the second time; what the fourth language actually
+taught:
+
+- **Pagefind stems `hi-in` and does not stem `or-in`.** Checked properly this
+  time, by reading Pagefind's own output across a four-language index rather
+  than reasoning from the script. It prints
+  `Note: Pagefind doesn't support stemming for the language or-in` and says
+  nothing about `hi-in`, `es-es` or `en-us`. So Odia — not Hindi — is this
+  repository's one unstemmed language, and the §8.5 bullet above about
+  checking the support table *first* was right in substance and was then not
+  followed.
+- **The second non-Latin script is what justified generalising the font
+  partial, not the first.** `uswds/hindi-font.html` hardcoded `hi` three ways;
+  a copy-pasted `odia-font.html` would have duplicated ~40 lines to change
+  three string literals. It is now `uswds/script-font.html`, driven by a
+  `params.uswds.scriptFonts` table keyed by language code, and `head.html`
+  names no language at all. The SCSS stayed hand-written per script — see
+  ODIA.md §3 for why the same table does not drive the `@font-face` rules.
+- **A fixed per-family font budget does not survive a multilingual theme.**
+  `check-budget.sh`'s `FONT` line was removed rather than bumped a second
+  time: a font family's size is a property of the script, not a regression,
+  so raising the ceiling at every new language measures nothing. The CSS, JS
+  and search budgets — which genuinely can regress — stay.
+- **Hugo's slugifier mangles Odia heading ids but does not empty them.**
+  Matras and viramas are stripped (`ବ୍ୟବହାର` → `ବୟବହର`), leaving ids that are
+  ugly, non-empty and — checked across all 25 pages — unique. So
+  `in-page-nav-heading-ids.js`, written for Hindi, needed no change: it keys
+  off the parent heading's own Hugo-assigned id whatever script it is in.
 
 ### 8.6 The Component UI does not change the §15.2 decision, but dates its wording
 

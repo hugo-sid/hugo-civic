@@ -16,7 +16,7 @@
 # Every danda (।, U+0964) in this file is preceded by a NO-BREAK SPACE
 # (U+00A0), never an ordinary space and never nothing at all:
 #
-#   ...ଅଟେ ।     <- U+00A0 + U+0964
+#   ...ଅଟେ ।     <- U+00A0 + U+0964
 #
 # The space is required because Odia's aa-kar matra (ା, U+0B3E) is very
 # nearly the danda's twin; set tight against the preceding consonant, a danda
@@ -25,10 +25,14 @@
 # between word and danda, orphaning the danda at the start of the next line.
 #
 # Your editor renders U+00A0 exactly like a normal space, so retyping a
-# sentence will silently replace it and nothing will fail — no check catches
-# this. When editing, copy an existing "&nbsp;।" pair rather than typing the
-# danda fresh. Same rule applies to every exampleSite/content/*.or.md file.
-# See ODIA.md §7.
+# sentence silently replaces it and the site still builds. When editing, copy
+# an existing pair rather than typing the danda fresh. The same rule applies
+# to every exampleSite/content/*.or.md file and to the Odia strings in
+# exampleSite/hugo.toml.
+#
+# tools/check-danda.sh enforces this (npm run check:danda, and part of
+# npm run check). It classifies dandas by script, so Hindi's — which are set
+# tight by convention — are left alone. See ODIA.md §7.
 
 [skipnav]
 other = "ମୁଖ୍ୟ ବିଷୟବସ୍ତୁକୁ ଯାଆନ୍ତୁ"
