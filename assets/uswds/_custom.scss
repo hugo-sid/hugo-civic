@@ -76,6 +76,45 @@
   font-family: "Noto Sans Oriya", #{get-font-stack("body")};
 }
 
+// The mobile language selector in the EXTENDED header.
+//
+// USWDS places the masthead language selector with a rule scoped to
+// `.usa-nav-container .usa-language-container` — absolute, right: 5rem, which
+// is what clears the menu button on mobile. Two facts collide here:
+// usa-header--extended has no .usa-nav-container (see
+// usa-header--extended.twig, which contains none), and upstream demonstrates
+// this placement only on usa-header--basic
+// (usa-language-selector--header.twig line 2). So in the extended variant the
+// control matches no placement rule at all: it lands in .usa-navbar's flex row
+// as an ordinary item, flush against .usa-menu-btn with no gap.
+//
+// Fixed with flex spacing rather than by copying upstream's absolute rule.
+// That rule anchors to .usa-nav-container's positioning context, which the
+// extended header never establishes — replicating it would mean also inventing
+// a containing block, for a row that is already display:flex and align-center
+// and simply needs the two controls held apart.
+//
+// Scoped below $theme-header-min-width because at and above it the menu button
+// is display:none and this instance is display:none too (the header renders a
+// separate desktop selector in .usa-nav__secondary).
+@include at-media-max($theme-header-min-width) {
+  // units(2) rather than a token guess: upstream's basic variant pins the
+  // control at right: 5rem against a menu button roughly 3.5rem wide, so the
+  // gap it produces is about 1.5rem. This lands in the same range without
+  // depending on the menu button's rendered width.
+  .usa-header--extended .usa-navbar .usa-language-container {
+    margin-right: units(2);
+  }
+
+  // .usa-language--small nudges its button down by 0.3rem, which is invisible
+  // in upstream's absolutely-positioned context but reads as a misalignment
+  // against the full-height menu button once the control sits in a centred
+  // flex row.
+  .usa-header--extended .usa-navbar .usa-language--small .usa-button {
+    margin-top: 0;
+  }
+}
+
 // The sidenav in the docs layout is sticky on wide screens only; USWDS ships no
 // setting for this, and it is purely additive.
 @include at-media("desktop") {
