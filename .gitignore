@@ -9,6 +9,12 @@ resources/
 .hugo_build.lock
 hugo_stats.json
 
+# Written by Hugo's js.Build on every build, to help editors resolve the
+# @uswds/uswds and theme-relative imports in assets/uswds/js/*.js. Pure editor
+# tooling, regenerated identically every time — nothing reads it at build or
+# runtime.
+jsconfig.json
+
 # Vercel CLI project linking (.vercel/project.json holds the org and project
 # IDs) and the local build cache that tools/vercel-build.sh points Hugo at.
 .vercel/
