@@ -27,9 +27,9 @@ The second constraint is payload. Compiling only the components a site uses, and
 - **⚙️ Configuration-driven theming.** Colors, font families, type roles, and grid width are set in `hugo.toml` and passed into Sass via Hugo's `vars` module. Retheming requires no SCSS edits.
 - **📦 Four component presets.** `minimal` (13 components, 21.9 KB gzip), `standard` (34, 39.0 KB), `full` (all), or `custom` — supply your own manifest and compile exactly what you use.
 - **⚡ Two-tier JavaScript.** A small, stable core bundle (banner, header, skipnav) is cached across every page; interactive components register their behaviour per page and are collected into one additional bundle.
-- **📏 Enforced size budgets.** CSS, JS, and font budgets are measured per preset and checked in `npm run check`. A budget you do not enforce is a wish.
+- **📏 Enforced size budgets.** CSS, JS, and search-index budgets are measured per preset and language and checked in `npm run check`. A budget you do not enforce is a wish. Fonts are deliberately *not* budgeted: a family's size is a property of the script, not a regression.
 - **♿ Accessibility built in.** Skip navigation, the federal government banner, the required site identifier, breadcrumbs, and in-page navigation ship as first-class partials.
-- **🌐 Multilingual.** English, Spanish, and Hindi translations included; all interface strings go through `i18n`.
+- **🌐 Multilingual.** English, Spanish, Hindi, and Odia translations included; all interface strings go through `i18n`.
 - **✍️ Content components as shortcodes.** Accordions, alerts, summary boxes, process lists, tags, and icons, usable directly from Markdown.
 - **📰 Article furniture.** Date and author bylines, tag-driven related content, previous/next sibling links, and pagination — each a no-op on pages that have nothing to show. An article ends with **one** onward block, never three: related content where the index matches, previous/next where it does not, and a section declares itself a flat feed rather than a tree with `sidenav: false`.
 - **🔎 Site search.** A [Pagefind](https://pagefind.app) index driven through its JS API, rendering results as `usa-collection` — so the CSS cost of the whole feature is one rule for `<mark>`. Degrades honestly with JavaScript off or with no index built, and `provider = "none"` removes the box entirely.
@@ -341,10 +341,20 @@ Language params **deep-merge** into the root `[params]`, so this overrides one k
 #### What to know before you rely on it
 
 - **Search does not cross languages.** Pagefind indexes each language separately and searches only the current page's partition, so a Spanish reader will not find English-only pages. Pagefind's `--force-language` flag merges them, at the cost of stemming every language with one stemmer — which makes search measurably worse for your majority language. Prefer translating the pages that matter.
-- **Interface strings come from `i18n/`.** The theme ships `en`, `es`, and `hi`. For another language, copy `i18n/en.toml`, translate it, and keep every key — a missing key silently renders the **default language's** string, not a blank. `npm run check:i18n` enforces that.
+- **Interface strings come from `i18n/`.** The theme ships `en`, `es`, `hi`, and `or`. For another language, copy `i18n/en.toml`, translate it, and keep every key — a missing key silently renders the **default language's** string, not a blank. `npm run check:i18n` enforces that.
 - **Name each language in every table.** A `[language_name_es]` entry in `en.toml` (`other = "Spanish"`) is what lets the three-or-more dropdown read "Español (Spanish)" to a reader who does not read Spanish — it is what makes a language in an unfamiliar script selectable at all.
-- **Banner and identifier wording is federally standardised — where a source exists.** The English and Spanish strings are copied verbatim from USWDS; do not paraphrase them. USWDS publishes no official Hindi translation of this wording, so `i18n/hi.toml`'s banner/identifier strings — and the rest of its UI strings — were translated for this repository and have had no native-speaker review. See HINDI.md.
-- **A script outside USWDS's fonts needs its own font.** Public Sans, Merriweather and Roboto Mono are Latin-only, so Hindi content is set in a self-hosted Noto Sans Devanagari (`@fontsource/noto-sans-devanagari`), scoped to `:lang(hi)` and published only when it's referenced. A future language in a script none of the four families cover needs the same treatment — see `uswds/hindi-font.html` for the pattern.
+- **Banner and identifier wording is federally standardised — where a source exists.** The English and Spanish strings are copied verbatim from USWDS; do not paraphrase them. USWDS publishes no official Hindi or Odia translation of this wording, so `i18n/hi.toml`'s and `i18n/or.toml`'s banner/identifier strings — and the rest of their UI strings — were translated for this repository and have had no native-speaker review. See HINDI.md and ODIA.md.
+- **A script outside USWDS's fonts needs its own font.** Public Sans, Merriweather and Roboto Mono are Latin-only, so Hindi is set in a self-hosted Noto Sans Devanagari and Odia in Noto Sans Oriya (both `@fontsource`), each scoped to its own `:lang()` and published only on pages in that language. Adding a script is a table entry plus an `@font-face` block, not a new template:
+
+  ```toml
+  [params.uswds.scriptFonts.or]
+    family = "Noto Sans Oriya"    # documentation only
+    mount  = "noto-sans-oriya"    # the fontsource package, mounted under assets/fonts-dist/
+    subset = "oriya"              # the script subset in the fontsource filename
+  ```
+
+  `uswds/script-font.html` reads that table and does nothing for a language with no entry; the matching `@font-face` and `:lang()` rules are hand-written in `assets/uswds/_custom.scss`. A language whose script *is* Latin needs neither.
+- **Pagefind stems some languages and not others.** It names the ones it cannot on every index run — here, `or-in` — and those search without matching across root forms. Read that output rather than assuming from the script: `hi-in` is stemmed, `or-in` is not.
 - **An empty translation is a *missing* translation.** `other = ""` makes Hugo fall back to the default language, so a "deliberately blank" string renders as English. Use a single space if you truly want nothing.
 
 ### Articles and listings
