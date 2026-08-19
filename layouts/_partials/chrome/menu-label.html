@@ -1,0 +1,33 @@
+{{- /*
+  A menu entry's display label, localised.
+
+  A site has two ways to translate a menu and this supports both:
+
+    - per-language menu definitions ([[languages.es.menus.main]]), where .Name
+      is already Spanish and no identifier is needed;
+    - one menu shared by every language, with `identifier` naming a key in
+      i18n/*.toml.
+
+  On a menu that uses neither — which is every menu this theme shipped with
+  until now — it returns .Name and nothing changes.
+
+  Hugo's own menu template writes `or (T .Identifier) .Name`. That is correct in
+  its fallback, but it calls T with an EMPTY key on every entry that has no
+  identifier, and Hugo logs each of those as
+
+      WARN  i18n|MISSING_TRANSLATION|en|
+
+  under --printI18nWarnings — the flag tools/check-i18n.sh uses to find strings
+  a translation table is actually missing. One unidentified menu entry would
+  bury that signal in noise, so the identifier is checked before T is called.
+
+  @param  a menu entry
+  @return the label, as a string
+*/ -}}
+{{- $label := .Name -}}
+{{- with .Identifier -}}
+  {{- with T . -}}
+    {{- $label = . -}}
+  {{- end -}}
+{{- end -}}
+{{- return $label -}}

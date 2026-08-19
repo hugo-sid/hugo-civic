@@ -11,7 +11,7 @@
   <ul class="grid-row grid-gap">
     {{- range .links }}
     <li class="{{ $cols }} desktop:grid-col-auto usa-footer__primary-content">
-      <a class="usa-footer__primary-link" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+      <a class="usa-footer__primary-link" href="{{ .URL | relLangURL }}">{{ partial "chrome/menu-label" . }}</a>
     </li>
     {{- end }}
   </ul>

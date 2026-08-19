@@ -17,6 +17,31 @@ other = "Close"
 [search]
 other = "Search"
 
+# The language selector's button, and only in its three-or-more form: with
+# exactly two languages the control is labelled with the other language's own
+# name, which comes from that language's `label` in the site config and is never
+# translated.
+[languages]
+other = "Languages"
+
+# `language_name_<code>` names a language in THIS table's language, so the
+# dropdown can read "Español (Spanish)" to someone who does not read Spanish.
+# It is what makes a language in an unfamiliar script selectable at all.
+#
+# A site adding a third language should add its name to every i18n table it
+# ships. Nothing breaks if it does not — the entry falls back to the endonym
+# alone — but --printI18nWarnings will name the missing key, which is the
+# warning working as intended.
+#
+# Every table names every language, itself included, so that §5.1's key-parity
+# check holds. The self-naming entry is never rendered: a gloss identical to
+# the endonym is dropped rather than printed as "English (English)".
+[language_name_en]
+other = "English"
+
+[language_name_es]
+other = "Spanish"
+
 [search_component]
 other = "Search component"
 
