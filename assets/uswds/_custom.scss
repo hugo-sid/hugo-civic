@@ -14,6 +14,39 @@
 
 @use "uswds-core" as *;
 
+// Devanagari, for Hindi content. No USWDS font family covers it — Public
+// Sans, Merriweather and Roboto Mono are all Latin-only — so this is a second
+// font system rather than a theme override of the first one.
+//
+// Regular and bold only, matching uswds-typography's own weight usage; the
+// files are published (or skipped, on a non-Hindi build) by
+// uswds/hindi-font.html, which is the only thing that knows the fingerprinted
+// resource path — hence the plain, unhashed /fonts/... URL here rather than a
+// Sass variable.
+//
+// :lang(hi) rather than [lang="hi"]: CSS's :lang() matches the hyphenated
+// subtag too, so it applies to <html lang="hi-in"> without listing every
+// region variant.
+@font-face {
+  font-family: "Noto Sans Devanagari";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/noto-sans-devanagari/noto-sans-devanagari-devanagari-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Sans Devanagari";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/noto-sans-devanagari/noto-sans-devanagari-devanagari-700-normal.woff2") format("woff2");
+}
+
+:lang(hi) {
+  font-family: "Noto Sans Devanagari", #{get-font-stack("body")};
+}
+
 // The sidenav in the docs layout is sticky on wide screens only; USWDS ships no
 // setting for this, and it is purely additive.
 @include at-media("desktop") {

@@ -31,6 +31,13 @@
 <link rel="preload" href="{{ . }}" as="font" type="font/woff2" crossorigin>
 {{- end }}
 
+{{- /* Devanagari is in no USWDS font, so a Hindi page needs a second family.
+       Scoped to the language being rendered, not to hugo.IsMultilingual, so an
+       English or Spanish build never fetches or publishes it. */ -}}
+{{- if eq site.Language.Lang "hi" }}
+{{- partial "uswds/hindi-font" . }}
+{{- end }}
+
 {{- with $sheet.css }}
   {{- if hugo.IsProduction }}
 <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}">
