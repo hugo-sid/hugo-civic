@@ -29,7 +29,7 @@ The second constraint is payload. Compiling only the components a site uses, and
 - **⚡ Two-tier JavaScript.** A small, stable core bundle (banner, header, skipnav) is cached across every page; interactive components register their behaviour per page and are collected into one additional bundle.
 - **📏 Enforced size budgets.** CSS, JS, and font budgets are measured per preset and checked in `npm run check`. A budget you do not enforce is a wish.
 - **♿ Accessibility built in.** Skip navigation, the federal government banner, the required site identifier, breadcrumbs, and in-page navigation ship as first-class partials.
-- **🌐 Multilingual.** English and Spanish translations included; all interface strings go through `i18n`.
+- **🌐 Multilingual.** English, Spanish, and Hindi translations included; all interface strings go through `i18n`.
 - **✍️ Content components as shortcodes.** Accordions, alerts, summary boxes, process lists, tags, and icons, usable directly from Markdown.
 - **📰 Article furniture.** Date and author bylines, tag-driven related content, previous/next sibling links, and pagination — each a no-op on pages that have nothing to show. An article ends with **one** onward block, never three: related content where the index matches, previous/next where it does not, and a section declares itself a flat feed rather than a tree with `sidenav: false`.
 - **🔎 Site search.** A [Pagefind](https://pagefind.app) index driven through its JS API, rendering results as `usa-collection` — so the CSS cost of the whole feature is one rule for `<mark>`. Degrades honestly with JavaScript off or with no index built, and `provider = "none"` removes the box entirely.
@@ -341,9 +341,10 @@ Language params **deep-merge** into the root `[params]`, so this overrides one k
 #### What to know before you rely on it
 
 - **Search does not cross languages.** Pagefind indexes each language separately and searches only the current page's partition, so a Spanish reader will not find English-only pages. Pagefind's `--force-language` flag merges them, at the cost of stemming every language with one stemmer — which makes search measurably worse for your majority language. Prefer translating the pages that matter.
-- **Interface strings come from `i18n/`.** The theme ships `en` and `es`. For a third language, copy `i18n/en.toml`, translate it, and keep every key — a missing key silently renders the **default language's** string, not a blank. `npm run check:i18n` enforces that.
+- **Interface strings come from `i18n/`.** The theme ships `en`, `es`, and `hi`. For another language, copy `i18n/en.toml`, translate it, and keep every key — a missing key silently renders the **default language's** string, not a blank. `npm run check:i18n` enforces that.
 - **Name each language in every table.** A `[language_name_es]` entry in `en.toml` (`other = "Spanish"`) is what lets the three-or-more dropdown read "Español (Spanish)" to a reader who does not read Spanish — it is what makes a language in an unfamiliar script selectable at all.
-- **Banner and identifier wording is federally standardised.** The English and Spanish strings are copied verbatim from USWDS. Do not paraphrase them, and note that USWDS publishes no other language.
+- **Banner and identifier wording is federally standardised — where a source exists.** The English and Spanish strings are copied verbatim from USWDS; do not paraphrase them. USWDS publishes no official Hindi translation of this wording, so `i18n/hi.toml`'s banner/identifier strings — and the rest of its UI strings — were translated for this repository and have had no native-speaker review. See HINDI.md.
+- **A script outside USWDS's fonts needs its own font.** Public Sans, Merriweather and Roboto Mono are Latin-only, so Hindi content is set in a self-hosted Noto Sans Devanagari (`@fontsource/noto-sans-devanagari`), scoped to `:lang(hi)` and published only when it's referenced. A future language in a script none of the four families cover needs the same treatment — see `uswds/hindi-font.html` for the pattern.
 - **An empty translation is a *missing* translation.** `other = ""` makes Hugo fall back to the default language, so a "deliberately blank" string renders as English. Use a single space if you truly want nothing.
 
 ### Articles and listings

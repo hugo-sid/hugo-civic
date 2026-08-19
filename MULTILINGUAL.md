@@ -658,6 +658,25 @@ Two specifics for whoever adds the third:
   calibrated on whitespace-delimited text and should be re-measured rather than
   trusted.
 
+**Update: the third language landed.** Hindi (`hi-in`), full-site rather than
+a fixture subset — see HINDI.md for the plan and font decision. What actually
+ran:
+
+- The three-or-more dropdown renders and behaves — `aria-expanded`,
+  `aria-current`, keyboard operation — for all three languages, English and
+  Spanish included, since crossing the two-language threshold flips their
+  variant too. This was the untested path §8.5 flagged; it is now exercised
+  by `exampleSite` on every build.
+- Devanagari is not in Pagefind's Snowball-based stemming table the way `es`
+  is, so Hindi search is unstemmed word matching, not stemmed. `check-search.sh`
+  passed regardless — its assertions are about index completeness and the
+  masthead action, not stemming quality — but the search *feel* for Hindi
+  should not be assumed equivalent to English or Spanish's.
+- No font question existed for `es` — Spanish is Latin script. Hindi's is the
+  one real blocker of the three: Devanagari has no glyphs in any USWDS font,
+  so `@fontsource/noto-sans-devanagari` is self-hosted and scoped to
+  `:lang(hi)`. See HINDI.md §4.
+
 ### 8.6 The Component UI does not change the §15.2 decision, but dates its wording
 
 Pagefind 1.5.0 replaced the Default UI (`pagefind-ui.js` / `PagefindUI`) with a
