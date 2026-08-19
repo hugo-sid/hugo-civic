@@ -1,0 +1,44 @@
+{{- /*
+  Publishes Noto Sans Devanagari (regular + bold) from the fontsource mount and
+  preloads the regular weight, exactly the way uswds/head.html already treats
+  the body face — same reasoning, same "regular weight only" call.
+
+  Not part of uswds/assets.html: that partial publishes only what the compiled
+  USWDS stylesheet references, and Devanagari is not in USWDS's font system at
+  all. This is a second, small, parallel pipeline for the one non-USWDS asset
+  the theme ships.
+
+  Two weights only — regular and bold — because that is what the theme's own
+  content actually sets (uswds-typography's bold, nothing heavier). Fontsource
+  ships nine; publishing the other seven would cost budget for weights nothing
+  requests.
+
+  Called only when the page being rendered is Hindi (see uswds/head.html), so
+  an English or Spanish build never fetches or publishes these files.
+
+  Side effects only — emits the preload link and publishes the files; the
+  @font-face rule itself lives in assets/uswds/_custom.scss, scoped to
+  :lang(hi), because CSS cannot be generated from a Go template partial and
+  Sass cannot reach into Hugo's asset pipeline to discover a filename.
+*/ -}}
+
+{{- $weights := slice "400" "700" -}}
+{{- $missing := slice -}}
+
+{{- range $weight := $weights -}}
+  {{- $name := printf "noto-sans-devanagari-devanagari-%s-normal.woff2" $weight -}}
+  {{- $src := printf "fonts-dist/noto-sans-devanagari/%s" $name -}}
+  {{- with resources.Get $src -}}
+    {{- $pub := resources.Copy (printf "/fonts/noto-sans-devanagari/%s" $name) . -}}
+    {{- $pub.Publish -}}
+    {{- if eq $weight "400" }}
+<link rel="preload" href="{{ $pub.RelPermalink }}" as="font" type="font/woff2" crossorigin>
+    {{- end }}
+  {{- else -}}
+    {{- $missing = $missing | append $src -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with $missing -}}
+  {{- warnf "uswds: %d Hindi font file(s) not found, e.g. %q — is @fontsource/noto-sans-devanagari installed and mounted? See exampleSite/hugo.toml." (len .) (index . 0) -}}
+{{- end -}}
