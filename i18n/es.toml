@@ -17,6 +17,18 @@ other = "Cerrar"
 [search]
 other = "Buscar"
 
+[languages]
+other = "Idiomas"
+
+# Véase i18n/en.toml: nombra cada idioma en el idioma de esta tabla. Todas las
+# tablas nombran todos los idiomas, incluido el suyo propio, para que la
+# comprobación de paridad de claves se cumpla; el propio nunca se muestra.
+[language_name_en]
+other = "inglés"
+
+[language_name_es]
+other = "español"
+
 [search_component]
 other = "Componente de búsqueda"
 
@@ -186,8 +198,18 @@ other = "Identificador de la agencia"
 [identifier_identity_aria]
 other = "Descripción de la agencia"
 
+# Spanish carries the article inside identifier_content ("Un sitio web oficial
+# de"), so there is no separate prefix to render — and this value is a single
+# space rather than "" on purpose.
+#
+# Hugo treats an EMPTY translation as a MISSING one: it logs
+# i18n|MISSING_TRANSLATION and falls back to the default language, which put
+# English's "An" in front of the Spanish sentence — "An Un sitio web oficial
+# de" — in the one region of the page that is federally required. A single
+# space is non-empty, so no fallback happens; it sits inside an aria-hidden
+# span and collapses to nothing on screen. Do not "tidy" it to "".
 [identifier_content_prefix]
-other = ""
+other = " "
 
 [identifier_content]
 other = "Un sitio web oficial de"

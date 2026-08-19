@@ -36,7 +36,20 @@
       <section class="usa-identifier__identity" aria-label="{{ i18n "identifier_identity_aria" }}">
         <p class="usa-identifier__identity-domain">{{ $id.domain | default site.BaseURL }}</p>
         <p class="usa-identifier__identity-disclaimer">
-          <span aria-hidden="true">{{ i18n "identifier_content_prefix" }}</span>
+          {{- /* Conditional, as upstream's `{% if masthead.content_prefix %}`
+                 is. The prefix is the English sentence's article ("An"), split
+                 out and aria-hidden because the domain is announced just above
+                 it. Not every language needs one — Spanish carries its article
+                 inside identifier_content ("Un sitio web oficial de") — and a
+                 language that does not must not inherit English's.
+
+                 Note that an EMPTY string in a translation table cannot say
+                 that: Hugo treats "" as a missing translation and falls back to
+                 the default language, which rendered the Spanish identifier as
+                 "An Un sitio web oficial de". See the note in i18n/es.toml. */ -}}
+          {{- with i18n "identifier_content_prefix" }}
+          <span aria-hidden="true">{{ . }}</span>
+          {{- end }}
           {{ i18n "identifier_content" }}
           <a href="{{ $parent.url | default "#" }}">{{ $parent.name }}</a>{{ if $id.taxpayerDisclaimer }}. {{ i18n "identifier_taxpayer" }}{{ end }}
         </p>

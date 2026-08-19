@@ -26,6 +26,9 @@
 {{- end -}}
 
 {{- range $i, $item := $items -}}
+  {{- /* .Name, not the translated label: the id is an aria-controls target, not
+         something a reader sees, and keying it off the untranslated name keeps
+         it identical across languages. */ -}}
   {{- $id := printf "nav-%d-%d-%s" $level $i (anchorize $item.Name) -}}
 
   {{- /* .IsMenuCurrent matches the page's OWN url and .HasMenuCurrent only walks
@@ -48,7 +51,7 @@
   <li class="{{ if gt $level 0 }}usa-nav__submenu-item{{ else }}usa-nav__primary-item{{ end }}">
     {{- if and (eq $level 0) $item.HasChildren -}}
       <button type="button" class="usa-accordion__button usa-nav__link{{ if $isCurrent }} usa-current{{ end }}" aria-expanded="false" aria-controls="{{ $id }}">
-        <span>{{ $item.Name }}</span>
+        <span>{{ partial "chrome/menu-label" $item }}</span>
       </button>
       {{- if $megamenu -}}
         <div id="{{ $id }}" class="usa-nav__submenu usa-megamenu">
@@ -80,7 +83,8 @@
       {{- end -}}
     {{- else -}}
       <a href="{{ $item.URL | relLangURL }}"{{ if eq $level 0 }} class="usa-nav-link{{ if $isCurrent }} usa-current{{ end }}"{{ else if $isCurrent }} class="usa-current"{{ end }}>
-        {{- if $megamenu }}{{ $item.Name }}{{ else }}<span>{{ $item.Name }}</span>{{ end -}}
+        {{- $label := partial "chrome/menu-label" $item -}}
+        {{- if $megamenu }}{{ $label }}{{ else }}<span>{{ $label }}</span>{{ end -}}
       </a>
     {{- end -}}
   </li>

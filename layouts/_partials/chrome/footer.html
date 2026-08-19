@@ -41,10 +41,10 @@
               {{- range $links }}
               <div class="mobile-lg:grid-col-6 desktop:grid-col-3">
                 <section class="usa-footer__primary-content usa-footer__primary-content--collapsible">
-                  <h4 class="usa-footer__primary-link">{{ .Name }}</h4>
+                  <h4 class="usa-footer__primary-link">{{ partial "chrome/menu-label" . }}</h4>
                   <ul class="usa-list usa-list--unstyled">
                     {{- range .Children }}
-                    <li class="usa-footer__secondary-link"><a href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+                    <li class="usa-footer__secondary-link"><a href="{{ .URL | relLangURL }}">{{ partial "chrome/menu-label" . }}</a></li>
                     {{- end }}
                   </ul>
                 </section>

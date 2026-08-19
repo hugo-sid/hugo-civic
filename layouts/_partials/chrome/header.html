@@ -28,6 +28,11 @@
        it, and every page in the site linked to a 404. */ -}}
 {{- $provider := ($u.search | default dict).provider | default "pagefind" -}}
 {{- $showSearch := and (ne $h.search false) (ne $provider "none") -}}
+{{- /* Two conditions again, for the same reason as search: languageSelector is
+       "does this masthead carry the control", and a site with one language has
+       nothing to put in it. The param defaults on because the second half of
+       the test already makes it a no-op everywhere it would be wrong. */ -}}
+{{- $showLanguages := and (ne $h.languageSelector false) hugo.IsMultilingual -}}
 {{- $items := site.Menus.main -}}
 {{- $secondary := site.Menus.secondary -}}
 
@@ -37,6 +42,9 @@
 <header class="usa-header usa-header--extended">
   <div class="usa-navbar">
     {{- partial "chrome/site-title" . }}
+    {{- if $showLanguages }}
+      {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options-mobile" "modifier" "usa-language--small" "class" "display-block desktop:display-none") }}
+    {{- end }}
     {{- with $items }}
     <button type="button" class="usa-menu-btn">{{ i18n "menu" | default "Menu" }}</button>
     {{- end }}
@@ -48,16 +56,19 @@
         <img src="{{ $u.imagePath | default "/img/uswds" }}/usa-icons/close.svg" role="img" alt="{{ i18n "close" | default "Close" }}">
       </button>
       {{- partial "chrome/nav-menu" (dict "items" . "level" 0 "megamenu" $megamenu "page" $) }}
-      {{- if or $secondary $showSearch }}
+      {{- if or $secondary $showSearch $showLanguages }}
       <div class="usa-nav__secondary">
         {{- with $secondary }}
         <ul class="usa-nav__secondary-links">
           {{- range . }}
           <li class="usa-nav__secondary-item">
-            <a href="{{ .URL | relLangURL }}"{{ if $.IsMenuCurrent "secondary" . }} class="usa-current"{{ end }}>{{ .Name }}</a>
+            <a href="{{ .URL | relLangURL }}"{{ if $.IsMenuCurrent "secondary" . }} class="usa-current"{{ end }}>{{ partial "chrome/menu-label" . }}</a>
           </li>
           {{- end }}
         </ul>
+        {{- end }}
+        {{- if $showLanguages }}
+          {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options" "modifier" "usa-language--small" "class" "display-none desktop:display-block") }}
         {{- end }}
         {{- if $showSearch }}
           {{- partial "chrome/search" (dict "modifier" "usa-search--small" "id" "search-field-small") }}
@@ -74,6 +85,9 @@
   <div class="usa-nav-container">
     <div class="usa-navbar">
       {{- partial "chrome/site-title" . }}
+      {{- if $showLanguages }}
+        {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options-mobile" "modifier" "usa-language--small" "class" "display-block desktop:display-none") }}
+      {{- end }}
       {{- with $items }}
       <button type="button" class="usa-menu-btn">{{ i18n "menu" | default "Menu" }}</button>
       {{- end }}
@@ -88,6 +102,15 @@
         {{- partial "chrome/search" (dict "modifier" "" "id" "search-field") }}
       {{- end }}
     </nav>
+    {{- end }}
+    {{- /* Outside .usa-nav, and outside `with $items`, because both facts are
+           load-bearing. The component's CSS positions it with
+           `.usa-nav-container .usa-language-container` — absolute on mobile,
+           beside the menu button; flex-end on desktop — which only resolves
+           when it is a child of the nav container rather than of the slide-in
+           panel. And a site with no main menu still has a language. */ -}}
+    {{- if $showLanguages }}
+      {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options" "modifier" "usa-language--small" "class" "display-none desktop:display-block") }}
     {{- end }}
   </div>
 </header>
