@@ -1,9 +1,22 @@
 baseURL = "https://civic.sid.one/"
-locale = "en-us"
 title = "Example Agency"
 theme = "hugo-civic"
 
 enableRobotsTXT = true
+
+# ---------------------------------------------------------------------------
+# Languages
+#
+# English stays at / and Spanish goes to /es/. Setting
+# defaultContentLanguageInSubdir = true would move every English page to /en/ —
+# a site-wide redirect event, and the one decision here a site cannot change
+# later for free. See the [languages] block below for the rest.
+#
+# `locale` used to be set at the top of this file; it now lives per language,
+# which is the only place it can differ.
+# ---------------------------------------------------------------------------
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
 
 # ---------------------------------------------------------------------------
 # Mounts
@@ -147,41 +160,114 @@ enableRobotsTXT = true
     name = "date"
     weight = 10
 
-[menus]
-  [[menus.main]]
-    name = "About"
-    url = "/about/"
-    weight = 10
-  [[menus.main]]
-    name = "Documentation"
-    url = "/docs/"
-    weight = 20
-  [[menus.main]]
-    name = "News"
-    url = "/news/"
-    weight = 30
+# ---------------------------------------------------------------------------
+# Languages and menus
+#
+# Menus are defined PER LANGUAGE rather than once at the top level. On a
+# multilingual site a shared [menus] block is inherited by every language, so
+# one shared menu means every Spanish page carries English labels pointing at
+# pages that may not exist in Spanish — which is the defect this whole section
+# exists to avoid.
+#
+# The Spanish menu is deliberately SHORTER than the English one. Hugo only
+# materialises a section in a language that has content in it, and only `about`
+# and `news` carry Spanish pages, so listing "Documentación" would put a link to
+# a section with nothing in it in the masthead of every Spanish page. A site
+# that would rather show its whole structure in every language wants
+# `lang.Merge` instead, which fills the gaps from another language — see
+# MULTILINGUAL.md §1.3. That is a content decision, not a config detail.
+#
+# `pageRef` rather than `url`, so Hugo resolves each language's own permalink
+# instead of the theme prefixing a string.
+#
+# No `identifier` on any entry. Identifiers exist so that ONE shared menu can be
+# relabelled from i18n/*.toml, which is the right tool when the languages differ
+# only in wording; here they differ in structure, so the names are inline and an
+# identifier would be dead config that also makes `hugo --printI18nWarnings`
+# report a missing translation for every entry.
+# ---------------------------------------------------------------------------
+[languages]
+  [languages.en]
+    label = "English"       # NOT languageName: deprecated in Hugo 0.158+, and
+    locale = "en-us"        # NOT languageCode: same. Both WARN, and
+    weight = 1              # tools/check-build.sh fails the build on a WARN.
+    title = "Example Agency"
 
-  [[menus.secondary]]
-    name = "Contact"
-    url = "/contact/"
-    weight = 10
+    [[languages.en.menus.main]]
+      name = "About"
+      pageRef = "/about"
+      weight = 10
+    [[languages.en.menus.main]]
+      name = "Documentation"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.en.menus.main]]
+      name = "News"
+      pageRef = "/news"
+      weight = 30
 
-  [[menus.footer]]
-    name = "About"
-    url = "/about/"
-    weight = 10
-  [[menus.footer]]
-    name = "Documentation"
-    url = "/docs/"
-    weight = 20
-  [[menus.footer]]
-    name = "News"
-    url = "/news/"
-    weight = 30
-  [[menus.footer]]
-    name = "Privacy"
-    url = "/privacy/"
-    weight = 40
+    [[languages.en.menus.secondary]]
+      name = "Contact"
+      url = "/contact/"
+      weight = 10
+
+    [[languages.en.menus.footer]]
+      name = "About"
+      pageRef = "/about"
+      weight = 10
+    [[languages.en.menus.footer]]
+      name = "Documentation"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.en.menus.footer]]
+      name = "News"
+      pageRef = "/news"
+      weight = 30
+    [[languages.en.menus.footer]]
+      name = "Privacy"
+      url = "/privacy/"
+      weight = 40
+
+  [languages.es]
+    label = "Español"
+    locale = "es-es"
+    weight = 2
+    title = "Agencia de Ejemplo"
+
+    [languages.es.params]
+      description = "Un sitio de ejemplo construido con el tema USWDS para Hugo."
+
+      # params.uswds.search.page is a STRING, and chrome/search.html resolves the
+      # masthead form's action as ($s.page | relLangURL). That is correct only
+      # while every language uses the same slug. content/search.es.md carries
+      # `slug: "buscar"`, so without this override every Spanish masthead posts
+      # to /es/search/ — which does not exist — while the page itself sits at
+      # /es/buscar/. Silently, on every Spanish page. Language params deep-merge
+      # into the root [params], so this overrides one key and inherits provider
+      # and resultsPerPage from above.
+      [languages.es.params.uswds.search]
+        page = "/buscar/"
+
+    [[languages.es.menus.main]]
+      name = "Acerca de"
+      pageRef = "/about"
+      weight = 10
+    [[languages.es.menus.main]]
+      name = "Noticias"
+      pageRef = "/news"
+      weight = 30
+
+    # No secondary menu: English's only entry is /contact/, and there is no
+    # contact page in either language. A menu entry is a promise.
+
+    [[languages.es.menus.footer]]
+      name = "Acerca de"
+      pageRef = "/about"
+      weight = 10
+    [[languages.es.menus.footer]]
+      name = "Noticias"
+      pageRef = "/news"
+      weight = 30
 
 # Keep processed images in Hugo's cacheDir rather than ./resources, so that a CI
 # platform which restores cacheDir between builds does not reprocess every image
