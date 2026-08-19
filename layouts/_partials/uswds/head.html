@@ -9,6 +9,7 @@
 <meta name="description" content="{{ . | plainify | truncate 160 }}">
 {{- end }}
 <link rel="canonical" href="{{ .Permalink }}">
+{{- partial "uswds/hreflang" . }}
 
 {{- /* Preload the body face only, and before the stylesheet link so it starts
        downloading in the same round trip. Preloading every weight competes with

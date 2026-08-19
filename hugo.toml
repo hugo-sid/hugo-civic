@@ -87,6 +87,13 @@
   megamenu = false
   search = true
 
+  # The USWDS language selector in the masthead. It renders only when the site
+  # declares more than one [languages] entry, so leaving it on costs a
+  # single-language site nothing — set it false only to place the control
+  # somewhere else. With exactly two languages it is a button-styled link to the
+  # other one; with three or more, a dropdown.
+  languageSelector = true
+
 [params.uswds.search]
   # What happens when the masthead form is submitted.
   #

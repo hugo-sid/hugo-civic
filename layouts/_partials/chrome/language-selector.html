@@ -1,0 +1,153 @@
+{{- /*
+  usa-language-selector.
+  Contract: packages/usa-language-selector/src/usa-language-selector.twig
+            packages/usa-language-selector/src/usa-language-selector--three-or-more/usa-language-selector--three-or-more.twig
+            packages/usa-language-selector/src/usa-language-selector--header/usa-language-selector--header.twig (placement)
+
+  Two languages render the single-control variant, three or more the dropdown.
+  That split is USWDS's, not this theme's: with one alternative there is nothing
+  to choose between, so a menu would be a menu of one. Only the dropdown has a
+  behaviour, so a two-language site ships no JS for this at all.
+
+  @param page      the page being rendered; required, for its translations and
+                   for registering the dropdown's JS against the right page
+  @param id        id of the dropdown's submenu. MUST be unique per instance —
+                   the masthead renders two (see chrome/header.html)
+  @param modifier  "" | "usa-language--small"
+  @param class     utility classes for the container, for the responsive
+                   mobile/desktop pair the header renders
+
+  Renders nothing on a single-language site, so it is safe to call
+  unconditionally.
+
+  --- WHERE A LINK GOES WHEN THERE IS NO TRANSLATION -------------------------
+
+  Most of a partially translated site has no counterpart in the other language
+  — see MULTILINGUAL.md §4 — so this is the normal case, not the edge case, and
+  it is the whole UX of the control.
+
+  Each language gets the CLOSEST page that actually exists in it: this page's
+  own translation, else the nearest translated ancestor, else that language's
+  home page. A reader on /docs/forms/validation/ with no Spanish translation
+  lands on /es/docs/ if that exists, rather than being thrown to the site root
+  and left to navigate back down. The walk always terminates, because the home
+  page exists in every language.
+
+  What it deliberately does NOT do is hide or disable the control when there is
+  no exact translation. A dead control on two thirds of a site teaches readers
+  the site has no Spanish; a working one that lands a level up teaches them
+  where the Spanish is.
+
+  --- DEPARTURES FROM THE CONTRACT, ALL OF THEM ------------------------------
+
+  1. The two-language control is an <a>, where upstream emits
+     <button type="button" role="button">. Upstream has nowhere to send a
+     reader; this does, and a control whose entire job is to navigate is a
+     link. Container, classes and the lang/xml:lang span are unchanged, so
+     usa-button's styling and the component's CSS both still apply.
+
+  2. aria-current="page" on the language whose link IS the current page. The
+     dropdown lists every language including the one being read — upstream's
+     example does the same, and a reader wants to see the whole set — but
+     nothing in upstream's markup tells a screen reader which one they are
+     already in.
+
+  3. The "(Spanish)" style gloss sits OUTSIDE the lang="es" span, where
+     upstream has it inside. It is written in the CURRENT page's language, not
+     the target's, so marking it as Spanish makes a screen reader pronounce an
+     English word with Spanish phonetics. It reads correctly to a sighted user
+     either way, which is why the bug is easy to miss.
+*/ -}}
+
+{{- $page := .page -}}
+{{- if not $page -}}
+  {{- errorf "chrome/language-selector: no page passed" -}}
+{{- end -}}
+{{- $id := .id | default "language-options" -}}
+{{- $modifier := .modifier | default "" -}}
+{{- $class := .class | default "" -}}
+
+{{- if hugo.IsMultilingual -}}
+
+  {{- /* hugo.Sites, not site.Sites: the latter was deprecated in Hugo 0.156
+         and its WARN fails tools/check-build.sh. Ordered by language weight,
+         each element carrying .Language and .Home. */ -}}
+  {{- $langs := slice -}}
+  {{- range $s := hugo.Sites -}}
+    {{- $lang := $s.Language.Lang -}}
+
+    {{- /* This page's own translation, if it has one. */ -}}
+    {{- $url := "" -}}
+    {{- range $t := $page.AllTranslations -}}
+      {{- if and (not $url) (eq $t.Language.Lang $lang) -}}
+        {{- $url = $t.RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $exact := ne $url "" -}}
+
+    {{- /* Otherwise the nearest ancestor that has one. .Ancestors is ordered
+           closest-first, so the first hit is the nearest. */ -}}
+    {{- if not $url -}}
+      {{- range $a := $page.Ancestors -}}
+        {{- if not $url -}}
+          {{- range $t := $a.AllTranslations -}}
+            {{- if and (not $url) (eq $t.Language.Lang $lang) -}}
+              {{- $url = $t.RelPermalink -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $langs = $langs | append (dict
+          "lang"    $lang
+          "locale"  ($s.Language.Locale | default $lang)
+          "label"   ($s.Language.Label | default $lang)
+          "current" (eq $lang $page.Language.Lang)
+          "exact"   $exact
+          "url"     (or $url $s.Home.RelPermalink)) -}}
+  {{- end -}}
+
+  {{- if eq (len $langs) 2 -}}
+    {{- /* The label is the OTHER language's own name, written in that language
+           — "Español", not "Spanish" and not "Switch language". A reader who
+           cannot read this page has to be able to read the way out of it. */ -}}
+    {{- with index (where $langs "current" false) 0 }}
+<div class="usa-language-container{{ with $modifier }} {{ . }}{{ end }}{{ with $class }} {{ . }}{{ end }}">
+  <a class="usa-button" href="{{ .url }}" hreflang="{{ .locale }}" lang="{{ .lang }}">
+    <span lang="{{ .lang }}" xml:lang="{{ .lang }}">{{ .label }}</span>
+  </a>
+</div>
+    {{- end }}
+  {{- else }}
+    {{- partial "uswds/require" (dict "page" $page "component" "usa-language-selector") -}}
+<div class="usa-language-container{{ with $modifier }} {{ . }}{{ end }}{{ with $class }} {{ . }}{{ end }}">
+  <ul class="usa-language__primary usa-accordion">
+    <li class="usa-language__primary-item">
+      <button type="button" class="usa-button usa-language__link" aria-expanded="false" aria-controls="{{ $id }}">
+        {{ i18n "languages" | default "Languages" }}
+      </button>
+      <ul id="{{ $id }}" class="usa-language__submenu" hidden="true">
+        {{- range $langs }}
+        {{- /* The gloss names this language in the language of the page being
+               read: "Español (Spanish)" to an English reader. It is what makes
+               a script the reader cannot read still selectable, which is the
+               entire point of upstream's lang_label_en slot. Optional — a site
+               that has not named a language simply gets the endonym — and
+               suppressed when it would only repeat the endonym back. */ -}}
+        {{- $gloss := T (printf "language_name_%s" .lang) -}}
+        {{- if eq (lower $gloss) (lower .label) }}{{ $gloss = "" }}{{ end }}
+        <li class="usa-language__submenu-item">
+          <a href="{{ .url }}" hreflang="{{ .locale }}"{{ if .current }} aria-current="page"{{ end }}>
+            <span lang="{{ .lang }}" xml:lang="{{ .lang }}"><strong>{{ .label }}</strong></span>
+            {{- with $gloss }} ({{ . }}){{ end }}
+          </a>
+        </li>
+        {{- end }}
+      </ul>
+    </li>
+  </ul>
+</div>
+  {{- end }}
+
+{{- end -}}
