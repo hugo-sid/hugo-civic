@@ -62,15 +62,29 @@
     {{- $names = $names | append $id -}}
   {{- end -}}
 
+  {{- /* usa-in-page-navigation assigns ids from a Latin-only regex (see
+         assets/uswds/js/in-page-nav-heading-ids.js for what breaks and why),
+         so its own scroll-spy stops working on non-Latin headings. Fixed up
+         by a follow-on call, not a fork of the component — the import is
+         conditional so a page using none of the other components affected by
+         this bug pays nothing for the fix. */ -}}
+  {{- $needsHeadingIdFix := in $wanted "usa-in-page-navigation" -}}
+  {{- if $needsHeadingIdFix -}}
+    {{- $imports = $imports | append "import fixInPageNavHeadingIds from \"../js/in-page-nav-heading-ids.js\";" -}}
+  {{- end -}}
+
   {{- $src := printf `%s
 const behaviors = [%s];
-const init = () => { behaviors.forEach((b) => b.on(document.body)); };
+const init = () => {
+  behaviors.forEach((b) => b.on(document.body));
+  %s
+};
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init, { once: true });
 } else {
   init();
 }
-` (delimit $imports "\n") (delimit $names ", ") -}}
+` (delimit $imports "\n") (delimit $names ", ") (cond $needsHeadingIdFix "fixInPageNavHeadingIds();" "") -}}
 
   {{- /* Keyed by the sorted component names, so identical sets share one
          bundle. A name is used rather than a hash of the source because the
