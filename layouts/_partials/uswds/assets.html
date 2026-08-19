@@ -30,12 +30,14 @@
 {{- /* Fonts: /fonts/public-sans/PublicSans-Regular.woff2
               -> uswds-dist/fonts/public-sans/PublicSans-Regular.woff2
 
-       Not every font under $fontPath is USWDS's: uswds/_custom.scss adds
-       Noto Sans Devanagari for Hindi (uswds/hindi-font.html), which the
-       compiled CSS's url() scan reports here exactly like a USWDS font
-       because stylesheet.html cannot tell the two apart. So a file missing
-       from the dist mount is tried once more against $extraDist — the
-       fontsource mount — before it counts as actually missing. */ -}}
+       Not every font under $fontPath is USWDS's: uswds/_custom.scss adds one
+       family per non-Latin script — Noto Sans Devanagari for Hindi, Noto Sans
+       Oriya for Odia — published by uswds/script-font.html. Those @font-face
+       rules compile into every preset, so the compiled CSS's url() scan
+       reports them here exactly like a USWDS font, because stylesheet.html
+       cannot tell the two apart. So a file missing from the dist mount is
+       tried once more against $extraDist — the fontsource mount — before it
+       counts as actually missing. */ -}}
 {{- $extraDist := $u.extraFontsDistPath | default "fonts-dist" -}}
 {{- range .sheet.fonts -}}
   {{- $rel := strings.TrimPrefix $fontPath . -}}

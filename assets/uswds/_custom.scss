@@ -14,15 +14,21 @@
 
 @use "uswds-core" as *;
 
+// Non-Latin scripts, one @font-face pair per script, hand-written rather than
+// generated from params.uswds.scriptFonts (see uswds/script-font.html) —
+// that table drives WHICH FILES get published, but Sass cannot reach into
+// Hugo's asset pipeline to discover a filename, and this file favors small,
+// explained, additive rules over a generated loop. Add a block by hand when a
+// script joins; reconsider only once there are enough to make that a real
+// maintenance cost.
+//
+// Regular and bold only for each, matching uswds-typography's own weight
+// usage; the plain, unhashed /fonts/... URLs are what uswds/script-font.html
+// publishes each family to.
+
 // Devanagari, for Hindi content. No USWDS font family covers it — Public
 // Sans, Merriweather and Roboto Mono are all Latin-only — so this is a second
 // font system rather than a theme override of the first one.
-//
-// Regular and bold only, matching uswds-typography's own weight usage; the
-// files are published (or skipped, on a non-Hindi build) by
-// uswds/hindi-font.html, which is the only thing that knows the fingerprinted
-// resource path — hence the plain, unhashed /fonts/... URL here rather than a
-// Sass variable.
 //
 // :lang(hi) rather than [lang="hi"]: CSS's :lang() matches the hyphenated
 // subtag too, so it applies to <html lang="hi-in"> without listing every
@@ -43,8 +49,31 @@
   src: url("/fonts/noto-sans-devanagari/noto-sans-devanagari-devanagari-700-normal.woff2") format("woff2");
 }
 
+// Oriya, for Odia content. A different Unicode block from Devanagari — Noto
+// Sans Devanagari has no Oriya glyphs — so this is a third font system, not a
+// reuse of the second.
+@font-face {
+  font-family: "Noto Sans Oriya";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/noto-sans-oriya/noto-sans-oriya-oriya-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Sans Oriya";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/noto-sans-oriya/noto-sans-oriya-oriya-700-normal.woff2") format("woff2");
+}
+
 :lang(hi) {
   font-family: "Noto Sans Devanagari", #{get-font-stack("body")};
+}
+
+:lang(or) {
+  font-family: "Noto Sans Oriya", #{get-font-stack("body")};
 }
 
 // The sidenav in the docs layout is sticky on wide screens only; USWDS ships no

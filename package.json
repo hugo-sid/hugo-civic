@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@fontsource/noto-sans-devanagari": "5.3.0",
+    "@fontsource/noto-sans-oriya": "5.3.0",
     "@uswds/uswds": "3.13.0",
     "pagefind": "1.5.2"
   },

@@ -31,12 +31,12 @@
 <link rel="preload" href="{{ . }}" as="font" type="font/woff2" crossorigin>
 {{- end }}
 
-{{- /* Devanagari is in no USWDS font, so a Hindi page needs a second family.
-       Scoped to the language being rendered, not to hugo.IsMultilingual, so an
-       English or Spanish build never fetches or publishes it. */ -}}
-{{- if eq site.Language.Lang "hi" }}
-{{- partial "uswds/hindi-font" . }}
-{{- end }}
+{{- /* Non-Latin scripts are in no USWDS font, so a page in one of them needs
+       a second family — see params.uswds.scriptFonts and uswds/script-font.
+       Keyed off the language being rendered, not off hugo.IsMultilingual, so
+       English or Spanish (or any language with no scriptFonts entry) never
+       fetches or publishes anything extra. */ -}}
+{{- partial "uswds/script-font" . }}
 
 {{- with $sheet.css }}
   {{- if hugo.IsProduction }}

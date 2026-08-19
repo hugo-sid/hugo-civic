@@ -45,6 +45,9 @@ other = "Spanish"
 [language_name_hi]
 other = "Hindi"
 
+[language_name_or]
+other = "Odia"
+
 [search_component]
 other = "Search component"
 

@@ -56,13 +56,17 @@ defaultContentLanguageInSubdir = false
   [[module.mounts]]
     source = "node_modules/@uswds/uswds/dist"
     target = "assets/uswds-dist"
-  # Devanagari has no glyphs in any USWDS font, so Hindi pages need a font
-  # this mount does not provide. @fontsource/noto-sans-devanagari ships the
-  # same family self-hosted; only its file assets are mounted, not its own
-  # (unused) CSS. See uswds/hindi-font.html.
+  # Devanagari and Oriya have no glyphs in any USWDS font, so Hindi and Odia
+  # pages need a font neither this mount nor USWDS provides. The fontsource
+  # packages ship each family self-hosted; only their file assets are
+  # mounted, not their own (unused) CSS. See uswds/script-font.html and
+  # params.uswds.scriptFonts above.
   [[module.mounts]]
     source = "node_modules/@fontsource/noto-sans-devanagari/files"
     target = "assets/fonts-dist/noto-sans-devanagari"
+  [[module.mounts]]
+    source = "node_modules/@fontsource/noto-sans-oriya/files"
+    target = "assets/fonts-dist/noto-sans-oriya"
 
 [params]
   description = "An example site built with the USWDS Hugo theme."
@@ -95,6 +99,29 @@ defaultContentLanguageInSubdir = false
   fontTypeSerif = false
   fontTypeMono = false
   fontRoleAlt = "sans"
+
+# ---------------------------------------------------------------------------
+# Script fonts
+#
+# Public Sans (and the theme's other USWDS font types) is Latin-only. A
+# language whose script it has no glyphs for needs a second, self-hosted
+# family — see uswds/script-font.html, which publishes and preloads these on
+# any page whose language matches a key here, and does nothing on any page
+# that doesn't. `family` is documentation only; the actual @font-face rules
+# are hand-written per script in assets/uswds/_custom.scss, scoped to
+# :lang(<code>).
+#
+# Each entry needs its own font package mounted below, under
+# assets/fonts-dist/<mount>/ — see [[module.mounts]] above.
+# ---------------------------------------------------------------------------
+[params.uswds.scriptFonts.hi]
+  family = "Noto Sans Devanagari"
+  mount = "noto-sans-devanagari"
+  subset = "devanagari"
+[params.uswds.scriptFonts.or]
+  family = "Noto Sans Oriya"
+  mount = "noto-sans-oriya"
+  subset = "oriya"
 
 [params.uswds.header]
   variant = "extended"
@@ -318,6 +345,49 @@ defaultContentLanguageInSubdir = false
       weight = 20
     [[languages.hi.menus.footer]]
       name = "समाचार"
+      pageRef = "/news"
+      weight = 30
+
+  [languages.or]
+    label = "ଓଡ଼ିଆ"
+    locale = "or-in"
+    weight = 4
+    title = "ଉଦାହରଣ ଏଜେନ୍ସି"
+
+    [languages.or.params]
+      description = "Hugo ପାଇଁ USWDS ଥିମ ସହିତ ତିଆରି ହୋଇଥିବା ଏକ ଉଦାହରଣ ସାଇଟ ।"
+
+    # content/search.or.md keeps the default filename-derived slug ("search"),
+    # same reasoning as languages.hi above — no params.uswds.search.page
+    # override needed.
+
+    # Every section has an Odia translation, same as Hindi's full menu.
+    [[languages.or.menus.main]]
+      name = "ପରିଚୟ"
+      pageRef = "/about"
+      weight = 10
+    [[languages.or.menus.main]]
+      name = "ଡକ୍ୟୁମେଣ୍ଟେସନ"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.or.menus.main]]
+      name = "ସମ୍ବାଦ"
+      pageRef = "/news"
+      weight = 30
+
+    # No secondary menu: English's only entry is /contact/, and there is no
+    # contact page in any language.
+
+    [[languages.or.menus.footer]]
+      name = "ପରିଚୟ"
+      pageRef = "/about"
+      weight = 10
+    [[languages.or.menus.footer]]
+      name = "ଡକ୍ୟୁମେଣ୍ଟେସନ"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.or.menus.footer]]
+      name = "ସମ୍ବାଦ"
       pageRef = "/news"
       weight = 30
 

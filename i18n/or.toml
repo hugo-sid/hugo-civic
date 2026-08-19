@@ -1,0 +1,299 @@
+# Odia strings.
+#
+# Unlike i18n/es.toml, USWDS ships no official Odia translation of the
+# federally standardised banner/identifier wording to copy — there is no
+# upstream 'or' branch of _banner.twig or _identifier.twig. Every string
+# here, banner and identifier included, was translated for this repository
+# and has had no native-speaker review.
+#
+# Weight this review recommendation more heavily than i18n/hi.toml's: Odia is
+# a lower-resource language for machine translation than Hindi is, so treat
+# this file as a demo fixture, not production-ready copy, until a native
+# speaker has checked it. See ODIA.md §5.
+#
+# TYPOGRAPHY, and it is invisible — read this before editing any string here.
+#
+# Every danda (।, U+0964) in this file is preceded by a NO-BREAK SPACE
+# (U+00A0), never an ordinary space and never nothing at all:
+#
+#   ...ଅଟେ ।     <- U+00A0 + U+0964
+#
+# The space is required because Odia's aa-kar matra (ା, U+0B3E) is very
+# nearly the danda's twin; set tight against the preceding consonant, a danda
+# reads as a matra hanging off that letter rather than as a full stop. The
+# space has to be non-breaking because an ordinary one lets the line wrap
+# between word and danda, orphaning the danda at the start of the next line.
+#
+# Your editor renders U+00A0 exactly like a normal space, so retyping a
+# sentence will silently replace it and nothing will fail — no check catches
+# this. When editing, copy an existing "&nbsp;।" pair rather than typing the
+# danda fresh. Same rule applies to every exampleSite/content/*.or.md file.
+# See ODIA.md §7.
+
+[skipnav]
+other = "ମୁଖ୍ୟ ବିଷୟବସ୍ତୁକୁ ଯାଆନ୍ତୁ"
+
+[menu]
+other = "ମେନୁ"
+
+[close]
+other = "ବନ୍ଦ କରନ୍ତୁ"
+
+[search]
+other = "ଖୋଜନ୍ତୁ"
+
+[languages]
+other = "ଭାଷାଗୁଡ଼ିକ"
+
+# See i18n/en.toml: names each language in this table's own language. Every
+# table names every language, itself included, so §5.1's key-parity check
+# holds; the self-naming entry is never rendered.
+[language_name_en]
+other = "ଇଂରାଜୀ"
+
+[language_name_es]
+other = "ସ୍ପାନିଶ"
+
+[language_name_hi]
+other = "ହିନ୍ଦୀ"
+
+[language_name_or]
+other = "ଓଡ଼ିଆ"
+
+[search_component]
+other = "ଖୋଜ ଉପାଦାନ"
+
+[primary_navigation]
+other = "ମୁଖ୍ୟ ନାଭିଗେସନ"
+
+[section_navigation]
+other = "ବିଭାଗ ନାଭିଗେସନ"
+
+[footer_navigation]
+other = "ଫୁଟର ନାଭିଗେସନ"
+
+[return_to_top]
+other = "ଉପରକୁ ଫେରନ୍ତୁ"
+
+[breadcrumbs]
+other = "ବ୍ରେଡକ୍ରମ୍ବ"
+
+[introduction]
+other = "ପରିଚୟ"
+
+[on_this_page]
+other = "ଏହି ପୃଷ୍ଠାରେ"
+
+[key_information]
+other = "ମୁଖ୍ୟ ସୂଚନା"
+
+[read_more]
+other = "ଅଧିକ ପଢ଼ନ୍ତୁ"
+
+[more_information]
+other = "ଅଧିକ ସୂଚନା"
+
+[topics]
+other = "ବିଷୟଗୁଡ଼ିକ"
+
+[site_alert]
+other = "ସାଇଟ ଆଲର୍ଟ"
+
+# --- Articles -------------------------------------------------------------
+
+[by_author]
+other = "ଲେଖକ"
+
+[published_on]
+other = "ପ୍ରକାଶିତ"
+
+[updated_on]
+other = "ଅଦ୍ୟତନ"
+
+[article_navigation]
+other = "ଲେଖା ନାଭିଗେସନ"
+
+[previous]
+other = "ପୂର୍ବବର୍ତ୍ତୀ"
+
+[next]
+other = "ପରବର୍ତ୍ତୀ"
+
+[related_content]
+other = "ସମ୍ବନ୍ଧିତ ବିଷୟବସ୍ତୁ"
+
+# --- Pagination -------------------------------------------------------------
+#
+# The aria-label wording follows USWDS's own English source; see i18n/en.toml.
+
+[pagination]
+other = "ପୃଷ୍ଠାଙ୍କନ"
+
+[page]
+other = "ପୃଷ୍ଠା"
+
+[last_page]
+other = "ଶେଷ ପୃଷ୍ଠା,"
+
+[pagination_overflow]
+other = "ଅଦୃଶ୍ୟ ପୃଷ୍ଠାଗୁଡ଼ିକୁ ଦର୍ଶାଉଥିବା ଡଟ୍‌ଗୁଡ଼ିକ"
+
+# --- Taxonomies -------------------------------------------------------------
+
+[tagged_with]
+other = "ଏହା ସହିତ ଟ୍ୟାଗ କରାଯାଇଛି"
+
+[browse_topics]
+other = "ବିଷୟ ଅନୁସାରେ ବ୍ରାଉଜ କରନ୍ତୁ"
+
+[item_count]
+one = "{{ . }} ପୃଷ୍ଠା"
+other = "{{ . }} ପୃଷ୍ଠା"
+
+# --- Search -------------------------------------------------------------
+#
+# `%d` and `%s` are substituted in the browser, not by Hugo — see
+# i18n/en.toml. Keep the token, translate everything around it. Odia's
+# plural rule collapses one/other to the same noun form, same as
+# item_count above; only the surrounding sentence differs.
+
+[search_results_count]
+one = "%d ଫଳାଫଳ"
+other = "%d ଫଳାଫଳ"
+
+[search_no_results]
+other = "%s ପାଇଁ କୌଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ ।"
+
+[search_no_results_hint]
+other = "ବନାନ ଯାଞ୍ଚ କରନ୍ତୁ, କିମ୍ବା ଏକ ଛୋଟ କିମ୍ବା ଅଧିକ ସାଧାରଣ ଶବ୍ଦ ଚେଷ୍ଟା କରନ୍ତୁ ।"
+
+[search_prompt]
+other = "ଏହି ସାଇଟରେ ଖୋଜିବାକୁ ଉପରେ ଏକ ଶବ୍ଦ ଲେଖନ୍ତୁ ।"
+
+[search_searching]
+other = "ଖୋଜୁଅଛି…"
+
+[search_load_more]
+other = "ଅଧିକ ଫଳାଫଳ ଦେଖାନ୍ତୁ"
+
+[search_browse_heading]
+other = "ସାଇଟ ବ୍ରାଉଜ କରନ୍ତୁ"
+
+[search_unavailable_title]
+other = "ଖୋଜ ଉପଲବ୍ଧ ନାହିଁ"
+
+[search_unavailable_text]
+other = "ସାଇଟ ପ୍ରକାଶିତ ହେବା ସମୟରେ ଖୋଜ ସୂଚକାଙ୍କ ତିଆରି ହୁଏ, ତେଣୁ ସ୍ଥାନୀୟ ବିକାଶ ସର୍ଭରରେ ଖୋଜ କାମ କରେ ନାହିଁ ।"
+
+[search_needs_js_title]
+other = "ଖୋଜ ପାଇଁ ଜାଭାସ୍କ୍ରିପ୍ଟ ଆବଶ୍ୟକ"
+
+[search_needs_js_text]
+other = "ଏହି ପୃଷ୍ଠା ଆପଣଙ୍କ ବ୍ରାଉଜରରେ ସାଇଟ ଖୋଜେ, ଯାହା ପାଇଁ ଜାଭାସ୍କ୍ରିପ୍ଟ ସକ୍ଷମ ହେବା ଆବଶ୍ୟକ ।"
+
+# --- Official .gov banner -----------------------------------------------
+#
+# Translated for this repository; no upstream Odia source exists to copy.
+# See the note at the top of this file and ODIA.md.
+
+[banner_aria_label]
+other = "ଯୁକ୍ତରାଷ୍ଟ୍ର ଆମେରିକା ସରକାରଙ୍କ ଏକ ସରକାରୀ ୱେବସାଇଟ"
+
+[banner_text]
+other = "ଯୁକ୍ତରାଷ୍ଟ୍ର ଆମେରିକା ସରକାରଙ୍କ ଏକ ସରକାରୀ ୱେବସାଇଟ"
+
+[banner_action]
+other = "ଏହା ଆପଣ କିପରି ଜାଣିବେ"
+
+[banner_domain_heading]
+other = "ସରକାରୀ ୱେବସାଇଟଗୁଡ଼ିକ .gov ବ୍ୟବହାର କରନ୍ତି"
+
+[banner_domain_text]
+other = "ଏକ <strong>.gov</strong> ୱେବସାଇଟ ଯୁକ୍ତରାଷ୍ଟ୍ର ଆମେରିକାର ଏକ ସରକାରୀ ସଂଗଠନର ଅଟେ ।"
+
+[banner_https_heading]
+other = "ସୁରକ୍ଷିତ .gov ୱେବସାଇଟଗୁଡ଼ିକ HTTPS ବ୍ୟବହାର କରନ୍ତି"
+
+[banner_https_pretext]
+other = "ଏକ <strong>ଲକ୍</strong>"
+
+[banner_https_posttext]
+other = "କିମ୍ବା <strong>https://</strong> ର ଅର୍ଥ ହେଉଛି ଆପଣ .gov ୱେବସାଇଟ ସହିତ ସୁରକ୍ଷିତ ଭାବେ ସଂଯୁକ୍ତ ଅଛନ୍ତି । ସମ୍ବେଦନଶୀଳ ସୂଚନା କେବଳ ସରକାରୀ, ସୁରକ୍ଷିତ ୱେବସାଇଟଗୁଡ଼ିକରେ ହିଁ ସେୟାର କରନ୍ତୁ ।"
+
+[banner_lock_title]
+other = "ଲକ୍"
+
+[banner_lock_description]
+other = "ବନ୍ଦ ତାଲା ଆଇକନ"
+
+# --- Agency identifier ---------------------------------------------------
+#
+# Translated for this repository; no upstream Odia source exists to copy.
+
+[identifier_masthead_aria]
+other = "ଏଜେନ୍ସି ପରିଚୟକାରୀ"
+
+[identifier_identity_aria]
+other = "ଏଜେନ୍ସି ବିବରଣୀ"
+
+# Odia, like Hindi and Spanish, carries no separate leading article the way
+# English's "An" does — "official website of the" needs nothing prepended to
+# read naturally. Per identifier.html and the note in i18n/es.toml, an EMPTY
+# translation is treated as MISSING and falls back to English, so this is a
+# single space rather than "" — non-empty, renders as nothing inside its
+# aria-hidden span. Do not "tidy" it to "".
+[identifier_content_prefix]
+other = " "
+
+[identifier_content]
+other = "ର ଏକ ସରକାରୀ ୱେବସାଇଟ"
+
+[identifier_taxpayer]
+other = "କରଦାତାଙ୍କ ଖର୍ଚ୍ଚରେ ତିଆରି ଏବଂ ପ୍ରକାଶିତ ।"
+
+[identifier_required_links_aria]
+other = "ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଲିଙ୍କଗୁଡ଼ିକ"
+
+[identifier_link_about]
+other = "ପରିଚୟ"
+
+[identifier_link_accessibility]
+other = "ପ୍ରବେଶଯୋଗ୍ୟତା ସହାୟତା"
+
+[identifier_link_foia]
+other = "FOIA ଅନୁରୋଧ"
+
+[identifier_link_no_fear_act]
+other = "ନୋ FEAR ଆକ୍ଟ ତଥ୍ୟ"
+
+[identifier_link_inspector_general]
+other = "ଇନ୍ସପେକ୍ଟର ଜେନେରାଲ କାର୍ଯ୍ୟାଳୟ"
+
+[identifier_link_performance]
+other = "କାର୍ଯ୍ୟଦକ୍ଷତା ରିପୋର୍ଟ"
+
+[identifier_link_privacy]
+other = "ଗୋପନୀୟତା ନୀତି"
+
+[identifier_usagov_aria]
+other = "ଆମେରିକୀୟ ସରକାରଙ୍କ ସୂଚନା ଓ ସେବା"
+
+[identifier_usagov_description]
+other = "ଆମେରିକୀୟ ସରକାରଙ୍କ ସୂଚନା ଓ ସେବା ଖୋଜୁଛନ୍ତି କି?"
+
+[identifier_usagov_link]
+other = "USA.gov ଦେଖନ୍ତୁ"
+
+# --- Errors ---------------------------------------------------------------
+
+[error_404_heading]
+other = "ପୃଷ୍ଠା ମିଳିଲା ନାହିଁ"
+
+[error_404_intro]
+other = "କ୍ଷମା କରନ୍ତୁ, ଆମେ ଆପଣ ଖୋଜୁଥିବା ପୃଷ୍ଠା ପାଇପାରିଲୁ ନାହିଁ । ଏହା ହୁଏତ ହଟାଯାଇଥାଇପାରେ, ନାମ ବଦଳାଯାଇଥାଇପାରେ, କିମ୍ବା ଅନ୍ୟଥା ଉପଲବ୍ଧ ନଥାଇପାରେ ।"
+
+[error_404_help]
+other = "ଯଦି ଆପଣ ସିଧାସଳଖ URL ଟାଇପ କରିଥିଲେ, ବନାନ ଏବଂ ବଡ଼-ଛୋଟ ଅକ୍ଷର ଯାଞ୍ଚ କରନ୍ତୁ । ଆମର URL ଏହିପରି ଦେଖାଯାଏ:"
+
+[error_404_home]
+other = "ମୁଖ୍ୟପୃଷ୍ଠା ଦେଖନ୍ତୁ"

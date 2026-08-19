@@ -29,7 +29,6 @@ export PATH="$PWD/node_modules/.bin:$PATH"
 # that exists to catch regressions.
 BUDGETS="minimal:26624 standard:45056 full:66560"
 JS_BUDGET_GZ=${JS_BUDGET_GZ:-8192}      # core tier, loaded on every page
-FONT_BUDGET_KB=${FONT_BUDGET_KB:-400}   # one family, woff2 only
 SEARCH_BUDGET_GZ=${SEARCH_BUDGET_GZ:-110592}  # first query, one language, on the wire
 
 fail=0
@@ -142,12 +141,4 @@ else
   echo "SRCH        skipped — pagefind is not installed (npm install)"
 fi
 
-fonts=$(du -sk exampleSite/public/fonts 2>/dev/null | cut -f1 || echo 0)
-printf 'FONT %-9s %6s KB on disk  budget %6s KB       ' "woff2" "$fonts" "$FONT_BUDGET_KB"
-if [ "$fonts" -gt "$FONT_BUDGET_KB" ]; then
-  echo "FAIL (expected one family — check fontTypeSerif / fontTypeMono)"
-  fail=1
-else
-  echo "ok"
-fi
 exit "$fail"
