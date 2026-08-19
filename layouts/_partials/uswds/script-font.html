@@ -1,0 +1,69 @@
+{{- /*
+  Publishes a non-Latin script's font (regular + bold) from its fontsource
+  mount and preloads the regular weight, exactly the way uswds/head.html
+  already treats the body face — same reasoning, same "regular weight only"
+  call. Generalised from what shipped as uswds/hindi-font.html for Hindi
+  alone; Odia's addition is what made a second near-identical file not worth
+  copy-pasting (see HINDI.md and ODIA.md).
+
+  Not part of uswds/assets.html: that partial publishes only what the compiled
+  USWDS stylesheet references, and no non-Latin script is in USWDS's font
+  system at all. This is a second, small, parallel pipeline for the non-USWDS
+  assets the theme ships.
+
+  Driven by params.uswds.scriptFonts, keyed by language code:
+
+    [params.uswds.scriptFonts.hi]
+      family = "Noto Sans Devanagari"   # documentation only — _custom.scss's
+                                         # @font-face rules are hand-written,
+                                         # not generated from this value
+      mount  = "noto-sans-devanagari"   # the fontsource package's own name,
+                                         # and its [[module.mounts]] target
+                                         # under assets/fonts-dist/
+      subset = "devanagari"             # the script subset in the
+                                         # fontsource filename
+
+  Does nothing when site.Language.Lang has no entry, so English and Spanish
+  publish and fetch nothing extra — and nothing keyed to "hi" specifically, so
+  a third script needs only a new table entry and a new @font-face block, not
+  a new template.
+
+  Two weights only — regular and bold — because that is what the theme's own
+  content actually sets (uswds-typography's bold, nothing heavier). Fontsource
+  ships nine per family; publishing the other seven would cost budget for
+  weights nothing requests.
+
+  Side effects only — emits the preload link and publishes the files; the
+  @font-face rules themselves live in assets/uswds/_custom.scss, one block per
+  script, scoped to :lang(<code>), because CSS cannot be generated from a Go
+  template partial and Sass cannot reach into Hugo's asset pipeline to
+  discover a filename.
+*/ -}}
+
+{{- $scriptFonts := (site.Params.uswds | default dict).scriptFonts | default dict -}}
+{{- $font := index $scriptFonts site.Language.Lang -}}
+
+{{- with $font -}}
+  {{- $mount := .mount -}}
+  {{- $subset := .subset -}}
+  {{- $weights := slice "400" "700" -}}
+  {{- $missing := slice -}}
+
+  {{- range $weight := $weights -}}
+    {{- $name := printf "%s-%s-%s-normal.woff2" $mount $subset $weight -}}
+    {{- $src := printf "fonts-dist/%s/%s" $mount $name -}}
+    {{- with resources.Get $src -}}
+      {{- $pub := resources.Copy (printf "/fonts/%s/%s" $mount $name) . -}}
+      {{- $pub.Publish -}}
+      {{- if eq $weight "400" }}
+<link rel="preload" href="{{ $pub.RelPermalink }}" as="font" type="font/woff2" crossorigin>
+      {{- end }}
+    {{- else -}}
+      {{- $missing = $missing | append $src -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- with $missing -}}
+    {{- warnf "uswds: %d %q font file(s) not found, e.g. %q — is the fontsource package for %q installed and mounted? See exampleSite/hugo.toml." (len .) site.Language.Lang (index . 0) $mount -}}
+  {{- end -}}
+{{- end -}}
