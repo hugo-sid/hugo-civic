@@ -1,0 +1,272 @@
+# Hindi strings.
+#
+# Unlike i18n/es.toml, USWDS ships no official Hindi translation of the
+# federally standardised banner/identifier wording to copy — there is no
+# upstream 'hi' branch of _banner.twig or _identifier.twig. Every string here,
+# banner and identifier included, was translated for this repository and has
+# had no native-speaker review. See HINDI.md.
+
+[skipnav]
+other = "मुख्य सामग्री पर जाएँ"
+
+[menu]
+other = "मेनू"
+
+[close]
+other = "बंद करें"
+
+[search]
+other = "खोजें"
+
+[languages]
+other = "भाषाएँ"
+
+# See i18n/en.toml: names each language in this table's own language. Every
+# table names every language, itself included, so §5.1's key-parity check
+# holds; the self-naming entry is never rendered.
+[language_name_en]
+other = "अंग्रेज़ी"
+
+[language_name_es]
+other = "स्पेनिश"
+
+[language_name_hi]
+other = "हिन्दी"
+
+[search_component]
+other = "खोज घटक"
+
+[primary_navigation]
+other = "मुख्य नेविगेशन"
+
+[section_navigation]
+other = "अनुभाग नेविगेशन"
+
+[footer_navigation]
+other = "फ़ुटर नेविगेशन"
+
+[return_to_top]
+other = "ऊपर वापस जाएँ"
+
+[breadcrumbs]
+other = "ब्रेडक्रम्ब"
+
+[introduction]
+other = "परिचय"
+
+[on_this_page]
+other = "इस पृष्ठ पर"
+
+[key_information]
+other = "मुख्य जानकारी"
+
+[read_more]
+other = "और पढ़ें"
+
+[more_information]
+other = "अधिक जानकारी"
+
+[topics]
+other = "विषय"
+
+[site_alert]
+other = "साइट अलर्ट"
+
+# --- Articles -------------------------------------------------------------
+
+[by_author]
+other = "लेखक"
+
+[published_on]
+other = "प्रकाशित"
+
+[updated_on]
+other = "अद्यतन"
+
+[article_navigation]
+other = "लेख नेविगेशन"
+
+[previous]
+other = "पिछला"
+
+[next]
+other = "अगला"
+
+[related_content]
+other = "संबंधित सामग्री"
+
+# --- Pagination -------------------------------------------------------------
+#
+# The aria-label wording follows USWDS's own English source; see i18n/en.toml.
+
+[pagination]
+other = "पृष्ठांकन"
+
+[page]
+other = "पृष्ठ"
+
+[last_page]
+other = "अंतिम पृष्ठ,"
+
+[pagination_overflow]
+other = "अदृश्य पृष्ठों को दर्शाने वाला दीर्घवृत्त"
+
+# --- Taxonomies -------------------------------------------------------------
+
+[tagged_with]
+other = "इनके साथ टैग किया गया"
+
+[browse_topics]
+other = "विषय के अनुसार ब्राउज़ करें"
+
+[item_count]
+one = "{{ . }} पृष्ठ"
+other = "{{ . }} पृष्ठ"
+
+# --- Search -------------------------------------------------------------
+#
+# `%d` and `%s` are substituted in the browser, not by Hugo — see
+# i18n/en.toml. Keep the token, translate everything around it. Hindi's
+# plural rule collapses one/other to the same noun form, same as
+# item_count above; only the surrounding sentence differs.
+
+[search_results_count]
+one = "%d परिणाम"
+other = "%d परिणाम"
+
+[search_no_results]
+other = "%s के लिए कोई परिणाम नहीं मिला।"
+
+[search_no_results_hint]
+other = "वर्तनी जाँचें, या कोई छोटा या अधिक सामान्य शब्द आज़माएँ।"
+
+[search_prompt]
+other = "इस साइट पर खोजने के लिए ऊपर एक शब्द दर्ज करें।"
+
+[search_searching]
+other = "खोजा जा रहा है…"
+
+[search_load_more]
+other = "और परिणाम दिखाएँ"
+
+[search_browse_heading]
+other = "साइट ब्राउज़ करें"
+
+[search_unavailable_title]
+other = "खोज उपलब्ध नहीं है"
+
+[search_unavailable_text]
+other = "खोज सूचकांक साइट प्रकाशित होने पर बनता है, इसलिए स्थानीय विकास सर्वर पर खोज काम नहीं करती।"
+
+[search_needs_js_title]
+other = "खोज के लिए जावास्क्रिप्ट आवश्यक है"
+
+[search_needs_js_text]
+other = "यह पृष्ठ आपके ब्राउज़र में साइट खोजता है, जिसके लिए जावास्क्रिप्ट सक्षम होना आवश्यक है।"
+
+# --- Official .gov banner -----------------------------------------------
+#
+# Translated for this repository; no upstream Hindi source exists to copy.
+# See the note at the top of this file and HINDI.md.
+
+[banner_aria_label]
+other = "संयुक्त राज्य अमेरिका सरकार की एक आधिकारिक वेबसाइट"
+
+[banner_text]
+other = "संयुक्त राज्य अमेरिका सरकार की एक आधिकारिक वेबसाइट"
+
+[banner_action]
+other = "यह जानने का तरीका"
+
+[banner_domain_heading]
+other = "आधिकारिक वेबसाइटें .gov का उपयोग करती हैं"
+
+[banner_domain_text]
+other = "एक <strong>.gov</strong> वेबसाइट संयुक्त राज्य अमेरिका में एक आधिकारिक सरकारी संगठन से संबंधित है।"
+
+[banner_https_heading]
+other = "सुरक्षित .gov वेबसाइटें HTTPS का उपयोग करती हैं"
+
+[banner_https_pretext]
+other = "एक <strong>लॉक</strong>"
+
+[banner_https_posttext]
+other = "या <strong>https://</strong> का अर्थ है कि आप .gov वेबसाइट से सुरक्षित रूप से जुड़े हैं। संवेदनशील जानकारी केवल आधिकारिक, सुरक्षित वेबसाइटों पर ही साझा करें।"
+
+[banner_lock_title]
+other = "लॉक"
+
+[banner_lock_description]
+other = "बंद ताले का आइकन"
+
+# --- Agency identifier ---------------------------------------------------
+#
+# Translated for this repository; no upstream Hindi source exists to copy.
+
+[identifier_masthead_aria]
+other = "एजेंसी पहचानकर्ता"
+
+[identifier_identity_aria]
+other = "एजेंसी विवरण"
+
+# Hindi, like Spanish, carries no separate leading article the way English's
+# "An" does — "official website of the" needs nothing prepended to read
+# naturally. Per identifier.html and the note in i18n/es.toml, an EMPTY
+# translation is treated as MISSING and falls back to English, so this is a
+# single space rather than "" — non-empty, renders as nothing inside its
+# aria-hidden span. Do not "tidy" it to "".
+[identifier_content_prefix]
+other = " "
+
+[identifier_content]
+other = "की एक आधिकारिक वेबसाइट"
+
+[identifier_taxpayer]
+other = "करदाताओं के व्यय पर निर्मित और प्रकाशित।"
+
+[identifier_required_links_aria]
+other = "महत्वपूर्ण लिंक"
+
+[identifier_link_about]
+other = "परिचय"
+
+[identifier_link_accessibility]
+other = "पहुँच-सुविधा सहायता"
+
+[identifier_link_foia]
+other = "FOIA अनुरोध"
+
+[identifier_link_no_fear_act]
+other = "नो FEAR एक्ट डेटा"
+
+[identifier_link_inspector_general]
+other = "महानिरीक्षक कार्यालय"
+
+[identifier_link_performance]
+other = "प्रदर्शन रिपोर्ट"
+
+[identifier_link_privacy]
+other = "गोपनीयता नीति"
+
+[identifier_usagov_aria]
+other = "अमेरिकी सरकार की जानकारी और सेवाएँ"
+
+[identifier_usagov_description]
+other = "अमेरिकी सरकार की जानकारी और सेवाएँ खोज रहे हैं?"
+
+[identifier_usagov_link]
+other = "USA.gov पर जाएँ"
+
+# --- Errors ---------------------------------------------------------------
+
+[error_404_heading]
+other = "पृष्ठ नहीं मिला"
+
+[error_404_intro]
+other = "क्षमा करें, हमें आपका खोजा गया पृष्ठ नहीं मिल सका। हो सकता है इसे हटा दिया गया हो, इसका नाम बदल दिया गया हो, या यह अन्यथा उपलब्ध न हो।"
+
+[error_404_help]
+other = "यदि आपने URL सीधे टाइप किया है, तो वर्तनी और बड़े-छोटे अक्षरों की जाँच करें। हमारे URL इस तरह दिखते हैं:"
+
+[error_404_home]
+other = "मुखपृष्ठ पर जाएँ"

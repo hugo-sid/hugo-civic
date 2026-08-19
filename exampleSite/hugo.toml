@@ -56,6 +56,13 @@ defaultContentLanguageInSubdir = false
   [[module.mounts]]
     source = "node_modules/@uswds/uswds/dist"
     target = "assets/uswds-dist"
+  # Devanagari has no glyphs in any USWDS font, so Hindi pages need a font
+  # this mount does not provide. @fontsource/noto-sans-devanagari ships the
+  # same family self-hosted; only its file assets are mounted, not its own
+  # (unused) CSS. See uswds/hindi-font.html.
+  [[module.mounts]]
+    source = "node_modules/@fontsource/noto-sans-devanagari/files"
+    target = "assets/fonts-dist/noto-sans-devanagari"
 
 [params]
   description = "An example site built with the USWDS Hugo theme."
@@ -266,6 +273,51 @@ defaultContentLanguageInSubdir = false
       weight = 10
     [[languages.es.menus.footer]]
       name = "Noticias"
+      pageRef = "/news"
+      weight = 30
+
+  [languages.hi]
+    label = "हिन्दी"
+    locale = "hi-in"
+    weight = 3
+    title = "उदाहरण एजेंसी"
+
+    [languages.hi.params]
+      description = "हुगो के लिए USWDS थीम के साथ बनाई गई एक उदाहरण साइट।"
+
+    # content/search.hi.md keeps the default filename-derived slug ("search"),
+    # unlike content/search.es.md's `slug: "buscar"` — so params.uswds.search.page
+    # needs no per-language override here. See the note on languages.es above
+    # for what happens when a translated page DOES localise its slug.
+
+    # Every section has a Hindi translation, unlike Spanish's deliberately
+    # shorter menu (§ above), so this menu carries the full English structure.
+    [[languages.hi.menus.main]]
+      name = "परिचय"
+      pageRef = "/about"
+      weight = 10
+    [[languages.hi.menus.main]]
+      name = "दस्तावेज़ीकरण"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.hi.menus.main]]
+      name = "समाचार"
+      pageRef = "/news"
+      weight = 30
+
+    # No secondary menu: English's only entry is /contact/, and there is no
+    # contact page in either language.
+
+    [[languages.hi.menus.footer]]
+      name = "परिचय"
+      pageRef = "/about"
+      weight = 10
+    [[languages.hi.menus.footer]]
+      name = "दस्तावेज़ीकरण"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.hi.menus.footer]]
+      name = "समाचार"
       pageRef = "/news"
       weight = 30
 
