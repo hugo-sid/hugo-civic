@@ -29,6 +29,9 @@ other = "inglés"
 [language_name_es]
 other = "español"
 
+[language_name_hi]
+other = "hindi"
+
 [search_component]
 other = "Componente de búsqueda"
 
