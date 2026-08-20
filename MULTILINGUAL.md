@@ -707,7 +707,9 @@ one language later. Three things the fifth language did teach:
 
 - **Pagefind stems `ta-in`.** Checked by reading Pagefind's stderr across a
   five-language index, per the bullet above. It names `or-in` and only `or-in`,
-  so Odia is still this repository's one unstemmed language.
+  ~~so Odia is still this repository's one unstemmed language.~~ **The first
+  half holds; the second did not survive a sixth language — see the Telugu
+  update below.** `ta-in` is stemmed. `or-in` is no longer alone.
 - **`SRCH` is now a per-language budget in practice.** Tamil's index is 30059 B
   gzipped against Hindi's 22467 B and English's 12561 B over the same 18 pages,
   with a flat wasm — Tamil is agglutinative, so identical prose yields far more
@@ -736,6 +738,45 @@ one language later. Three things the fifth language did teach:
   ugly, non-empty and — checked across all 25 pages — unique. So
   `in-page-nav-heading-ids.js`, written for Hindi, needed no change: it keys
   off the parent heading's own Hugo-assigned id whatever script it is in.
+
+**Update: a sixth language landed, and cost nothing structural either.**
+Telugu (`te-in`), full-site, 25 pages — see TELUGU.md. Same shape as Tamil: a
+mount, a `scriptFonts` entry, a `[languages.te]` block, an `@font-face` pair and
+a `:lang()` rule, and no template touched. Two rollouts running is the point at
+which ODIA.md §3's generalisation stops being a claim. What the sixth language
+taught:
+
+- **`or-in` is not the only unstemmed language, and the script does not predict
+  which are.** Pagefind names `or-in` *and* `te-in` on every index run, which
+  corrects the bullet above and TAMIL.md §7. Telugu and Tamil are both
+  Dravidian, both agglutinative, both South Indian abugidas, and they land on
+  opposite sides of this line; Hindi stems and Odia does not. Read the stderr —
+  there is no rule to infer it from. TELUGU.md §7.1.
+- **`SRCH` did not need raising for a sixth language**, and the reason is the
+  wasm rather than the prose. An unstemmed language shares
+  `wasm.unknown.pagefind` (68024 B) instead of getting its own stemmer build
+  (~70-72 KB), so Telugu reports smaller than Tamil despite indexing 25812 B
+  against Tamil's 30013 B. `ta-in` is still the budgeted language.
+- **`check-budget.sh` under-reports every unstemmed language by the size of the
+  shared wasm.** Pagefind writes `"wasm": null` for them and the script builds a
+  filename from that field, so the `[ -f ]` guard silently drops 68024 B from
+  `or-in`'s and `te-in`'s totals. Latent since Odia landed, found because Telugu
+  made two of them. Not fixed in the Telugu rollout; TELUGU.md §7.2.
+- **A font decision can go back to the obvious answer without going back to the
+  obvious reasoning.** Tamil broke the Noto pattern, so Telugu could not just
+  inherit it — Noto Sans Telugu, Noto Serif Telugu and Hind Guntur (Telugu's
+  Mukta Malar, by Tamil's own logic) were all measured. Hind Guntur lost on the
+  line box TAMIL.md §2 had already flagged, at 1.9x the bytes; the serif lost on
+  stroke contrast, thinning to 0.72px at the 16px this theme sets body text at,
+  on exactly the *vattulu* that carry Telugu's distinctions. TELUGU.md §2 and §4.
+- **`font-size-adjust` is a per-face measurement, not a per-script habit.**
+  Tamil needed it at 10.5% short of Public Sans; Telugu is 3.4% short and
+  deliberately does not carry it. Recording the absence and its measurement is
+  what stops the next language copying the declaration on faith. TELUGU.md §3.
+- **Telugu brings its own invisible-character convention, and it is not the
+  danda.** ZWNJ (U+200C) stops a conjunct forming across a virama, so
+  `వెబ్‌సైట్` needs one and loses its letterforms without it — the same class of
+  silent damage as Odia's no-break space, currently unchecked. TELUGU.md §5.
 
 ### 8.6 The Component UI does not change the §15.2 decision, but dates its wording
 
