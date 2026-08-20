@@ -698,6 +698,34 @@ taught:
   `params.uswds.scriptFonts` table keyed by language code, and `head.html`
   names no language at all. The SCSS stayed hand-written per script — see
   ODIA.md §3 for why the same table does not drive the `@font-face` rules.
+
+**Update: a fifth language landed, and cost nothing structural.** Tamil
+(`ta-in`), full-site, 25 pages — see TAMIL.md. No template changed: a mount, a
+`scriptFonts` entry, a `[languages.ta]` block, an `@font-face` pair and a
+`:lang()` rule. That is the generalisation ODIA.md §3 argued for, paying off
+one language later. Three things the fifth language did teach:
+
+- **Pagefind stems `ta-in`.** Checked by reading Pagefind's stderr across a
+  five-language index, per the bullet above. It names `or-in` and only `or-in`,
+  so Odia is still this repository's one unstemmed language.
+- **`SRCH` is now a per-language budget in practice.** Tamil's index is 30059 B
+  gzipped against Hindi's 22467 B and English's 12561 B over the same 18 pages,
+  with a flat wasm — Tamil is agglutinative, so identical prose yields far more
+  distinct surface forms. The budget was raised to 126976 B rather than
+  removed; see TAMIL.md §7 for why that differs from the FONT budget's fate.
+- **A script's font can need a size adjustment, not just an `@font-face`.**
+  Mukta Malar sets 11-13% smaller than Public Sans at the same `font-size`, and
+  every Tamil page mixes the two on one line because only the `tamil` subset is
+  published. `:lang(ta)` carries `font-size-adjust: 0.517` — Public Sans's own
+  aspect ratio — which sizes the Tamil to the Latin beside it and is a no-op on
+  the Latin itself. TAMIL.md §3.
+- **The agency identifier reads backwards in every postpositional language.**
+  Not a Tamil bug; Hindi and Odia have shipped it since they landed.
+  `chrome/identifier.html` emits `identifier_content` before the agency link,
+  which no translation table can reorder. Tamil sidesteps it with a label form;
+  the real fix is passing the link into the string as a template argument, and
+  it is a fix to Hindi and Odia rather than part of a Tamil rollout. TAMIL.md
+  §6.
 - **A fixed per-family font budget does not survive a multilingual theme.**
   `check-budget.sh`'s `FONT` line was removed rather than bumped a second
   time: a font family's size is a property of the script, not a regression,
