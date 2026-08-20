@@ -43,7 +43,7 @@
   <div class="usa-navbar">
     {{- partial "chrome/site-title" . }}
     {{- if $showLanguages }}
-      {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options-mobile" "modifier" "usa-language--small" "class" "display-block desktop:display-none") }}
+      {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options-mobile" "modifier" "usa-language--small" "class" "display-block desktop:display-none" "buttonClass" "usa-button--unstyled") }}
     {{- end }}
     {{- with $items }}
     <button type="button" class="usa-menu-btn">{{ i18n "menu" | default "Menu" }}</button>
@@ -86,7 +86,7 @@
     <div class="usa-navbar">
       {{- partial "chrome/site-title" . }}
       {{- if $showLanguages }}
-        {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options-mobile" "modifier" "usa-language--small" "class" "display-block desktop:display-none") }}
+        {{- partial "chrome/language-selector" (dict "page" $ "id" "language-options-mobile" "modifier" "usa-language--small" "class" "display-block desktop:display-none" "buttonClass" "usa-button--unstyled") }}
       {{- end }}
       {{- with $items }}
       <button type="button" class="usa-menu-btn">{{ i18n "menu" | default "Menu" }}</button>
