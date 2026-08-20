@@ -88,6 +88,30 @@
   src: url("/fonts/mukta-malar/mukta-malar-tamil-700-normal.woff2") format("woff2");
 }
 
+// Telugu. A fourth Unicode block, and back to a Noto after Tamil's exception —
+// on measurement, not on consistency. Noto Serif Telugu and Hind Guntur were
+// both compared against this face; see TELUGU.md §2 for the numbers. The short
+// version is stroke contrast: Noto Sans Telugu runs 1.14:1 thin-to-thick and
+// holds 1.19px at the 16px this theme sets body text at, where Noto Serif
+// Telugu runs 2.34:1 and thins to 0.72px — under one device pixel on a 1x
+// display, on exactly the vattulu and vowel signs that carry Telugu's
+// distinctions.
+@font-face {
+  font-family: "Noto Sans Telugu";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/noto-sans-telugu/noto-sans-telugu-telugu-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Noto Sans Telugu";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/noto-sans-telugu/noto-sans-telugu-telugu-700-normal.woff2") format("woff2");
+}
+
 :lang(hi) {
   font-family: "Noto Sans Devanagari", #{get-font-stack("body")};
 }
@@ -121,6 +145,20 @@
 :lang(ta) {
   font-family: "Mukta Malar", #{get-font-stack("body")};
   font-size-adjust: 0.517;
+}
+
+// Telugu, and deliberately WITHOUT the font-size-adjust above.
+//
+// It was measured for, not skipped. Noto Sans Telugu's aspect ratio is
+// 0.500 (x-height 50.0px at font-size 100px) against Public Sans's 0.517 —
+// 3.4% short, where Mukta Malar was 10.5% short. Declaring font-size-adjust
+// here would scale Telugu by 1.034, which is below the threshold where the
+// mixed Telugu/Latin line the `telugu` subset forces is visibly uneven, and
+// it would cost a declaration whose value has to be kept in sync with Public
+// Sans by hand. Telugu's line box (135.2px) is also far closer to Public
+// Sans's 117.5px than Mukta Malar's 166.2px is. See TELUGU.md §3.
+:lang(te) {
+  font-family: "Noto Sans Telugu", #{get-font-stack("body")};
 }
 
 // The mobile language selector in the EXTENDED header.

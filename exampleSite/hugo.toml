@@ -56,11 +56,11 @@ defaultContentLanguageInSubdir = false
   [[module.mounts]]
     source = "node_modules/@uswds/uswds/dist"
     target = "assets/uswds-dist"
-  # Devanagari, Oriya and Tamil have no glyphs in any USWDS font, so Hindi,
-  # Odia and Tamil pages need a font neither this mount nor USWDS provides. The fontsource
-  # packages ship each family self-hosted; only their file assets are
-  # mounted, not their own (unused) CSS. See uswds/script-font.html and
-  # params.uswds.scriptFonts above.
+  # Devanagari, Oriya, Tamil and Telugu have no glyphs in any USWDS font, so
+  # Hindi, Odia, Tamil and Telugu pages each need a font neither this mount nor
+  # USWDS provides. The fontsource packages ship each family self-hosted; only
+  # their file assets are mounted, not their own (unused) CSS. See
+  # uswds/script-font.html and params.uswds.scriptFonts above.
   [[module.mounts]]
     source = "node_modules/@fontsource/noto-sans-devanagari/files"
     target = "assets/fonts-dist/noto-sans-devanagari"
@@ -70,6 +70,9 @@ defaultContentLanguageInSubdir = false
   [[module.mounts]]
     source = "node_modules/@fontsource/mukta-malar/files"
     target = "assets/fonts-dist/mukta-malar"
+  [[module.mounts]]
+    source = "node_modules/@fontsource/noto-sans-telugu/files"
+    target = "assets/fonts-dist/noto-sans-telugu"
 
 [params]
   description = "An example site built with the USWDS Hugo theme."
@@ -129,6 +132,10 @@ defaultContentLanguageInSubdir = false
   family = "Mukta Malar"
   mount = "mukta-malar"
   subset = "tamil"
+[params.uswds.scriptFonts.te]
+  family = "Noto Sans Telugu"
+  mount = "noto-sans-telugu"
+  subset = "telugu"
 
 [params.uswds.header]
   variant = "extended"
@@ -439,6 +446,50 @@ defaultContentLanguageInSubdir = false
       weight = 20
     [[languages.ta.menus.footer]]
       name = "செய்திகள்"
+      pageRef = "/news"
+      weight = 30
+
+  [languages.te]
+    label = "తెలుగు"
+    locale = "te-in"
+    weight = 6
+    title = "ఉదాహరణ సంస్థ"
+
+    [languages.te.params]
+      description = "Hugo కోసం USWDS థీమ్‌తో నిర్మించబడిన ఒక ఉదాహరణ సైట్."
+
+    # content/search.te.md keeps the default filename-derived slug ("search"),
+    # same reasoning as languages.hi, languages.or and languages.ta above — no
+    # params.uswds.search.page override needed.
+
+    # Every section has a Telugu translation, same as the Hindi, Odia and
+    # Tamil full menus.
+    [[languages.te.menus.main]]
+      name = "మా గురించి"
+      pageRef = "/about"
+      weight = 10
+    [[languages.te.menus.main]]
+      name = "డాక్యుమెంటేషన్"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.te.menus.main]]
+      name = "వార్తలు"
+      pageRef = "/news"
+      weight = 30
+
+    # No secondary menu: English's only entry is /contact/, and there is no
+    # contact page in any language.
+
+    [[languages.te.menus.footer]]
+      name = "మా గురించి"
+      pageRef = "/about"
+      weight = 10
+    [[languages.te.menus.footer]]
+      name = "డాక్యుమెంటేషన్"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.te.menus.footer]]
+      name = "వార్తలు"
       pageRef = "/news"
       weight = 30
 

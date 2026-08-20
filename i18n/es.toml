@@ -36,7 +36,10 @@ other = "hindi"
 other = "odia"
 
 [language_name_ta]
-other = "Tamil"
+other = "tamil"
+
+[language_name_te]
+other = "telugu"
 
 [search_component]
 other = "Componente de búsqueda"
