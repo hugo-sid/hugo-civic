@@ -1,0 +1,302 @@
+# Telugu strings.
+#
+# Like i18n/hi.toml, i18n/or.toml and i18n/ta.toml, and unlike i18n/es.toml,
+# USWDS ships no official Telugu translation of the federally standardised
+# banner/identifier wording to copy — there is no upstream 'te' branch of
+# _banner.twig or _identifier.twig. Every string here, banner and identifier
+# included, was translated for this repository and has had no native-speaker
+# review. Treat this as a demo fixture until someone who reads Telugu has been
+# through it. See TELUGU.md §4.
+#
+# No danda here, and that is not an omission. Modern Telugu prose ends a
+# sentence with a full stop, not U+0964, so tools/check-danda.sh has nothing to
+# check in this file and the no-break-space rule that governs every Odia string
+# does not apply to any Telugu one. See TELUGU.md §5.
+#
+# ZWNJ (U+200C) is load-bearing in several strings and is NOT stray whitespace.
+# Telugu forms a conjunct across a virama, so "వెబ్" + "సైట్" would render as a
+# single ligature without it; "వెబ్‌సైట్", "సైట్‌లో", "కంటెంట్‌కు" and
+# "ఇన్‌స్పెక్టర్" each carry one. Deleting them changes the letterforms.
+#
+# Register: these are set in the ordinary written Telugu a government site
+# would publish, not in literary Telugu. Where a technical term has no settled
+# Telugu equivalent that a reader would recognise faster than the English
+# (JavaScript, FOIA, HTTPS, .gov, USA.gov), the English is kept — translating
+# it would make the string harder to act on, not easier.
+
+[skipnav]
+other = "ప్రధాన కంటెంట్‌కు వెళ్లండి"
+
+[menu]
+other = "మెనూ"
+
+[close]
+other = "మూసివేయి"
+
+[search]
+other = "వెతకండి"
+
+[languages]
+other = "భాషలు"
+
+# See i18n/en.toml: names each language in this table's own language. Every
+# table names every language, itself included, so the key-parity check in
+# tools/check-i18n.sh holds; the self-naming entry is never rendered.
+[language_name_en]
+other = "ఆంగ్లం"
+
+[language_name_es]
+other = "స్పానిష్"
+
+[language_name_hi]
+other = "హిందీ"
+
+[language_name_or]
+other = "ఒడియా"
+
+[language_name_ta]
+other = "తమిళం"
+
+[language_name_te]
+other = "తెలుగు"
+
+[search_component]
+other = "శోధన భాగం"
+
+[primary_navigation]
+other = "ప్రధాన నావిగేషన్"
+
+[section_navigation]
+other = "విభాగ నావిగేషన్"
+
+[footer_navigation]
+other = "దిగువ నావిగేషన్"
+
+[return_to_top]
+other = "పైకి తిరిగి వెళ్లండి"
+
+[breadcrumbs]
+other = "మార్గసూచిక"
+
+[introduction]
+other = "పరిచయం"
+
+[on_this_page]
+other = "ఈ పేజీలో"
+
+[key_information]
+other = "ముఖ్య సమాచారం"
+
+[read_more]
+other = "మరింత చదవండి"
+
+[more_information]
+other = "మరింత సమాచారం"
+
+[topics]
+other = "అంశాలు"
+
+[site_alert]
+other = "సైట్ హెచ్చరిక"
+
+# --- Articles -------------------------------------------------------------
+
+[by_author]
+other = "రచయిత"
+
+[published_on]
+other = "ప్రచురించబడింది"
+
+[updated_on]
+other = "నవీకరించబడింది"
+
+[article_navigation]
+other = "వ్యాస నావిగేషన్"
+
+[previous]
+other = "మునుపటి"
+
+[next]
+other = "తదుపరి"
+
+[related_content]
+other = "సంబంధిత కంటెంట్"
+
+# --- Pagination -----------------------------------------------------------
+
+[pagination]
+other = "పేజీల విభజన"
+
+[page]
+other = "పేజీ"
+
+[last_page]
+other = "చివరి పేజీ,"
+
+[pagination_overflow]
+other = "కనిపించని పేజీలను సూచించే చుక్కలు"
+
+# --- Taxonomies -----------------------------------------------------------
+
+[tagged_with]
+other = "వీటితో ట్యాగ్ చేయబడింది"
+
+[browse_topics]
+other = "అంశం వారీగా చూడండి"
+
+[item_count]
+one = "{{ . }} పేజీ"
+other = "{{ . }} పేజీలు"
+
+# --- Search ---------------------------------------------------------------
+#
+# search_results_count and search_no_results carry %d and %s rather than
+# Hugo's {{ . }}: they are substituted in the BROWSER, not by Hugo. Keep the
+# token, translate everything around it. See i18n/en.toml for why.
+
+[search_results_count]
+one = "%d ఫలితం"
+other = "%d ఫలితాలు"
+
+[search_no_results]
+other = "%s కోసం ఫలితాలు ఏవీ లేవు."
+
+[search_no_results_hint]
+other = "అక్షరదోషాలు ఉన్నాయేమో చూడండి, లేదా చిన్నదైన లేదా మరింత సాధారణమైన పదాన్ని ప్రయత్నించండి."
+
+[search_prompt]
+other = "ఈ సైట్‌లో వెతకడానికి పైన ఒక పదాన్ని నమోదు చేయండి."
+
+[search_searching]
+other = "వెతుకుతోంది…"
+
+[search_load_more]
+other = "మరిన్ని ఫలితాలను చూపించు"
+
+[search_browse_heading]
+other = "సైట్‌ను విహరించండి"
+
+[search_unavailable_title]
+other = "శోధన అందుబాటులో లేదు"
+
+[search_unavailable_text]
+other = "సైట్ ప్రచురించబడినప్పుడే శోధన సూచిక తయారవుతుంది, కాబట్టి స్థానిక డెవలప్‌మెంట్ సర్వర్‌లో శోధన పని చేయదు."
+
+[search_needs_js_title]
+other = "శోధనకు JavaScript అవసరం"
+
+[search_needs_js_text]
+other = "ఈ పేజీ మీ బ్రౌజర్‌లోనే సైట్‌ను వెతుకుతుంది; అందుకు JavaScript ప్రారంభించి ఉండాలి."
+
+# --- Official .gov banner -----------------------------------------------
+
+[banner_aria_label]
+other = "అమెరికా సంయుక్త రాష్ట్రాల ప్రభుత్వ అధికారిక వెబ్‌సైట్"
+
+[banner_text]
+other = "ఇది అమెరికా సంయుక్త రాష్ట్రాల ప్రభుత్వ అధికారిక వెబ్‌సైట్"
+
+[banner_action]
+other = "ఇది ఎలా తెలుసుకోవాలి"
+
+[banner_domain_heading]
+other = "అధికారిక వెబ్‌సైట్‌లు .gov ను ఉపయోగిస్తాయి"
+
+[banner_domain_text]
+other = "ఒక <strong>.gov</strong> వెబ్‌సైట్ అమెరికాలోని ఒక అధికారిక ప్రభుత్వ సంస్థకు చెందినది."
+
+[banner_https_heading]
+other = "సురక్షితమైన .gov వెబ్‌సైట్‌లు HTTPS ను ఉపయోగిస్తాయి"
+
+[banner_https_pretext]
+other = "ఒక <strong>తాళం</strong>"
+
+[banner_https_posttext]
+other = "లేదా <strong>https://</strong> అంటే మీరు ఆ .gov వెబ్‌సైట్‌కు సురక్షితంగా అనుసంధానమయ్యారని అర్థం. ముఖ్యమైన సమాచారాన్ని అధికారికమైన, సురక్షితమైన వెబ్‌సైట్‌లలో మాత్రమే పంచుకోండి."
+
+[banner_lock_title]
+other = "తాళం"
+
+[banner_lock_description]
+other = "మూసి ఉన్న తాళం చిహ్నం"
+
+# --- Agency identifier ---------------------------------------------------
+#
+# WORD ORDER, and Telugu follows i18n/ta.toml here rather than i18n/hi.toml
+# and i18n/or.toml.
+#
+# chrome/identifier.html renders identifier_content and THEN the agency's
+# name, because the English sentence runs "An official website of the <a>".
+# Telugu, like Tamil, marks that relationship with a postposition AFTER the
+# name — the agency has to come first — and no i18n string can reorder a
+# template.
+#
+# i18n/hi.toml and i18n/or.toml answered this by translating the tail of the
+# English sentence anyway, which renders the postposition in front of the word
+# it governs and is not a sentence in either language. Rather than reproduce
+# that in a fourth language, Telugu uses the label form Tamil introduced —
+# "అధికారిక వెబ్‌సైట్: <agency>" — which is correct Telugu in the order the
+# template actually emits. See TELUGU.md §6 and TAMIL.md §6, which propose
+# fixing the partial so all four can use a natural sentence.
+
+[identifier_content_prefix]
+other = " "
+
+[identifier_content]
+other = "అధికారిక వెబ్‌సైట్:"
+
+[identifier_taxpayer]
+other = "పన్ను చెల్లింపుదారుల ఖర్చుతో తయారు చేయబడి ప్రచురించబడింది."
+
+[identifier_masthead_aria]
+other = "సంస్థ గుర్తింపు"
+
+[identifier_identity_aria]
+other = "సంస్థ వివరణ"
+
+[identifier_required_links_aria]
+other = "ముఖ్యమైన లింక్‌లు"
+
+[identifier_link_about]
+other = "మా గురించి"
+
+[identifier_link_accessibility]
+other = "అందుబాటు సహాయం"
+
+[identifier_link_foia]
+other = "FOIA అభ్యర్థనలు"
+
+[identifier_link_no_fear_act]
+other = "No FEAR Act డేటా"
+
+[identifier_link_inspector_general]
+other = "ఇన్‌స్పెక్టర్ జనరల్ కార్యాలయం"
+
+[identifier_link_performance]
+other = "పనితీరు నివేదికలు"
+
+[identifier_link_privacy]
+other = "గోప్యతా విధానం"
+
+[identifier_usagov_aria]
+other = "అమెరికా ప్రభుత్వ సమాచారం మరియు సేవలు"
+
+[identifier_usagov_description]
+other = "అమెరికా ప్రభుత్వ సమాచారం మరియు సేవల కోసం చూస్తున్నారా?"
+
+[identifier_usagov_link]
+other = "USA.gov ను సందర్శించండి"
+
+# --- Errors ---------------------------------------------------------------
+
+[error_404_heading]
+other = "పేజీ కనుగొనబడలేదు"
+
+[error_404_intro]
+other = "క్షమించండి, మీరు వెతుకుతున్న పేజీని మేము కనుగొనలేకపోయాము. అది తొలగించబడి ఉండవచ్చు, పేరు మార్చబడి ఉండవచ్చు, లేదా మరేదైనా కారణంగా అందుబాటులో లేకపోవచ్చు."
+
+[error_404_help]
+other = "మీరు URL ను నేరుగా టైప్ చేసి ఉంటే, అక్షరదోషాలను, పెద్ద-చిన్న అక్షరాలను సరిచూసుకోండి. మా URL లు ఇలా ఉంటాయి:"
+
+[error_404_home]
+other = "హోమ్ పేజీకి వెళ్లండి"
