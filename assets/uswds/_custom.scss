@@ -68,12 +68,59 @@
   src: url("/fonts/noto-sans-oriya/noto-sans-oriya-oriya-700-normal.woff2") format("woff2");
 }
 
+// Tamil. A third Unicode block, and the one script here that is NOT set in a
+// Noto face: Mukta Malar (Ek Type) was drawn for screen UI and running web
+// text, which is what these pages are. See TAMIL.md §2 for the comparison it
+// won and the measurements below.
+@font-face {
+  font-family: "Mukta Malar";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/mukta-malar/mukta-malar-tamil-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/mukta-malar/mukta-malar-tamil-700-normal.woff2") format("woff2");
+}
+
 :lang(hi) {
   font-family: "Noto Sans Devanagari", #{get-font-stack("body")};
 }
 
 :lang(or) {
   font-family: "Noto Sans Oriya", #{get-font-stack("body")};
+}
+
+// Tamil, plus the one declaration no other script here needs.
+//
+// Mukta Malar sets SMALLER than Public Sans at the same font-size. Measured
+// from the shipped woff2 at font-size 100px: Public Sans x-height 51.7px,
+// Mukta Malar x-height 46.8px — and Tamil's own base consonant (க) tops out
+// at 49.5px against Noto Sans Tamil's 55.4px. Left alone, every Tamil page
+// reads a size smaller than the rest of the site, and every Latin word inside
+// a Tamil sentence — hugo.toml, USWDS, HTTPS, all of which fall through to
+// Public Sans because only the `tamil` subset is published — sits visibly
+// larger than the Tamil around it.
+//
+// font-size-adjust fixes exactly this and nothing else. The value is Public
+// Sans's own aspect ratio (1034/2000), so Mukta Malar is scaled up by
+// 0.517/0.468 = 1.105 to match it, while the Latin runs are untouched: their
+// font's aspect ratio already IS 0.517, so the adjustment resolves to a
+// no-op for them. It also does not compound through nested elements the way
+// a font-size in `em` would.
+//
+// Browsers without font-size-adjust support simply get the unadjusted face,
+// which is the same slightly-small Tamil the other two scripts never had —
+// legible, just not size-matched. Deleting this one line is the whole
+// rollback. See TAMIL.md §3.
+:lang(ta) {
+  font-family: "Mukta Malar", #{get-font-stack("body")};
+  font-size-adjust: 0.517;
 }
 
 // The mobile language selector in the EXTENDED header.

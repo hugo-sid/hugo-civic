@@ -1,0 +1,294 @@
+# Tamil strings.
+#
+# Like i18n/hi.toml and i18n/or.toml, and unlike i18n/es.toml, USWDS ships no
+# official Tamil translation of the federally standardised banner/identifier
+# wording to copy — there is no upstream 'ta' branch of _banner.twig or
+# _identifier.twig. Every string here, banner and identifier included, was
+# translated for this repository and has had no native-speaker review. Treat
+# this as a demo fixture until someone who reads Tamil has been through it.
+# See TAMIL.md §4.
+#
+# No danda here, and that is not an omission. Tamil does not use U+0964; it
+# ends sentences with a full stop, so tools/check-danda.sh has nothing to
+# check in this file and the no-break-space rule that governs every Odia
+# string does not apply to any Tamil one. See TAMIL.md §5.
+#
+# Register: these are set in the ordinary written Tamil a government site
+# would publish, not in high literary Tamil. Where a technical term has no
+# settled Tamil equivalent that a reader would recognise faster than the
+# English (JavaScript, FOIA, HTTPS, .gov, USA.gov), the English is kept —
+# translating it would make the string harder to act on, not easier.
+
+[skipnav]
+other = "முதன்மை உள்ளடக்கத்திற்குச் செல்"
+
+[menu]
+other = "பட்டி"
+
+[close]
+other = "மூடு"
+
+[search]
+other = "தேடு"
+
+[languages]
+other = "மொழிகள்"
+
+# See i18n/en.toml: names each language in this table's own language. Every
+# table names every language, itself included, so the key-parity check in
+# tools/check-i18n.sh holds; the self-naming entry is never rendered.
+[language_name_en]
+other = "ஆங்கிலம்"
+
+[language_name_es]
+other = "ஸ்பானிஷ்"
+
+[language_name_hi]
+other = "இந்தி"
+
+[language_name_or]
+other = "ஒடியா"
+
+[language_name_ta]
+other = "தமிழ்"
+
+[search_component]
+other = "தேடல் கூறு"
+
+[primary_navigation]
+other = "முதன்மை வழிசெலுத்தல்"
+
+[section_navigation]
+other = "பிரிவு வழிசெலுத்தல்"
+
+[footer_navigation]
+other = "அடிப்பகுதி வழிசெலுத்தல்"
+
+[return_to_top]
+other = "மேலே திரும்பு"
+
+[breadcrumbs]
+other = "வழித்தடம்"
+
+[introduction]
+other = "அறிமுகம்"
+
+[on_this_page]
+other = "இந்தப் பக்கத்தில்"
+
+[key_information]
+other = "முக்கியத் தகவல்"
+
+[read_more]
+other = "மேலும் படிக்க"
+
+[more_information]
+other = "கூடுதல் தகவல்"
+
+[topics]
+other = "தலைப்புகள்"
+
+[site_alert]
+other = "தள எச்சரிக்கை"
+
+# --- Articles -------------------------------------------------------------
+
+[by_author]
+other = "எழுதியவர்"
+
+[published_on]
+other = "வெளியிடப்பட்டது"
+
+[updated_on]
+other = "புதுப்பிக்கப்பட்டது"
+
+[article_navigation]
+other = "கட்டுரை வழிசெலுத்தல்"
+
+[previous]
+other = "முந்தையது"
+
+[next]
+other = "அடுத்தது"
+
+[related_content]
+other = "தொடர்புடைய உள்ளடக்கம்"
+
+# --- Pagination -----------------------------------------------------------
+
+[pagination]
+other = "பக்கமாக்கல்"
+
+[page]
+other = "பக்கம்"
+
+[last_page]
+other = "கடைசிப் பக்கம்,"
+
+[pagination_overflow]
+other = "காட்டப்படாத பக்கங்களைக் குறிக்கும் நீள்புள்ளி"
+
+# --- Taxonomies -----------------------------------------------------------
+
+[tagged_with]
+other = "இவற்றுடன் குறிக்கப்பட்டது"
+
+[browse_topics]
+other = "தலைப்பு வாரியாகப் பார்க்கவும்"
+
+[item_count]
+one = "{{ . }} பக்கம்"
+other = "{{ . }} பக்கங்கள்"
+
+# --- Search ---------------------------------------------------------------
+#
+# search_results_count and search_no_results carry %d and %s rather than
+# Hugo's {{ . }}: they are substituted in the BROWSER, not by Hugo. Keep the
+# token, translate everything around it. See i18n/en.toml for why.
+
+[search_results_count]
+one = "%d முடிவு"
+other = "%d முடிவுகள்"
+
+[search_no_results]
+other = "%s என்பதற்கு முடிவுகள் எதுவும் இல்லை."
+
+[search_no_results_hint]
+other = "எழுத்துப்பிழையைச் சரிபார்க்கவும், அல்லது சுருக்கமான அல்லது பொதுவான ஒரு சொல்லை முயற்சிக்கவும்."
+
+[search_prompt]
+other = "இந்தத் தளத்தில் தேட, மேலே ஒரு சொல்லை உள்ளிடவும்."
+
+[search_searching]
+other = "தேடுகிறது…"
+
+[search_load_more]
+other = "மேலும் முடிவுகளைக் காட்டு"
+
+[search_browse_heading]
+other = "தளத்தை உலாவுக"
+
+[search_unavailable_title]
+other = "தேடல் கிடைக்கவில்லை"
+
+[search_unavailable_text]
+other = "தளம் வெளியிடப்படும்போதுதான் தேடல் அட்டவணை உருவாக்கப்படுகிறது, எனவே உள்ளூர் மேம்பாட்டுச் சேவையகத்தில் தேடல் வேலை செய்யாது."
+
+[search_needs_js_title]
+other = "தேடலுக்கு JavaScript தேவை"
+
+[search_needs_js_text]
+other = "இந்தப் பக்கம் உங்கள் உலாவியிலேயே தளத்தைத் தேடுகிறது; அதற்கு JavaScript இயக்கப்பட்டிருக்க வேண்டும்."
+
+# --- Official .gov banner -----------------------------------------------
+
+[banner_aria_label]
+other = "அமெரிக்க அரசாங்கத்தின் அதிகாரப்பூர்வ இணையதளம்"
+
+[banner_text]
+other = "இது அமெரிக்க அரசாங்கத்தின் அதிகாரப்பூர்வ இணையதளம்"
+
+[banner_action]
+other = "இதை எப்படி அறிவது"
+
+[banner_domain_heading]
+other = "அதிகாரப்பூர்வ இணையதளங்கள் .gov ஐப் பயன்படுத்துகின்றன"
+
+[banner_domain_text]
+other = "ஒரு <strong>.gov</strong> இணையதளம் அமெரிக்காவின் அதிகாரப்பூர்வ அரசாங்க அமைப்பு ஒன்றுக்குச் சொந்தமானது."
+
+[banner_https_heading]
+other = "பாதுகாப்பான .gov இணையதளங்கள் HTTPS ஐப் பயன்படுத்துகின்றன"
+
+[banner_https_pretext]
+other = "ஒரு <strong>பூட்டு</strong>"
+
+[banner_https_posttext]
+other = "அல்லது <strong>https://</strong> என்பது, நீங்கள் அந்த .gov இணையதளத்துடன் பாதுகாப்பாக இணைந்துவிட்டீர்கள் என்பதைக் குறிக்கிறது. முக்கியமான தகவல்களை அதிகாரப்பூர்வமான, பாதுகாப்பான இணையதளங்களில் மட்டுமே பகிரவும்."
+
+[banner_lock_title]
+other = "பூட்டு"
+
+[banner_lock_description]
+other = "பூட்டப்பட்ட பூட்டு சின்னம்"
+
+# --- Agency identifier ---------------------------------------------------
+#
+# WORD ORDER, and it is the one place Tamil cannot follow Hindi and Odia.
+#
+# chrome/identifier.html renders identifier_content and THEN the agency's
+# name, because the English sentence runs "An official website of the <a>".
+# Tamil marks that relationship with a postposition AFTER the name — the
+# agency has to come first — and no i18n string can reorder a template.
+#
+# i18n/hi.toml and i18n/or.toml answered this by translating the tail of the
+# English sentence anyway ("की एक आधिकारिक वेबसाइट"), which renders as
+# "की एक आधिकारिक वेबसाइट Example Parent Agency": the postposition sits in
+# front of the word it governs, which is not a sentence in either language.
+#
+# Rather than reproduce that in a third language, Tamil uses a label form —
+# "அதிகாரப்பூர்வ இணையதளம்: <agency>" — which is correct Tamil in the order
+# the template actually emits. See TAMIL.md §6, which proposes fixing the
+# partial so all three can use a natural sentence.
+
+[identifier_content_prefix]
+other = " "
+
+[identifier_content]
+other = "அதிகாரப்பூர்வ இணையதளம்:"
+
+[identifier_taxpayer]
+other = "வரி செலுத்துவோரின் செலவில் தயாரிக்கப்பட்டு வெளியிடப்பட்டது."
+
+[identifier_masthead_aria]
+other = "நிறுவன அடையாளம்"
+
+[identifier_identity_aria]
+other = "நிறுவன விவரம்"
+
+[identifier_required_links_aria]
+other = "முக்கிய இணைப்புகள்"
+
+[identifier_link_about]
+other = "எங்களைப் பற்றி"
+
+[identifier_link_accessibility]
+other = "அணுகல் ஆதரவு"
+
+[identifier_link_foia]
+other = "FOIA கோரிக்கைகள்"
+
+[identifier_link_no_fear_act]
+other = "No FEAR Act தரவு"
+
+[identifier_link_inspector_general]
+other = "தலைமை ஆய்வாளர் அலுவலகம்"
+
+[identifier_link_performance]
+other = "செயல்திறன் அறிக்கைகள்"
+
+[identifier_link_privacy]
+other = "தனியுரிமைக் கொள்கை"
+
+[identifier_usagov_aria]
+other = "அமெரிக்க அரசாங்கத் தகவல்களும் சேவைகளும்"
+
+[identifier_usagov_description]
+other = "அமெரிக்க அரசாங்கத் தகவல்களையும் சேவைகளையும் தேடுகிறீர்களா?"
+
+[identifier_usagov_link]
+other = "USA.gov ஐப் பார்வையிடவும்"
+
+# --- Errors ---------------------------------------------------------------
+
+[error_404_heading]
+other = "பக்கம் கிடைக்கவில்லை"
+
+[error_404_intro]
+other = "மன்னிக்கவும், நீங்கள் தேடும் பக்கத்தை எங்களால் கண்டுபிடிக்க முடியவில்லை. அது நீக்கப்பட்டிருக்கலாம், பெயர் மாற்றப்பட்டிருக்கலாம், அல்லது வேறு காரணத்தால் கிடைக்காமல் இருக்கலாம்."
+
+[error_404_help]
+other = "நீங்கள் URL ஐ நேரடியாகத் தட்டச்சு செய்திருந்தால், எழுத்துப்பிழையையும் பெரிய-சிறிய எழுத்துகளையும் சரிபார்க்கவும். எங்கள் URL கள் இப்படி இருக்கும்:"
+
+[error_404_home]
+other = "முகப்புப் பக்கத்திற்குச் செல்"

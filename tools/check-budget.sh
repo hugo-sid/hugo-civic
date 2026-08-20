@@ -29,7 +29,25 @@ export PATH="$PWD/node_modules/.bin:$PATH"
 # that exists to catch regressions.
 BUDGETS="minimal:26624 standard:45056 full:66560"
 JS_BUDGET_GZ=${JS_BUDGET_GZ:-8192}      # core tier, loaded on every page
-SEARCH_BUDGET_GZ=${SEARCH_BUDGET_GZ:-110592}  # first query, one language, on the wire
+# Raised from 110592 B when Tamil landed, and the reason matters for whoever
+# reads this next: Tamil is not a regression, it is a bigger language to index.
+# Measured over the same 18 pages, gzipped index chunks per language:
+#
+#   es-es    1432 B      en-us   12561 B      hi-in   22467 B
+#   or-in   23129 B      ta-in   30059 B
+#
+# The wasm is flat across all of them (ta-in 71802 B, between hi-in's 69947 and
+# en-us's 72262), so the whole difference is the index itself. Tamil is
+# agglutinative: case, number and postpositions attach to the noun rather than
+# standing as separate words, so identical prose yields far more distinct
+# surface forms to index. No amount of tuning here makes that smaller.
+#
+# Same reasoning as the CSS bump above: a budget left at 110592 would sit at
+# 105% on the day Tamil shipped and fail for a legitimate addition, which is
+# not what a regression check is for. This one is NOT removed the way the FONT
+# budget was (ODIA.md §2) — an index can still bloat by indexing pages it
+# should not, which is exactly what tools/check-search.sh and this line catch.
+SEARCH_BUDGET_GZ=${SEARCH_BUDGET_GZ:-126976}  # first query, one language, on the wire
 
 fail=0
 for entry in $BUDGETS; do

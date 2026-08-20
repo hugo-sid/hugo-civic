@@ -56,8 +56,8 @@ defaultContentLanguageInSubdir = false
   [[module.mounts]]
     source = "node_modules/@uswds/uswds/dist"
     target = "assets/uswds-dist"
-  # Devanagari and Oriya have no glyphs in any USWDS font, so Hindi and Odia
-  # pages need a font neither this mount nor USWDS provides. The fontsource
+  # Devanagari, Oriya and Tamil have no glyphs in any USWDS font, so Hindi,
+  # Odia and Tamil pages need a font neither this mount nor USWDS provides. The fontsource
   # packages ship each family self-hosted; only their file assets are
   # mounted, not their own (unused) CSS. See uswds/script-font.html and
   # params.uswds.scriptFonts above.
@@ -67,6 +67,9 @@ defaultContentLanguageInSubdir = false
   [[module.mounts]]
     source = "node_modules/@fontsource/noto-sans-oriya/files"
     target = "assets/fonts-dist/noto-sans-oriya"
+  [[module.mounts]]
+    source = "node_modules/@fontsource/mukta-malar/files"
+    target = "assets/fonts-dist/mukta-malar"
 
 [params]
   description = "An example site built with the USWDS Hugo theme."
@@ -122,6 +125,10 @@ defaultContentLanguageInSubdir = false
   family = "Noto Sans Oriya"
   mount = "noto-sans-oriya"
   subset = "oriya"
+[params.uswds.scriptFonts.ta]
+  family = "Mukta Malar"
+  mount = "mukta-malar"
+  subset = "tamil"
 
 [params.uswds.header]
   variant = "extended"
@@ -388,6 +395,50 @@ defaultContentLanguageInSubdir = false
       weight = 20
     [[languages.or.menus.footer]]
       name = "ସମ୍ବାଦ"
+      pageRef = "/news"
+      weight = 30
+
+  [languages.ta]
+    label = "தமிழ்"
+    locale = "ta-in"
+    weight = 5
+    title = "எடுத்துக்காட்டு நிறுவனம்"
+
+    [languages.ta.params]
+      description = "Hugo வுக்கான USWDS தீமைப் பயன்படுத்தி உருவாக்கப்பட்ட ஒரு எடுத்துக்காட்டுத் தளம்."
+
+    # content/search.ta.md keeps the default filename-derived slug ("search"),
+    # same reasoning as languages.hi and languages.or above — no
+    # params.uswds.search.page override needed.
+
+    # Every section has a Tamil translation, same as Hindi's and Odia's full
+    # menus.
+    [[languages.ta.menus.main]]
+      name = "எங்களைப் பற்றி"
+      pageRef = "/about"
+      weight = 10
+    [[languages.ta.menus.main]]
+      name = "ஆவணங்கள்"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.ta.menus.main]]
+      name = "செய்திகள்"
+      pageRef = "/news"
+      weight = 30
+
+    # No secondary menu: English's only entry is /contact/, and there is no
+    # contact page in any language.
+
+    [[languages.ta.menus.footer]]
+      name = "எங்களைப் பற்றி"
+      pageRef = "/about"
+      weight = 10
+    [[languages.ta.menus.footer]]
+      name = "ஆவணங்கள்"
+      pageRef = "/docs"
+      weight = 20
+    [[languages.ta.menus.footer]]
+      name = "செய்திகள்"
       pageRef = "/news"
       weight = 30
 
