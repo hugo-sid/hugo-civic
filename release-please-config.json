@@ -22,6 +22,11 @@
       "hidden": false
     },
     {
+      "type": "content",
+      "section": ":page_facing_up: Example Content",
+      "hidden": false
+    },
+    {
       "type": "ci",
       "section": ":construction_worker: CI/CD",
       "hidden": false
